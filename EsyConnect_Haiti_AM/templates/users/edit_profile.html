@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Modifier le Profil" %} - EsyConnect{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-20 px-4">
+    <div class="max-w-2xl w-full">
+        <!-- Logo & Title -->
+        <div class="text-center mb-10">
+            <div class="w-20 h-20 bg-esy-blue-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-esy-blue-600/20">
+                <i class="fas fa-user-edit text-white text-3xl"></i>
+            </div>
+            <h1 class="text-3xl font-black text-esy-dark mb-2">{% trans "Modifier Votre Profil" %}</h1>
+            <p class="text-gray-400 font-bold uppercase text-xs tracking-widest">{% trans "Mettez à jour vos informations" %}</p>
+        </div>
+
+        <!-- Edit Profile Card -->
+        <div class="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100">
+            <form method="POST" action="{% url 'users:edit_profile' %}" class="space-y-6">
+                {% csrf_token %}
+                
+                {% if u_form.errors or p_form.errors %}
+                <div class="bg-red-50 border border-red-100 text-red-600 p-4 rounded-2xl text-sm font-bold">
+                    {% for field, errors in u_form.errors.items %}
+                        {% for error in errors %}<p>{{ field }}: {{ error }}</p>{% endfor %}
+                    {% endfor %}
+                    {% for field, errors in p_form.errors.items %}
+                        {% for error in errors %}<p>{{ field }}: {{ error }}</p>{% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-esy-dark font-black text-sm mb-3">{% trans "Nom d'utilisateur" %}</label>
+                        <div class="relative">
+                            <i class="fas fa-user absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            {{ u_form.username }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-esy-dark font-black text-sm mb-3">{% trans "Email" %}</label>
+                        <div class="relative">
+                            <i class="fas fa-envelope absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            {{ u_form.email }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-esy-dark font-black text-sm mb-3">{% trans "Prénom" %}</label>
+                        <div class="relative">
+                            <i class="fas fa-id-card absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            {{ u_form.first_name }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-esy-dark font-black text-sm mb-3">{% trans "Nom" %}</label>
+                        <div class="relative">
+                            <i class="fas fa-id-card absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            {{ u_form.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-esy-dark font-black text-sm mb-3">{% trans "Téléphone" %}</label>
+                        <div class="relative">
+                            <i class="fas fa-phone absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            {{ p_form.phone }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit" class="w-full bg-esy-blue-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-esy-blue-600/20 hover:bg-esy-blue-700 transition transform hover:scale-[1.02]">
+                        {% trans "Sauvegarder les modifications" %}
+                    </button>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <a href="javascript:history.back()" class="text-gray-400 font-bold hover:text-esy-blue-600 transition">
+                        {% trans "Annuler et retourner" %}
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

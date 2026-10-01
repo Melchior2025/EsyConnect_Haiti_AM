@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Mon Abonnement - {{ site_title|default:"EsyConnect" }}{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #fafafa;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="flex h-screen w-full overflow-y-auto bg-[#fafafa]">
+  
+    <!-- PREMIUM DARK SIDEBAR -->
+    {% include 'components/dashboard_sidebar.html' %}
+
+  <!-- MAIN AREA -->
+  <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+    
+    <!-- HEADER -->
+    {% include 'components/dashboard_header.html' %}
+
+    <!-- CONTENT SCROLL -->
+    <div class="relative z-10 flex-1 px-6 py-6 custom-scrollbar flex flex-col">
+        
+        <!-- Current Plan Banner -->
+        <div class="bg-white rounded-xl border border-gray-200 p-8 relative overflow-hidden mb-6 shadow-sm">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">Plan Actuel</p>
+                    <h2 class="text-2xl font-black text-gray-900 mb-2">Plan Freemium</h2>
+                    <p class="text-gray-500 font-medium text-sm">Vous utilisez actuellement le plan basique gratuit. Passez à la vitesse supérieure !</p>
+                </div>
+                <div class="flex-shrink-0">
+                    <span class="bg-gray-100 border border-gray-200 text-gray-600 px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider">Gratuit</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Table -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Free Plan -->
+            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
+                <h3 class="text-lg font-black text-gray-900 mb-1">Basic</h3>
+                <p class="text-gray-500 text-xs mb-4">Idéal pour commencer</p>
+                <div class="text-3xl font-black text-gray-900 mb-6">0$ <span class="text-sm text-gray-400 font-medium">/mois</span></div>
+                <ul class="space-y-3 mb-6">
+                    <li class="flex items-center text-gray-600 text-xs"><i class="fas fa-check text-gray-400 mr-3 w-4"></i> 1 Entreprise</li>
+                    <li class="flex items-center text-gray-600 text-xs"><i class="fas fa-check text-gray-400 mr-3 w-4"></i> Visibilité standard</li>
+                    <li class="flex items-center text-gray-400 text-xs"><i class="fas fa-times text-gray-300 mr-3 w-4"></i> Pas de statistiques avancées</li>
+                    <li class="flex items-center text-gray-400 text-xs"><i class="fas fa-times text-gray-300 mr-3 w-4"></i> Pas de badge Premium</li>
+                </ul>
+                <button class="w-full bg-gray-50 border border-gray-200 text-gray-500 font-bold py-2.5 rounded-md text-xs cursor-not-allowed">
+                    Plan Actuel
+                </button>
+            </div>
+
+            <!-- Premium Plan -->
+            <div class="bg-white rounded-xl border-2 border-gray-900 p-6 shadow-sm relative">
+                <div class="absolute top-0 right-6 bg-gray-900 text-white px-2 py-0.5 rounded-b-md text-[9px] font-bold uppercase tracking-widest">Recommandé</div>
+                <h3 class="text-lg font-black text-gray-900 mb-1">Premium</h3>
+                <p class="text-gray-500 text-xs mb-4">Pour les professionnels</p>
+                <div class="text-3xl font-black text-gray-900 mb-6">29$ <span class="text-sm text-gray-400 font-medium">/mois</span></div>
+                <ul class="space-y-3 mb-6">
+                    <li class="flex items-center text-gray-800 text-xs font-medium"><i class="fas fa-check text-gray-900 mr-3 w-4"></i> Entreprises illimitées</li>
+                    <li class="flex items-center text-gray-800 text-xs font-medium"><i class="fas fa-check text-gray-900 mr-3 w-4"></i> Visibilité en tête de liste</li>
+                    <li class="flex items-center text-gray-800 text-xs font-medium"><i class="fas fa-check text-gray-900 mr-3 w-4"></i> Statistiques avancées (Leads)</li>
+                    <li class="flex items-center text-gray-800 text-xs font-medium"><i class="fas fa-check text-gray-900 mr-3 w-4"></i> Badge Premium doré</li>
+                    <li class="flex items-center text-gray-800 text-xs font-medium"><i class="fas fa-check text-gray-900 mr-3 w-4"></i> Support prioritaire</li>
+                </ul>
+                <button class="w-full bg-gray-900 hover:bg-black text-white font-bold py-2.5 rounded-md text-xs transition-all shadow-sm">
+                    Passer Premium
+                </button>
+            </div>
+        </div>
+
+        <!-- FAQ / Features Comparison -->
+        <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm mb-6">
+            <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4">Comparaison des fonctionnalités</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs">
+                    <thead>
+                        <tr class="border-b border-gray-100">
+                            <th class="text-left py-3 text-gray-500 font-bold">Fonctionnalité</th>
+                            <th class="text-center py-3 text-gray-500 font-bold">Basic</th>
+                            <th class="text-center py-3 text-gray-900 font-bold">Premium</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        <tr>
+                            <td class="py-3 text-gray-700">Nombre d'entreprises</td>
+                            <td class="py-3 text-center text-gray-500">1</td>
+                            <td class="py-3 text-center text-gray-900 font-bold">Illimité</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-gray-700">Statistiques</td>
+                            <td class="py-3 text-center text-gray-500">Basiques</td>
+                            <td class="py-3 text-center text-gray-900 font-bold">Avancées</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-gray-700">Visibilité</td>
+                            <td class="py-3 text-center text-gray-500">Standard</td>
+                            <td class="py-3 text-center text-gray-900 font-bold">Prioritaire</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-gray-700">Badge vérifié</td>
+                            <td class="py-3 text-center text-gray-300"><i class="fas fa-times"></i></td>
+                            <td class="py-3 text-center text-gray-900"><i class="fas fa-check"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-gray-700">Export CSV</td>
+                            <td class="py-3 text-center text-gray-300"><i class="fas fa-times"></i></td>
+                            <td class="py-3 text-center text-gray-900"><i class="fas fa-check"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-gray-700">Support</td>
+                            <td class="py-3 text-center text-gray-500">Email</td>
+                            <td class="py-3 text-center text-gray-900 font-bold">Prioritaire 24/7</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- DASHBOARD FOOTER -->
+        <footer class="mt-auto pt-6 pb-2 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center text-[10px] text-gray-500 font-medium px-2">
+            <div class="mb-4 sm:mb-0 flex items-center gap-2">
+                <span class="w-6 h-6 bg-gray-900 text-white rounded flex items-center justify-center font-bold text-xs">E</span>
+                <p>&copy; {% now "Y" %} EsyConnect Haiti. Tous droits réservés.</p>
+            </div>
+            <div class="flex gap-4">
+                <a href="{% url 'business:contact_general' %}" class="hover:text-gray-900 transition-colors">Support</a>
+                <a href="{% url 'business:about' %}" class="hover:text-gray-900 transition-colors">Conditions d'utilisation</a>
+                <a href="{% url 'business:about' %}" class="hover:text-gray-900 transition-colors">Politique de confidentialité</a>
+            </div>
+        </footer>
+
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+{% endblock %}

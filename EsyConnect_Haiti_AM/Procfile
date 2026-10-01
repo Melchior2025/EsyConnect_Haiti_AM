@@ -1,0 +1,1 @@
+web: gunicorn EsyConnect_Haiti_AM.wsgi --log-file -

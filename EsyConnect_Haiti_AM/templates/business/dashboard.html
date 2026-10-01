@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Tableau de Bord Business" %} - EsyConnect Haïti{% endblock %}
+
+{% block extra_css %}<style>html { scroll-behavior: smooth; } .custom-scrollbar::-webkit-scrollbar { width: 8px; } .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; } .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }</style>{% endblock %}
+
+{% comment %} Masquer la navbar et le footer publics sur le dashboard {% endcomment %}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<!-- Layout Dashboard avec Sidebar -->
+<div class="flex min-h-screen w-full bg-slate-50 overflow-hidden">
+    <!-- Sidebar uniquement pour le dashboard -->
+    {% include 'components/dashboard_sidebar.html' %}
+    
+    <!-- Contenu du Dashboard -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        <!-- Mobile Header (Visible only on mobile) -->
+        <header class="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center shrink-0">
+            <h2 class="text-xl font-bold tracking-tight text-gray-900">EsyConnect</h2>
+            <button onclick="toggleSidebar()" class="text-gray-500 hover:text-gray-900 focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </header>
+
+        <!-- Contenu scrollable -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8">
+            <div class="max-w-7xl mx-auto py-2 space-y-6">
+<!-- HERO SECTION -->
+<div class="bg-esy-dark py-16">
+    <div class="max-w-7xl mx-auto px-4">
+        <h1 class="text-3xl md:text-5xl font-black text-white mb-4">{% trans "Tableau de Bord" %}</h1>
+        <p class="text-lg text-white/60 font-medium">
+            {% trans "Gérez votre entreprise et suivez vos performances." %}
+        </p>
+    </div>
+</div>
+
+<div>
+    <!-- STATS CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+        <!-- Views -->
+        <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-esy-blue-50 text-esy-blue-600 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">+12%</span>
+            </div>
+            <h3 class="text-3xl font-black text-esy-dark mb-1">{{ business.view_count|default:0 }}</h3>
+            <p class="text-gray-400 font-bold text-sm uppercase tracking-widest">{% trans "Vues" %}</p>
+        </div>
+
+        <!-- WhatsApp Clicks -->
+        <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">+8%</span>
+            </div>
+            <h3 class="text-3xl font-black text-esy-dark mb-1">{{ business.whatsapp_clicks|default:0 }}</h3>
+            <p class="text-gray-400 font-bold text-sm uppercase tracking-widest">{% trans "Clics WhatsApp" %}</p>
+        </div>
+
+        <!-- Reviews -->
+        <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fas fa-star"></i>
+                </div>
+                <span class="text-xs font-bold text-esy-blue-600 bg-esy-blue-50 px-3 py-1 rounded-full">{{ business.get_average_rating }}/5</span>
+            </div>
+            <h3 class="text-3xl font-black text-esy-dark mb-1">{{ business.get_rating_count }}</h3>
+            <p class="text-gray-400 font-bold text-sm uppercase tracking-widest">{% trans "Avis" %}</p>
+        </div>
+
+        <!-- Call Count -->
+        <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">+5%</span>
+            </div>
+            <h3 class="text-3xl font-black text-esy-dark mb-1">{{ business.call_count|default:0 }}</h3>
+            <p class="text-gray-400 font-bold text-sm uppercase tracking-widest">{% trans "Appels" %}</p>
+        </div>
+            <!-- Conversion Rate -->
+            <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">+5%</span>
+                </div>
+                <h3 class="text-3xl font-black text-esy-dark mb-1">{{ conversion_rate }}%</h3>
+                <p class="text-gray-400 font-bold text-sm uppercase tracking-widest">{% trans "Taux de conversion" %}</p>
+            </div>
+            <!-- Total Reviews -->
+            <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg transition-all">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center text-xl">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span class="text-xs font-bold text-esy-blue-600 bg-esy-blue-50 px-3 py-1 rounded-full">{{ stats.total_reviews }}</span>
+                </div>
+                <h3 class="text-3xl font-black text-esy-dark mb-1">{{ stats.total_reviews }}</h3>
+                <p class="text-gray-400 font-bold text-sm uppercase tracking-widest">{% trans "Avis totaux" %}</p>
+            </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-12">
+        <h2 class="text-xl font-black text-esy-dark mb-6">{% trans "Actions Rapides" %}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <a href="{% url 'business:edit' business.id %}" class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-esy-blue-50 hover:border-esy-blue-200 border border-gray-100 transition-all group">
+                <div class="w-10 h-10 bg-esy-blue-600 text-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div>
+                    <p class="font-black text-esy-dark">{% trans "Modifier" %}</p>
+                    <p class="text-xs text-gray-400">{% trans "Infos business" %}</p>
+                </div>
+            </a>
+
+            <a href="{% url 'business:manage_gallery' business.id %}" class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-esy-blue-50 hover:border-esy-blue-200 border border-gray-100 transition-all group">
+                <div class="w-10 h-10 bg-esy-blue-600 text-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i class="fas fa-images"></i>
+                </div>
+                <div>
+                    <p class="font-black text-esy-dark">{% trans "Galerie" %}</p>
+                    <p class="text-xs text-gray-400">{% trans "Gérer images" %}</p>
+                </div>
+            </a>
+
+            <a href="{% url 'business:detail' business.id %}" class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-esy-blue-50 hover:border-esy-blue-200 border border-gray-100 transition-all group">
+                <div class="w-10 h-10 bg-esy-blue-600 text-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div>
+                    <p class="font-black text-esy-dark">{% trans "Voir" %}</p>
+                    <p class="text-xs text-gray-400">{% trans "Page publique" %}</p>
+                </div>
+            </a>
+
+            <a href="{% url 'business:delete' business.id %}" class="flex items-center gap-4 p-4 rounded-xl bg-red-50 hover:bg-red-100 border border-red-100 transition-all group">
+                <div class="w-10 h-10 bg-red-600 text-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <i class="fas fa-trash"></i>
+                </div>
+                <div>
+                    <p class="font-black text-red-600">{% trans "Supprimer" %}</p>
+                    <p class="text-xs text-red-400">{% trans "Business" %}</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <!-- CHARTS SECTION -->
+    <div class="space-y-6">
+      <div class="relative h-64 w-full">
+        <canvas id="viewsChart"></canvas>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="relative h-64 w-full">
+          <canvas id="statutChart"></canvas>
+        </div>
+        <div class="relative h-64 w-full">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT REVIEWS -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-12">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-black text-esy-dark">{% trans "Avis Récents" %}</h2>
+            <a href="{% url 'business:detail' business.id %}#reviews" class="text-esy-blue-600 font-black text-sm hover:underline">
+                {% trans "Voir tout" %} <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+
+        {% if business.reviews.all %}
+        <div class="space-y-4">
+            {% for review in business.reviews.all|slice:":5" %}
+            <div class="p-4 rounded-xl bg-gray-50 border border-gray-100">
+                <div class="flex items-start gap-4">
+                    <div class="w-10 h-10 bg-esy-blue-100 text-esy-blue-600 rounded-full flex items-center justify-center font-bold flex-shrink-0">
+                        {{ review.user.username|slice:":1"|upper }}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-black text-esy-dark">{{ review.user.username }}</p>
+                                <div class="flex text-yellow-400 text-sm">
+                                    {% for i in "12345"|make_list %}
+                                        {% if forloop.counter <= review.rating.score %}
+                                            <i class="fas fa-star"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-400">{{ review.created_at|timesince }}</span>
+                        </div>
+                        {% if review.comment %}
+                        <p class="text-gray-600 text-sm">{{ review.comment }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <div class="w-16 h-16 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fas fa-comment-slash"></i>
+            </div>
+            <p class="text-gray-400 font-medium">{% trans "Aucun avis pour le moment" %}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- BUSINESS INFO -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+        <h2 class="text-xl font-black text-esy-dark mb-6">{% trans "Informations Business" %}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{% trans "Nom" %}</p>
+                <p class="font-black text-esy-dark text-lg">{{ business.name }}</p>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{% trans "Catégorie" %}</p>
+                <p class="font-black text-esy-dark text-lg">{{ business.category.name|default:"-" }}</p>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{% trans "Téléphone" %}</p>
+                <p class="font-black text-esy-dark text-lg">{{ business.phone }}</p>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{% trans "Email" %}</p>
+                <p class="font-black text-esy-dark text-lg">{{ business.email }}</p>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{% trans "Département" %}</p>
+                <p class="font-black text-esy-dark text-lg">{{ business.departement_obj.name|default:"-" }}</p>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{% trans "Ville" %}</p>
+                <p class="font-black text-esy-dark text-lg">{{ business.ville_obj.nom|default:"-" }}</p>
+            </div>
+            <div class="md:col-span-2">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">{% trans "Adresse" %}</p>
+                <p class="font-black text-esy-dark text-lg">{{ business.address }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+    </main>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Helper to destroy existing chart instances
+  function destroyChart(chart) { if (chart) { chart.destroy(); } }
+
+  // Line Chart - Évolution des Vues
+  const viewsCanvas = document.getElementById('viewsChart');
+  if (viewsCanvas) {
+    const ctx = viewsCanvas.getContext('2d');
+    destroyChart(window.viewsChart);
+    window.viewsChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: {{ view_dates|json_script:"viewLabels" }},
+        datasets: [{
+          label: '{% trans "Vues" %}',
+          data: {{ view_counts|json_script:"viewData" }},
+          borderColor: '#6366F1',
+          backgroundColor: 'rgba(99, 102, 241, 0.1)',
+          tension: 0.4,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: true, position: 'bottom' } }
+      }
+    });
+  }
+
+  // Doughnut Chart - Répartition par Statut
+  const statutCanvas = document.getElementById('statutChart');
+  if (statutCanvas) {
+    const ctx = statutCanvas.getContext('2d');
+    destroyChart(window.statutChart);
+    window.statutChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Actives', 'En Attente', 'Premium'],
+        datasets: [{
+          data: {{ statut_counts|json_script:"statutData" }},
+          backgroundColor: ['#10B981', '#F59E0B', '#6366F1'],
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: true, position: 'bottom' } }
+      }
+    });
+  }
+
+  // Bar Chart - Répartition par Catégorie
+  const categoryCanvas = document.getElementById('categoryChart');
+  if (categoryCanvas) {
+    const ctx = categoryCanvas.getContext('2d');
+    destroyChart(window.categoryChart);
+    window.categoryChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {{ category_labels|json_script:"catLabels" }},
+        datasets: [{
+          label: '{% trans "Entreprises" %}',
+          data: {{ category_counts|json_script:"catData" }},
+          backgroundColor: '#3B82F6',
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { ticks: { precision: 0 } } },
+        plugins: { legend: { display: true, position: 'bottom' } }
+      }
+    });
+  }
+
+  console.log('Chart.js initialisé avec succès !');
+});
+</script>
+</div>
+{% endblock %}
+

@@ -1,0 +1,2062 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-23 14:34-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .\business\admin.py:77
+msgid "Apparence"
+msgstr "Aparans"
+
+#: .\business\admin.py:80
+msgid "Messages"
+msgstr "Mesaj"
+
+#: .\business\admin.py:83
+msgid "SEO"
+msgstr "SEO"
+
+#: .\business\admin.py:86 .\templates\business\contact.html:5
+#: .\templates\components\business_footer.html:52
+#: .\templates\components\business_footer.html:76
+#: .\templates\components\business_header.html:27
+#: .\templates\components\footer.html:43 .\templates\components\navbar.html:43
+#: .\templates\components\navbar.html:172
+msgid "Contact"
+msgstr "Kontak"
+
+#: .\business\admin.py:89
+msgid "Maintenance"
+msgstr "Antretyen"
+
+#: .\business\admin.py:92
+msgid "Timestamps"
+msgstr "Dat ak Lè"
+
+#: .\business\models.py:9 .\templates\base.html:191
+msgid "Nom de la catégorie"
+msgstr "Non kategori a"
+
+#: .\business\models.py:10
+msgid "Nom qui sera affiché pour cette catégorie"
+msgstr "Non ki pral parèt pou kategori sa a"
+
+#: .\business\models.py:14
+msgid "Icône"
+msgstr "Ikon"
+
+#: .\business\models.py:15
+msgid "Classe CSS ou nom de l'icône (ex: fa-store, fa-restaurant)"
+msgstr "Klas CSS oswa non ikon an (ex: fa-store, fa-restaurant)"
+
+#: .\business\models.py:19 .\business\models.py:179 .\business\models.py:238
+#: .\business\models.py:283 .\business\models.py:370
+msgid "Date de création"
+msgstr "Dat kreyasyon"
+
+#: .\business\models.py:23 .\business\models.py:183 .\business\models.py:242
+#: .\business\models.py:287 .\business\models.py:374
+msgid "Date de mise à jour"
+msgstr "Dat dènye modifikasyon"
+
+#: .\business\models.py:37
+msgid "Actif"
+msgstr "Aktif"
+
+#: .\business\models.py:38
+msgid "Inactif"
+msgstr "Inaktif"
+
+#: .\business\models.py:39
+msgid "Suspendu"
+msgstr "Sispann"
+
+#: .\business\models.py:43
+msgid "Gratuit"
+msgstr "Gratis"
+
+#: .\business\models.py:44 .\business\models.py:127
+#: .\templates\business\business_list.html:70
+#: .\templates\business\business_list.html:88
+#: .\templates\business\business_list.html:131
+#: .\templates\business\category.html:38
+#: .\templates\business\dashboard.html:177
+#: .\templates\business\dashboard.html:212
+#: .\templates\users\business_dashboard.html:165
+#: .\templates\users\dashboard.html:173
+msgid "Premium"
+msgstr "Premium"
+
+#: .\business\models.py:45
+msgid "Gold"
+msgstr "Gold"
+
+#: .\business\models.py:50 .\templates\business\register_business.html:133
+msgid "Nom de l'entreprise"
+msgstr "Non biznis la"
+
+#: .\business\models.py:51
+msgid "Nom officiel de l'entreprise"
+msgstr ""
+
+#: .\business\models.py:58
+msgid "Slug"
+msgstr ""
+
+#: .\business\models.py:59
+msgid "URL unique générée automatiquement depuis le nom"
+msgstr ""
+
+#: .\business\models.py:64
+msgid "Propriétaire"
+msgstr ""
+
+#: .\business\models.py:72 .\templates\business\register_business.html:138
+#: .\templates\users\dashboard.html:244
+msgid "Catégorie"
+msgstr ""
+
+#: .\business\models.py:76
+msgid "Description"
+msgstr ""
+
+#: .\business\models.py:77
+msgid "Description détaillée de l'entreprise et de ses services"
+msgstr ""
+
+#: .\business\models.py:81 .\business\models.py:417
+#: .\templates\business\contact.html:34 .\templates\business\detail.html:343
+#: .\templates\business\register_business.html:173
+#: .\templates\components\business_footer.html:93
+#: .\templates\components\map_component.html:86
+#: .\templates\users\edit_profile.html:69
+msgid "Téléphone"
+msgstr ""
+
+#: .\business\models.py:82 .\business\models.py:355
+msgid "Numéro de téléphone principal"
+msgstr ""
+
+#: .\business\models.py:88 .\templates\business\register_business.html:178
+msgid "WhatsApp"
+msgstr ""
+
+#: .\business\models.py:89
+msgid "Numéro WhatsApp (optionnel)"
+msgstr ""
+
+#: .\business\models.py:92 .\business\models.py:418
+#: .\templates\business\contact.html:43 .\templates\business\detail.html:355
+#: .\templates\business\register_business.html:188
+#: .\templates\components\business_footer.html:102
+#: .\templates\components\map_component.html:108
+#: .\templates\users\edit_profile.html:45 .\templates\users\register.html:57
+msgid "Email"
+msgstr ""
+
+#: .\business\models.py:93
+msgid "Adresse email professionnelle"
+msgstr ""
+
+#: .\business\models.py:96 .\templates\business\detail.html:332
+#: .\templates\components\business_footer.html:84
+#: .\templates\components\map_component.html:97
+msgid "Adresse"
+msgstr ""
+
+#: .\business\models.py:97
+msgid "Adresse physique complète de l'entreprise"
+msgstr ""
+
+#: .\business\models.py:103
+msgid "Logo"
+msgstr ""
+
+#: .\business\models.py:104 .\templates\business\register_business.html:253
+msgid "Logo de l'entreprise"
+msgstr ""
+
+#: .\business\models.py:110
+msgid "Bannière"
+msgstr ""
+
+#: .\business\models.py:111
+msgid "Image de bannière pour le profil"
+msgstr ""
+
+#: .\business\models.py:117
+msgid "Image de couverture"
+msgstr ""
+
+#: .\business\models.py:118
+msgid "Image de couverture pour la page d'accueil"
+msgstr ""
+
+#: .\business\models.py:122 .\templates\business\business_list.html:127
+#: .\templates\components\business_card.html:41
+msgid "Vérifié"
+msgstr ""
+
+#: .\business\models.py:123
+msgid "Indique si l'entreprise a été vérifiée par l'administration"
+msgstr ""
+
+#: .\business\models.py:128
+msgid "Indique si l'entreprise a un compte premium"
+msgstr ""
+
+#: .\business\models.py:134
+msgid "Type de plan"
+msgstr ""
+
+#: .\business\models.py:135
+msgid "Plan d'abonnement de l'entreprise"
+msgstr ""
+
+#: .\business\models.py:141 .\templates\business\business_list.html:123
+#: .\templates\business\detail.html:227 .\templates\users\dashboard.html:246
+msgid "Statut"
+msgstr ""
+
+#: .\business\models.py:146 .\business\models.py:419
+msgid "Site web"
+msgstr ""
+
+#: .\business\models.py:147
+msgid "Site web de l'entreprise (optionnel)"
+msgstr ""
+
+#: .\business\models.py:152 .\templates\business\register_business.html:221
+msgid "Facebook"
+msgstr ""
+
+#: .\business\models.py:153
+msgid "Page Facebook (optionnel)"
+msgstr ""
+
+#: .\business\models.py:158 .\templates\business\register_business.html:226
+msgid "Instagram"
+msgstr ""
+
+#: .\business\models.py:159
+msgid "Profil Instagram (optionnel)"
+msgstr ""
+
+#: .\business\models.py:166
+msgid "Latitude"
+msgstr ""
+
+#: .\business\models.py:167 .\business\models.py:175
+msgid "Coordonnée GPS pour la localisation"
+msgstr ""
+
+#: .\business\models.py:174
+msgid "Longitude"
+msgstr ""
+
+#: .\business\models.py:219 .\business\models.py:269
+#: .\templates\business\home.html:141 .\templates\users\dashboard.html:243
+msgid "Entreprise"
+msgstr ""
+
+#: .\business\models.py:224 .\business\models.py:274
+msgid "Utilisateur"
+msgstr ""
+
+#: .\business\models.py:230 .\business\models.py:278 .\business\models.py:291
+#: .\templates\business\detail.html:218 .\templates\business\detail.html:290
+msgid "Note"
+msgstr ""
+
+#: .\business\models.py:233
+msgid "Commentaire"
+msgstr ""
+
+#: .\business\models.py:234
+msgid "Votre avis détaillé sur cette entreprise"
+msgstr ""
+
+#: .\business\models.py:246 .\business\models.py:247
+#: .\templates\business\detail.html:122 .\templates\business\detail.html:222
+#: .\templates\business\detail.html:231
+#: .\templates\components\business_header.html:26
+msgid "Avis"
+msgstr ""
+
+#: .\business\models.py:279
+msgid "Note de 1 à 5 étoiles"
+msgstr ""
+
+#: .\business\models.py:292
+msgid "Notes"
+msgstr ""
+
+#: .\business\models.py:318
+msgid "Image d'arrière-plan Hero"
+msgstr ""
+
+#: .\business\models.py:319
+msgid "Image d'arrière-plan pour la section hero de la page d'accueil"
+msgstr ""
+
+#: .\business\models.py:322
+msgid "Message de bienvenue"
+msgstr "Mesaj byenvini"
+
+#: .\business\models.py:323
+msgid "Message principal affiché sur la page d'accueil"
+msgstr ""
+
+#: .\business\models.py:329
+msgid "Sous-titre de bienvenue"
+msgstr ""
+
+#: .\business\models.py:330
+msgid "Sous-titre accompagnant le message de bienvenue"
+msgstr ""
+
+#: .\business\models.py:335
+msgid "Titre du site"
+msgstr "Tit sit la"
+
+#: .\business\models.py:336
+msgid "Titre principal du site affiché dans l'en-tête"
+msgstr ""
+
+#: .\business\models.py:341
+msgid "Meta description"
+msgstr ""
+
+#: .\business\models.py:342
+msgid "Description SEO pour les moteurs de recherche"
+msgstr ""
+
+#: .\business\models.py:347
+msgid "Email de contact"
+msgstr ""
+
+#: .\business\models.py:348
+msgid "Email principal pour les contacts"
+msgstr ""
+
+#: .\business\models.py:354
+msgid "Téléphone de contact"
+msgstr ""
+
+#: .\business\models.py:359
+msgid "Mode maintenance"
+msgstr ""
+
+#: .\business\models.py:360
+msgid "Activer pour mettre le site en mode maintenance"
+msgstr ""
+
+#: .\business\models.py:365
+msgid "Message de maintenance"
+msgstr ""
+
+#: .\business\models.py:366
+msgid "Message affiché pendant la maintenance"
+msgstr ""
+
+#: .\business\models.py:421
+msgid "Type de contact"
+msgstr ""
+
+#: .\business\models.py:424
+msgid "Adresse IP"
+msgstr ""
+
+#: .\business\models.py:425
+msgid "Adresse IP du visiteur"
+msgstr ""
+
+#: .\business\models.py:429
+msgid "User Agent"
+msgstr ""
+
+#: .\business\models.py:430
+msgid "Navigateur du visiteur"
+msgstr ""
+
+#: .\business\models.py:434
+msgid "Date du clic"
+msgstr ""
+
+#: .\business\models.py:438
+msgid "Suivi de lead"
+msgstr ""
+
+#: .\business\models.py:439
+msgid "Suivis de leads"
+msgstr ""
+
+#: .\business\views.py:270
+#, python-brace-format
+msgid "Mèsi pou avi ou sou {}!"
+msgstr ""
+
+#: .\business\views.py:272
+msgid "Gen yon pwoblèm ki rive pandan n ap sove avi ou a."
+msgstr ""
+
+#: .\business\views.py:274
+msgid "Silvouplè chwazi yon nòt (etwal)."
+msgstr ""
+
+#: .\business\views.py:315
+msgid "Modifikasyon yo sove ak siksè!"
+msgstr ""
+
+#: .\business\views.py:317
+msgid "Biznis ou enskri avèk siksè! Li parèt sou sit la kounye a."
+msgstr ""
+
+#: .\business\views.py:370
+msgid "Biznis ou a siprime ak siksè."
+msgstr ""
+
+#: .\templates\404.html:4
+msgid "Page Non Trouvée"
+msgstr ""
+
+#: .\templates\404.html:18
+msgid "Oups ! Page Perdue."
+msgstr ""
+
+#: .\templates\404.html:20
+msgid ""
+"Il semble que vous ayez pris un mauvais virage au Cap-Haïtien. La page que "
+"vous cherchez est introuvable."
+msgstr ""
+
+#: .\templates\404.html:25 .\templates\business\business_list.html:243
+#: .\templates\users\password_reset_done.html:20
+msgid "Retour à l'accueil"
+msgstr ""
+
+#: .\templates\404.html:28 .\templates\business\dashboard.html:250
+#, fuzzy
+#| msgid "Voir Toutes les Catégories"
+msgid "Voir les catégories"
+msgstr "Wè Tout Kategori yo"
+
+#: .\templates\500.html:5
+msgid "Erreur Serveur"
+msgstr ""
+
+#: .\templates\500.html:14
+msgid "Oups ! Une erreur s'est produite"
+msgstr ""
+
+#: .\templates\500.html:16
+msgid ""
+"Désolé, notre serveur a rencontré un problème inattendu. Notre équipe "
+"technique a été informée et travaille à la résolution du problème."
+msgstr ""
+
+#: .\templates\500.html:20
+msgid "Retour"
+msgstr ""
+
+#: .\templates\500.html:23 .\templates\components\business_footer.html:49
+#: .\templates\components\footer.html:33 .\templates\components\navbar.html:31
+#: .\templates\components\navbar.html:160 .\templates\home_backup.html:63
+msgid "Accueil"
+msgstr "Akèy"
+
+#: .\templates\base.html:182
+#, fuzzy
+#| msgid "Rechercher une catégorie..."
+msgid "Suggérer une catégorie"
+msgstr "Chèche yon kategori..."
+
+#: .\templates\base.html:197
+msgid "Icône (Optionnel)"
+msgstr ""
+
+#: .\templates\base.html:204
+msgid "Envoyer la suggestion"
+msgstr ""
+
+#: .\templates\business\about.html:4
+#: .\templates\components\business_footer.html:51
+#: .\templates\components\footer.html:35 .\templates\components\navbar.html:39
+#: .\templates\components\navbar.html:168
+msgid "À Propos"
+msgstr ""
+
+#: .\templates\business\about.html:13
+msgid "Notre"
+msgstr ""
+
+#: .\templates\business\about.html:13
+msgid "Mission"
+msgstr ""
+
+#: .\templates\business\about.html:15
+msgid ""
+"Propulser l'économie locale du Cap-Haïtien en connectant les entreprises "
+"avec leurs clients."
+msgstr ""
+
+#: .\templates\business\about.html:23
+msgid "Qui sommes-nous ?"
+msgstr ""
+
+#: .\templates\business\about.html:26
+msgid ""
+"EsyConnect est la plateforme de référence pour la visibilité des entreprises "
+"dans le Nord d'Haïti. Nous croyons que chaque business, petit ou grand, "
+"mérite une présence digitale de qualité."
+msgstr ""
+
+#: .\templates\business\about.html:29
+msgid ""
+"Notre plateforme permet aux entrepreneurs de gérer leur image, de recevoir "
+"des avis clients et d'augmenter leur portée géographique sans "
+"investissements massifs en marketing."
+msgstr ""
+
+#: .\templates\business\about.html:36
+#: .\templates\business\business_list.html:32
+#: .\templates\business\categories.html:42 .\templates\business\home.html:212
+#: .\templates\home.html:122 .\templates\home.html:501
+#: .\templates\home_backup.html:65 .\templates\home_backup.html:428
+msgid "Entreprises"
+msgstr "Antrepriz"
+
+#: .\templates\business\about.html:40
+msgid "Visiteurs"
+msgstr ""
+
+#: .\templates\business\business_list.html:7
+#: .\templates\business\business_list.html:28
+msgid "Résultats pour"
+msgstr ""
+
+#: .\templates\business\business_list.html:11
+msgid "Toutes les Entreprises"
+msgstr ""
+
+#: .\templates\business\business_list.html:24
+#, fuzzy
+#| msgid "Annuaire Professionnel du Cap-Haïtien"
+msgid "Annuaire Premium"
+msgstr "Annwè Pwofesyonèl Kap Ayisyen"
+
+#: .\templates\business\business_list.html:32
+#, fuzzy
+#| msgid "Nom de l'entreprise"
+msgid "Découvrez les"
+msgstr "Non biznis la"
+
+#: .\templates\business\business_list.html:36
+msgid "Explorez le meilleur du commerce local au Cap-Haïtien."
+msgstr ""
+
+#: .\templates\business\business_list.html:49
+msgid "Nom, service ou adresse..."
+msgstr ""
+
+#: .\templates\business\business_list.html:56
+#: .\templates\business\category.html:27
+#, fuzzy
+#| msgid "Toutes catégories"
+msgid "Toutes les catégories"
+msgstr "Tout kategori"
+
+#: .\templates\business\business_list.html:66
+#, fuzzy
+#| msgid "Explorer par Catégories"
+msgid "Trier par"
+msgstr "Eksplore pa Kategori"
+
+#: .\templates\business\business_list.html:67
+#: .\templates\business\category.html:35
+#, fuzzy
+#| msgid "Populaires:"
+msgid "Plus populaires"
+msgstr "Popilè:"
+
+#: .\templates\business\business_list.html:68
+#: .\templates\business\category.html:36
+msgid "Mieux notés"
+msgstr ""
+
+#: .\templates\business\business_list.html:69
+#: .\templates\business\category.html:37
+msgid "Plus récents"
+msgstr ""
+
+#: .\templates\business\business_list.html:75
+#: .\templates\business\home.html:160 .\templates\home.html:103
+#: .\templates\home_backup.html:108
+msgid "Rechercher"
+msgstr "Chèche"
+
+#: .\templates\business\business_list.html:81
+#, fuzzy
+#| msgid "Liens Rapides"
+msgid "Filtres rapides :"
+msgstr "Lyen Rapd"
+
+#: .\templates\business\business_list.html:84
+#, fuzzy
+#| msgid "Vérifiées"
+msgid "Vérifiés"
+msgstr "Verifye"
+
+#: .\templates\business\business_list.html:92
+#: .\templates\business\detail.html:196
+msgid "Ouvert maintenant"
+msgstr ""
+
+#: .\templates\business\business_list.html:106
+msgid "Filtres avancés"
+msgstr ""
+
+#: .\templates\business\business_list.html:110
+#: .\templates\business\categories.html:11
+#: .\templates\components\business_footer.html:50
+#: .\templates\components\footer.html:34 .\templates\components\navbar.html:35
+#: .\templates\components\navbar.html:164 .\templates\home.html:126
+#: .\templates\home.html:505 .\templates\home_backup.html:64
+#: .\templates\home_backup.html:432
+msgid "Catégories"
+msgstr "Kategori"
+
+#: .\templates\business\business_list.html:138
+msgid "Quartier"
+msgstr ""
+
+#: .\templates\business\business_list.html:142
+msgid "Centre-ville"
+msgstr ""
+
+#: .\templates\business\business_list.html:146
+msgid "Nord"
+msgstr ""
+
+#: .\templates\business\business_list.html:150
+msgid "Sud"
+msgstr ""
+
+#: .\templates\business\business_list.html:154
+msgid "Est"
+msgstr ""
+
+#: .\templates\business\business_list.html:158
+msgid "Ouest"
+msgstr ""
+
+#: .\templates\business\business_list.html:164
+msgid "Appliquer les filtres"
+msgstr ""
+
+#: .\templates\business\business_list.html:173
+msgid "Résultats trouvés"
+msgstr ""
+
+#: .\templates\business\business_list.html:209
+#: .\templates\business\dashboard.html:174
+#: .\templates\business\dashboard.html:209
+msgid "Voir"
+msgstr ""
+
+#: .\templates\business\business_list.html:238
+msgid "Oups ! Aucun résultat"
+msgstr ""
+
+#: .\templates\business\business_list.html:240
+msgid ""
+"Nous n'avons trouvé aucune entreprise correspondant à votre recherche. "
+"Essayez avec d'autres mots clés ou une autre catégorie."
+msgstr ""
+
+#: .\templates\business\categories.html:5
+msgid "Toutes les Catégories"
+msgstr ""
+
+#: .\templates\business\categories.html:11
+#, fuzzy
+#| msgid "Explorer par Catégories"
+msgid "Explorer par"
+msgstr "Eksplore pa Kategori"
+
+#: .\templates\business\categories.html:13
+msgid ""
+"Trouvez exactement le service qu'il vous faut parmi nos secteurs d'activité "
+"vérifiés."
+msgstr ""
+
+#: .\templates\business\categories.html:22
+msgid "Secteurs d'activité"
+msgstr ""
+
+#: .\templates\business\categories.html:23
+msgid "Classés par ordre alphabétique"
+msgstr ""
+
+#: .\templates\business\categories.html:28
+#, fuzzy
+#| msgid "Rechercher une catégorie..."
+msgid "Chercher une catégorie..."
+msgstr "Chèche yon kategori..."
+
+#: .\templates\business\categories.html:45
+msgid "Voir les biznis"
+msgstr ""
+
+#: .\templates\business\categories.html:55
+msgid "Votre domaine n'est pas encore listé ?"
+msgstr ""
+
+#: .\templates\business\categories.html:57
+msgid ""
+"Soyez le premier à inscrire votre entreprise dans une nouvelle catégorie et "
+"dominez votre marché."
+msgstr ""
+
+#: .\templates\business\categories.html:60
+#: .\templates\business\category.html:69
+msgid "Ajouter mon Biznis"
+msgstr ""
+
+#: .\templates\business\category.html:16
+msgid "Découvrez les meilleures entreprises et services dans le secteur"
+msgstr ""
+
+#: .\templates\business\category.html:16
+msgid "au Cap-Haïtien."
+msgstr ""
+
+#: .\templates\business\category.html:25
+#, fuzzy
+#| msgid "Entreprises"
+msgid "Entreprises trouvées"
+msgstr "Antrepriz"
+
+#: .\templates\business\category.html:32
+msgid "Trier:"
+msgstr ""
+
+#: .\templates\business\category.html:34
+msgid "Par défaut"
+msgstr ""
+
+#: .\templates\business\category.html:66
+msgid "Aucun biznis nan kategori sa a"
+msgstr ""
+
+#: .\templates\business\category.html:67
+msgid "Soyez le premier à inscrire votre entreprise ici !"
+msgstr ""
+
+#: .\templates\business\contact.html:15
+#, fuzzy
+#| msgid "Contact"
+msgid "Contactez"
+msgstr "Kontak"
+
+#: .\templates\business\contact.html:15
+#: .\templates\components\global_map.html:28
+msgid "EsyConnect"
+msgstr ""
+
+#: .\templates\business\contact.html:18
+msgid "Nous sommes à votre écoute"
+msgstr ""
+
+#: .\templates\business\contact.html:52
+msgid "Bureau"
+msgstr ""
+
+#: .\templates\business\contact.html:59
+msgid "Envoyez-nous un message"
+msgstr ""
+
+#: .\templates\business\contact.html:64
+msgid "Nom Complet"
+msgstr ""
+
+#: .\templates\business\contact.html:69
+#: .\templates\users\password_reset.html:33
+msgid "Adresse Email"
+msgstr ""
+
+#: .\templates\business\contact.html:75
+msgid "Sujet"
+msgstr ""
+
+#: .\templates\business\contact.html:80
+#, fuzzy
+#| msgid "Messages"
+msgid "Message"
+msgstr "Mesaj"
+
+#: .\templates\business\contact.html:86
+msgid "Envoyer le Message"
+msgstr ""
+
+#: .\templates\business\dashboard.html:5 .\templates\business\dashboard.html:60
+msgid "Tableau de Bord"
+msgstr ""
+
+#: .\templates\business\dashboard.html:63
+#: .\templates\users\business_dashboard.html:91
+msgid "Bienvenue"
+msgstr ""
+
+#: .\templates\business\dashboard.html:66
+msgid "Gérez vos entreprises et suivez vos performances"
+msgstr ""
+
+#: .\templates\business\dashboard.html:71
+#: .\templates\business\dashboard.html:242
+#: .\templates\users\business_dashboard.html:66
+#: .\templates\users\business_dashboard.html:94
+#: .\templates\users\dashboard.html:67
+msgid "Ajouter un Biznis"
+msgstr ""
+
+#: .\templates\business\dashboard.html:81
+msgid "Statistiques Globales"
+msgstr ""
+
+#: .\templates\business\dashboard.html:93
+msgid "Vues totales"
+msgstr ""
+
+#: .\templates\business\dashboard.html:105
+msgid "Avis reçus"
+msgstr ""
+
+#: .\templates\business\dashboard.html:117 .\templates\business\detail.html:177
+#: .\templates\home.html:134
+msgid "Note moyenne"
+msgstr "Mwayèn nòt"
+
+#: .\templates\business\dashboard.html:129
+msgid "Statut abonnement"
+msgstr ""
+
+#: .\templates\business\dashboard.html:139
+msgid "Mes Biznis"
+msgstr ""
+
+#: .\templates\business\dashboard.html:141
+msgid "Ajouter"
+msgstr ""
+
+#: .\templates\business\dashboard.html:165
+#: .\templates\business\dashboard.html:200
+msgid "vues"
+msgstr ""
+
+#: .\templates\business\dashboard.html:166
+#: .\templates\business\dashboard.html:201
+msgid "avis"
+msgstr ""
+
+#: .\templates\business\dashboard.html:171
+#: .\templates\business\dashboard.html:206
+msgid "Modifier"
+msgstr ""
+
+#: .\templates\business\dashboard.html:225
+msgid "Ajouter un nouveau Biznis"
+msgstr ""
+
+#: .\templates\business\dashboard.html:235
+#, fuzzy
+#| msgid "Liens Rapides"
+msgid "Actions Rapides"
+msgstr "Lyen Rapd"
+
+#: .\templates\business\dashboard.html:243
+msgid "Enregistrer une nouvelle entreprise"
+msgstr ""
+
+#: .\templates\business\dashboard.html:251
+msgid "Explorer les secteurs d'activité"
+msgstr ""
+
+#: .\templates\business\dashboard.html:258
+msgid "Contacter le support"
+msgstr ""
+
+#: .\templates\business\dashboard.html:259
+msgid "Besoin d'aide ?"
+msgstr ""
+
+#: .\templates\business\detail.html:108
+msgid "VÉRIFIÉ"
+msgstr ""
+
+#: .\templates\business\detail.html:124 .\templates\business\detail.html:186
+#: .\templates\business\detail.html:226
+msgid "Nouveau"
+msgstr ""
+
+#: .\templates\business\detail.html:148
+#: .\templates\components\business_header.html:31
+msgid "Appeler"
+msgstr ""
+
+#: .\templates\business\detail.html:159
+msgid "Partager"
+msgstr ""
+
+#: .\templates\business\detail.html:187
+msgid "Pas encore d'avis"
+msgstr ""
+
+#: .\templates\business\detail.html:201
+msgid "Favori"
+msgstr ""
+
+#: .\templates\business\detail.html:208
+msgid "À propos de"
+msgstr ""
+
+#: .\templates\business\detail.html:236
+msgid "Années"
+msgstr ""
+
+#: .\templates\business\detail.html:244
+msgid "Avis des clients"
+msgstr ""
+
+#: .\templates\business\detail.html:278
+msgid "Pas encore d'avis. Soyez le premier !"
+msgstr ""
+
+#: .\templates\business\detail.html:286
+msgid "Laissez votre avis"
+msgstr ""
+
+#: .\templates\business\detail.html:304
+msgid "Votre Commentaire"
+msgstr ""
+
+#: .\templates\business\detail.html:308
+msgid "Publier mon avis"
+msgstr ""
+
+#: .\templates\business\detail.html:314
+msgid "Vous devez être connecté pour laisser un avis."
+msgstr ""
+
+#: .\templates\business\detail.html:315 .\templates\users\login.html:62
+msgid "Se Connecter"
+msgstr ""
+
+#: .\templates\business\detail.html:325
+msgid "Coordonnées"
+msgstr ""
+
+#: .\templates\business\detail.html:364
+msgid "Horaires d'ouverture"
+msgstr ""
+
+#: .\templates\business\detail.html:367
+msgid "Lundi - Vendredi"
+msgstr ""
+
+#: .\templates\business\detail.html:371
+msgid "Samedi"
+msgstr ""
+
+#: .\templates\business\detail.html:375
+msgid "Dimanche"
+msgstr ""
+
+#: .\templates\business\detail.html:456
+msgid "Suivez-nous"
+msgstr ""
+
+#: .\templates\business\home.html:5 .\templates\home.html:5
+#: .\templates\home_backup.html:5
+msgid "Annuaire Professionnel du Cap-Haïtien"
+msgstr "Annwè Pwofesyonèl Kap Ayisyen"
+
+#: .\templates\business\home.html:137
+#, fuzzy
+#| msgid "Annuaire Professionnel du Cap-Haïtien"
+msgid "Annuaire Professionnel Premium"
+msgstr "Annwè Pwofesyonèl Kap Ayisyen"
+
+#: .\templates\business\home.html:141
+msgid "Propulsez Votre"
+msgstr ""
+
+#: .\templates\business\home.html:142
+msgid "au Cap-Haïtien"
+msgstr ""
+
+#: .\templates\business\home.html:147
+msgid "Connectez-vous avec les meilleures entreprises et services de la ville."
+msgstr ""
+
+#: .\templates\business\home.html:155
+#, fuzzy
+#| msgid "Rechercher une entreprise..."
+msgid "Rechercher un service, restaurant, hôtel..."
+msgstr "Chèche yon antrepriz..."
+
+#: .\templates\business\home.html:178 .\templates\home.html:145
+#: .\templates\home_backup.html:150
+msgid "Explorer par Catégories"
+msgstr "Eksplore pa Kategori"
+
+#: .\templates\business\home.html:182
+#, fuzzy
+#| msgid "Voir Toutes les Catégories"
+msgid "Voir toutes les catégories"
+msgstr "Wè Tout Kategori yo"
+
+#: .\templates\business\home.html:223 .\templates\home.html:411
+#: .\templates\home_backup.html:345
+msgid "Entreprises à la Une"
+msgstr ""
+
+#: .\templates\business\home.html:276
+msgid "Voir Profil"
+msgstr ""
+
+#: .\templates\business\home.html:292 .\templates\business\home.html:297
+#, fuzzy
+#| msgid "Entreprises"
+msgid "Ajouter mon Entreprise"
+msgstr "Antrepriz"
+
+#: .\templates\business\home.html:323
+msgid "Vizibilite Maksimòm"
+msgstr ""
+
+#: .\templates\business\home.html:334
+#, fuzzy
+#| msgid "Premium"
+msgid "Kont Premium"
+msgstr "Premium"
+
+#: .\templates\business\home.html:345
+msgid "Sèvis Verifye"
+msgstr ""
+
+#: .\templates\business\home.html:360
+msgid "Biznis Verifye"
+msgstr ""
+
+#: .\templates\business\home.html:373
+msgid "Sa Kliyan yo Di"
+msgstr ""
+
+#: .\templates\business\home.html:375
+#, fuzzy
+#| msgid "Témoignages"
+msgid "Témoignages VIP"
+msgstr "Temwanyaj"
+
+#: .\templates\business\home.html:377
+msgid "Découvrez ce que nos entrepreneurs disent d'EsyConnect"
+msgstr ""
+
+#: .\templates\business\home.html:417 .\templates\business\home.html:493
+#: .\templates\home.html:238 .\templates\home.html:304
+msgid "Client depuis 2024"
+msgstr ""
+
+#: .\templates\business\home.html:455 .\templates\home.html:271
+msgid "Client depuis 2023"
+msgstr ""
+
+#: .\templates\business\register_business.html:5
+msgid "Inscrire mon Biznis"
+msgstr ""
+
+#: .\templates\business\register_business.html:95
+#, fuzzy
+#| msgid "Premium"
+msgid "Inscription Premium"
+msgstr "Premium"
+
+#: .\templates\business\register_business.html:98
+msgid "Modifier votre"
+msgstr ""
+
+#: .\templates\business\register_business.html:98
+msgid "Ajouter votre"
+msgstr ""
+
+#: .\templates\business\register_business.html:99
+msgid "Biznis"
+msgstr ""
+
+#: .\templates\business\register_business.html:102
+msgid "Mettez à jour vos informations pour rester compétitif."
+msgstr ""
+
+#: .\templates\business\register_business.html:102
+msgid "Rejoignez la plus grande communauté d'affaires du Cap-Haïtien."
+msgstr ""
+
+#: .\templates\business\register_business.html:115
+msgid "Oups ! Erreur dans le formulaire"
+msgstr ""
+
+#: .\templates\business\register_business.html:128
+msgid "Informations Générales"
+msgstr ""
+
+#: .\templates\business\register_business.html:143
+#, fuzzy
+#| msgid "Rechercher une catégorie..."
+msgid "Autre / Suggérer une catégorie..."
+msgstr "Chèche yon kategori..."
+
+#: .\templates\business\register_business.html:148
+#, fuzzy
+#| msgid "Nom de la catégorie"
+msgid "Nom de la nouvelle catégorie"
+msgstr "Non kategori a"
+
+#: .\templates\business\register_business.html:149
+msgid "Ex: Services techniques"
+msgstr ""
+
+#: .\templates\business\register_business.html:153
+msgid "Ville"
+msgstr ""
+
+#: .\templates\business\register_business.html:158
+msgid "Description complète"
+msgstr ""
+
+#: .\templates\business\register_business.html:168
+msgid "Contact & Localisation"
+msgstr ""
+
+#: .\templates\business\register_business.html:183
+msgid "Adresse Complète"
+msgstr ""
+
+#: .\templates\business\register_business.html:193
+msgid "Site Web"
+msgstr ""
+
+#: .\templates\business\register_business.html:199
+msgid "Coordonnées GPS"
+msgstr ""
+
+#: .\templates\business\register_business.html:201
+msgid "Prendre ma position"
+msgstr ""
+
+#: .\templates\business\register_business.html:216
+msgid "Réseaux Sociaux"
+msgstr ""
+
+#: .\templates\business\register_business.html:231
+msgid "Twitter / X"
+msgstr ""
+
+#: .\templates\business\register_business.html:236
+msgid "LinkedIn"
+msgstr ""
+
+#: .\templates\business\register_business.html:246
+msgid "Images & Branding"
+msgstr ""
+
+#: .\templates\business\register_business.html:256
+#: .\templates\business\register_business.html:266
+msgid "Choisir un fichier"
+msgstr ""
+
+#: .\templates\business\register_business.html:263
+msgid "Image de Couverture"
+msgstr ""
+
+#: .\templates\business\register_business.html:276
+msgid "Enregistrer les modifications"
+msgstr ""
+
+#: .\templates\business\register_business.html:276
+msgid "Lancer mon Biznis kounye a !"
+msgstr ""
+
+#: .\templates\business\register_business.html:279
+msgid "Vos données sont sécurisées et vérifiées."
+msgstr ""
+
+#: .\templates\components\business_card.html:69
+msgid "Voir le profil"
+msgstr ""
+
+#: .\templates\components\business_footer.html:23
+msgid ""
+"La plateforme numéro 1 pour trouver et promouvoir les entreprises en Haïti. "
+"Connectez-vous avec des milliers de businesses locaux."
+msgstr ""
+
+#: .\templates\components\business_footer.html:46
+msgid "Liens Rapides"
+msgstr "Lyen Rapd"
+
+#: .\templates\components\business_footer.html:53
+#: .\templates\components\navbar.html:114
+#: .\templates\components\navbar.html:198 .\templates\home_backup.html:68
+msgid "S'inscrire"
+msgstr "Enskri"
+
+#: .\templates\components\business_footer.html:61
+#, fuzzy
+#| msgid "Catégories"
+msgid "Catégories Populaires"
+msgstr "Kategori"
+
+#: .\templates\components\business_footer.html:64
+#, fuzzy
+#| msgid "Restaurant"
+msgid "Restaurants"
+msgstr "Restoran"
+
+#: .\templates\components\business_footer.html:65
+#, fuzzy
+#| msgid "Hôtel"
+msgid "Hôtels"
+msgstr "Otèl"
+
+#: .\templates\components\business_footer.html:66
+msgid "Commerces"
+msgstr ""
+
+#: .\templates\components\business_footer.html:67
+msgid "Santé"
+msgstr ""
+
+#: .\templates\components\business_footer.html:68
+msgid "Éducation"
+msgstr ""
+
+#: .\templates\components\business_footer.html:114
+#: .\templates\components\footer.html:65
+msgid "Tous droits réservés."
+msgstr ""
+
+#: .\templates\components\business_footer.html:117
+msgid "Politique de Confidentialité"
+msgstr ""
+
+#: .\templates\components\business_footer.html:119
+msgid "Conditions d'Utilisation"
+msgstr ""
+
+#: .\templates\components\business_footer.html:121
+msgid "Mentions Légales"
+msgstr ""
+
+#: .\templates\components\business_header.html:24
+msgid "À propos"
+msgstr ""
+
+#: .\templates\components\business_header.html:25
+msgid "Photos"
+msgstr ""
+
+#: .\templates\components\footer.html:19
+msgid ""
+"La plateforme leader pour découvrir et propulser les meilleures entreprises "
+"en Haïti. Connectez-vous avec l'excellence."
+msgstr ""
+
+#: .\templates\components\footer.html:31
+msgid "Navigation"
+msgstr ""
+
+#: .\templates\components\footer.html:41
+msgid "Support"
+msgstr ""
+
+#: .\templates\components\footer.html:44
+msgid "FAQ"
+msgstr ""
+
+#: .\templates\components\footer.html:45
+msgid "Confidentialité"
+msgstr ""
+
+#: .\templates\components\footer.html:51
+msgid "Restez Informés"
+msgstr ""
+
+#: .\templates\components\footer.html:52
+msgid ""
+"Rejoignez notre newsletter pour recevoir les dernières opportunités et "
+"offres exclusives."
+msgstr ""
+
+#: .\templates\components\footer.html:54
+msgid "Adresse email..."
+msgstr ""
+
+#: .\templates\components\footer.html:56
+msgid "S'abonner"
+msgstr ""
+
+#: .\templates\components\footer.html:68
+msgid "Conditions d'utilisation"
+msgstr ""
+
+#: .\templates\components\footer.html:69
+msgid "Mentions légales"
+msgstr ""
+
+#: .\templates\components\global_map.html:27
+msgid "Carte Interactive"
+msgstr ""
+
+#: .\templates\components\global_map.html:31
+msgid "Découvrez tous nos partenaires à travers la ville du Cap-Haïtien."
+msgstr ""
+
+#: .\templates\components\global_map.html:34
+msgid "Biznis Disponibles"
+msgstr ""
+
+#: .\templates\components\global_map.html:88
+#: .\templates\components\map_component.html:114
+msgid "Voir le profil complet"
+msgstr ""
+
+#: .\templates\components\map_component.html:26
+msgid "Localisation"
+msgstr ""
+
+#: .\templates\components\navbar.html:23
+msgid "Chercher une entreprise, service, produit..."
+msgstr ""
+
+#: .\templates\components\navbar.html:82 .\templates\components\navbar.html:178
+msgid "Mon Espace"
+msgstr ""
+
+#: .\templates\components\navbar.html:88
+#: .\templates\users\business_dashboard.html:58
+#: .\templates\users\dashboard.html:59 .\templates\users\dashboard.html:103
+#: .\templates\users\reviews.html:44 .\templates\users\subscription.html:44
+msgid "Vue d'ensemble"
+msgstr ""
+
+#: .\templates\components\navbar.html:94
+#: .\templates\users\business_dashboard.html:62
+#: .\templates\users\dashboard.html:63 .\templates\users\reviews.html:47
+#: .\templates\users\subscription.html:47
+#, fuzzy
+#| msgid "Entreprises"
+msgid "Mes Entreprises"
+msgstr "Antrepriz"
+
+#: .\templates\components\navbar.html:100
+#: .\templates\components\navbar.html:186 .\templates\users\dashboard.html:80
+#: .\templates\users\reviews.html:58 .\templates\users\subscription.html:58
+msgid "Paramètres"
+msgstr ""
+
+#: .\templates\components\navbar.html:104
+#: .\templates\components\navbar.html:190
+#: .\templates\users\business_dashboard.html:79
+#: .\templates\users\dashboard.html:92 .\templates\users\reviews.html:66
+#: .\templates\users\subscription.html:66
+msgid "Déconnexion"
+msgstr "Dekoneksyon"
+
+#: .\templates\components\navbar.html:111
+#: .\templates\components\navbar.html:195 .\templates\users\login.html:5
+msgid "Connexion"
+msgstr "Koneksyon"
+
+#: .\templates\components\navbar.html:139
+#, fuzzy
+#| msgid "Rechercher une catégorie..."
+msgid "Chercher une entreprise..."
+msgstr "Chèche yon kategori..."
+
+#: .\templates\components\navbar.html:156 .\templates\users\dashboard.html:56
+#: .\templates\users\reviews.html:42 .\templates\users\subscription.html:42
+msgid "Menu Principal"
+msgstr ""
+
+#: .\templates\components\navbar.html:182
+msgid "Dashboard"
+msgstr "Tablo bò"
+
+#: .\templates\home.html:67
+msgid "Entreprises Vérifiées"
+msgstr ""
+
+#: .\templates\home.html:76 .\templates\home_backup.html:77
+msgid "🇭🇹 Annwaire Pwofesyonèl Cap-Haïtien"
+msgstr ""
+
+#: .\templates\home.html:82 .\templates\home_backup.html:83
+msgid "À Cap-Haïtien et ses Environs"
+msgstr "Nan Kap Ayisyen ak zòn ki antoure l"
+
+#: .\templates\home.html:92 .\templates\home_backup.html:97
+msgid "Rechercher une entreprise, service, produit..."
+msgstr ""
+
+#: .\templates\home.html:96 .\templates\home_backup.html:101
+msgid "Toutes catégories"
+msgstr "Tout kategori"
+
+#: .\templates\home.html:109 .\templates\home_backup.html:114
+msgid "Populaires:"
+msgstr "Popilè:"
+
+#: .\templates\home.html:110 .\templates\home_backup.html:115
+msgid "Restaurant"
+msgstr "Restoran"
+
+#: .\templates\home.html:111 .\templates\home_backup.html:116
+msgid "Hôtel"
+msgstr "Otèl"
+
+#: .\templates\home.html:112 .\templates\home_backup.html:117
+msgid "Pharmacie"
+msgstr "Famasi"
+
+#: .\templates\home.html:113 .\templates\home_backup.html:118
+msgid "Transfert Dollars"
+msgstr ""
+
+#: .\templates\home.html:130 .\templates\home.html:509
+#: .\templates\home_backup.html:436
+msgid "Vérifiées"
+msgstr "Verifye"
+
+#: .\templates\home.html:147 .\templates\home_backup.html:152
+msgid "Catégories Professionnelles"
+msgstr ""
+
+#: .\templates\home.html:149 .\templates\home_backup.html:154
+msgid ""
+"Trouvez des entreprises qui répondent à vos besoins dans tous les secteurs "
+"d'activité"
+msgstr ""
+
+#: .\templates\home.html:177 .\templates\home_backup.html:182
+msgid "Aucune Catégorie Disponible"
+msgstr ""
+
+#: .\templates\home.html:178 .\templates\home_backup.html:183
+msgid ""
+"Les catégories apparaîtront lorsque les entreprises seront ajoutées à la "
+"plateforme."
+msgstr ""
+
+#: .\templates\home.html:187 .\templates\home_backup.html:192
+msgid "Voir Toutes les Catégories"
+msgstr "Wè Tout Kategori yo"
+
+#: .\templates\home.html:200 .\templates\home_backup.html:205
+msgid "Témoignages Clients"
+msgstr ""
+
+#: .\templates\home.html:202
+msgid "Ce Que Disent Nos Entrepreneurs"
+msgstr ""
+
+#: .\templates\home.html:204
+msgid ""
+"Découvrez comment EsyConnect transforme les entreprises à Cap-Haïtien et "
+"dans ses environs"
+msgstr ""
+
+#: .\templates\home.html:315
+#, fuzzy
+#| msgid "Note moyenne"
+msgid "Note Moyenne"
+msgstr "Mwayèn nòt"
+
+#: .\templates\home.html:326
+msgid "Clients Satisfaits"
+msgstr ""
+
+#: .\templates\home.html:330
+msgid "Entreprises Inscrites"
+msgstr ""
+
+#: .\templates\home.html:334
+msgid "Support Disponible"
+msgstr ""
+
+#: .\templates\home.html:376 .\templates\home_backup.html:319
+msgid "Analytiques"
+msgstr ""
+
+#: .\templates\home.html:378 .\templates\home_backup.html:321
+msgid ""
+"Suivez les performances de votre entreprise avec des statistiques détaillées "
+"en temps réel"
+msgstr ""
+
+#: .\templates\home.html:386 .\templates\home_backup.html:329
+msgid "Support 24/7"
+msgstr ""
+
+#: .\templates\home.html:388 .\templates\home_backup.html:331
+msgid "Notre équipe de support est disponible pour vous aider à tout moment"
+msgstr ""
+
+#: .\templates\home.html:409 .\templates\home_backup.html:343
+msgid "Entreprises Populaires"
+msgstr ""
+
+#: .\templates\home.html:413 .\templates\home_backup.html:347
+msgid ""
+"Les entreprises les plus populaires et bien notées dans la ville de Cap-"
+"Haïtien"
+msgstr ""
+
+#: .\templates\home.html:470 .\templates\home_backup.html:397
+msgid "Voir le Profil"
+msgstr ""
+
+#: .\templates\home.html:477 .\templates\home_backup.html:404
+msgid "Aucune Entreprise Pour l'instant"
+msgstr ""
+
+#: .\templates\home.html:478 .\templates\home_backup.html:405
+msgid "Soyez le premier à ajouter votre entreprise sur la plateforme!"
+msgstr ""
+
+#: .\templates\home.html:480 .\templates\home_backup.html:407
+msgid "Inscrivez Votre Entreprise"
+msgstr ""
+
+#: .\templates\home.html:489 .\templates\home_backup.html:416
+msgid "Voir Toutes les Entreprises"
+msgstr ""
+
+#: .\templates\home.html:513 .\templates\home_backup.html:440
+msgid "Utilisateurs"
+msgstr ""
+
+#: .\templates\home.html:522 .\templates\home_backup.html:449
+msgid "Mettez Votre Entreprise en Valeur!"
+msgstr ""
+
+#: .\templates\home.html:523 .\templates\home_backup.html:450
+msgid ""
+"Faites découvrir votre entreprise à des milliers de clients potentiels dans "
+"la ville de Cap-Haïtien."
+msgstr ""
+
+#: .\templates\home.html:526 .\templates\home_backup.html:453
+msgid "Inscrivez Votre Entreprise Gratuitement"
+msgstr ""
+
+#: .\templates\home.html:529 .\templates\home_backup.html:456
+msgid "Comment ça marche?"
+msgstr ""
+
+#: .\templates\home_backup.html:66
+msgid "Témoignages"
+msgstr "Temwanyaj"
+
+#: .\templates\home_backup.html:87
+msgid ""
+"Trouvez tous les services dont vous avez besoin dans la ville historique de "
+"Cap-Haïtien."
+msgstr ""
+
+#: .\templates\home_backup.html:88
+msgid "+500 Entreprises Vérifiées | 24/7 Disponibilité"
+msgstr ""
+
+#: .\templates\home_backup.html:207
+msgid "Clients Confiants"
+msgstr ""
+
+#: .\templates\home_backup.html:209
+msgid ""
+"Découvrez comment EsyConnect aide les entreprises à grandir et à trouver de "
+"bons clients"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:70
+msgid "Paramètres Profil"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:90
+msgid "Tableau de Bord Business"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:114
+#: .\templates\users\dashboard.html:131
+msgid "Total Biznis"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:116
+#: .\templates\users\dashboard.html:133
+#, fuzzy
+#| msgid "Entreprises"
+msgid "Entreprises enregistrées"
+msgstr "Antrepriz"
+
+#: .\templates\users\business_dashboard.html:131
+#: .\templates\users\dashboard.html:145
+msgid "Biznis Actifs"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:133
+msgid "Visibles sur le site"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:148
+#: .\templates\users\dashboard.html:159
+msgid "En Attente"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:150
+#: .\templates\users\dashboard.html:161
+msgid "En attente de validation"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:167
+#, fuzzy
+#| msgid "Premium"
+msgid "Comptes premium"
+msgstr "Premium"
+
+#: .\templates\users\business_dashboard.html:175
+#: .\templates\users\dashboard.html:211
+msgid "Répartition des Statuts"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:181
+#: .\templates\users\dashboard.html:218
+#, fuzzy
+#| msgid "Explorer par Catégories"
+msgid "Statistiques par Catégorie"
+msgstr "Eksplore pa Kategori"
+
+#: .\templates\users\business_dashboard.html:191
+msgid "Mes Businesses"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:192
+#, fuzzy
+#| msgid "S'inscrire"
+msgid "Inscrites"
+msgstr "Enskri"
+
+#: .\templates\users\business_dashboard.html:256
+msgid "Bienvenue sur votre tableau de bord !"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:257
+msgid "Vous n'avez pas encore de business. Commencez dès maintenant :"
+msgstr ""
+
+#: .\templates\users\business_dashboard.html:259
+#, fuzzy
+#| msgid "Nom de l'entreprise"
+msgid "Ajouter ma première entreprise"
+msgstr "Non biznis la"
+
+#: .\templates\users\dashboard.html:70 .\templates\users\reviews.html:50
+#: .\templates\users\subscription.html:50
+msgid "Outils & Croissance"
+msgstr ""
+
+#: .\templates\users\dashboard.html:73 .\templates\users\reviews.html:52
+#: .\templates\users\reviews.html:76 .\templates\users\subscription.html:52
+msgid "Mes Avis"
+msgstr ""
+
+#: .\templates\users\dashboard.html:77 .\templates\users\reviews.html:55
+#: .\templates\users\subscription.html:55
+#: .\templates\users\subscription.html:76
+msgid "Mon Abonnement"
+msgstr ""
+
+#: .\templates\users\dashboard.html:83 .\templates\users\reviews.html:60
+#: .\templates\users\subscription.html:60
+msgid "Mon Profil"
+msgstr ""
+
+#: .\templates\users\dashboard.html:104
+msgid "Bienvenue sur votre espace de gestion"
+msgstr ""
+
+#: .\templates\users\dashboard.html:113
+msgid "Nouveau Biznis"
+msgstr ""
+
+#: .\templates\users\dashboard.html:147
+msgid "Visibles publiquement"
+msgstr ""
+
+#: .\templates\users\dashboard.html:175
+msgid "Comptes VIP actifs"
+msgstr ""
+
+#: .\templates\users\dashboard.html:187
+msgid "Avis Clients"
+msgstr ""
+
+#: .\templates\users\dashboard.html:189
+msgid "Total des commentaires"
+msgstr ""
+
+#: .\templates\users\dashboard.html:201
+msgid "Leads Générés"
+msgstr ""
+
+#: .\templates\users\dashboard.html:203
+msgid "Clics sur vos contacts"
+msgstr ""
+
+#: .\templates\users\dashboard.html:225
+msgid "Évolution des Visites"
+msgstr ""
+
+#: .\templates\users\dashboard.html:235
+msgid "Aperçu de mes Businesses"
+msgstr ""
+
+#: .\templates\users\dashboard.html:236
+msgid "Gérer tout"
+msgstr ""
+
+#: .\templates\users\dashboard.html:245
+msgid "Plan"
+msgstr ""
+
+#: .\templates\users\dashboard.html:247
+#, fuzzy
+#| msgid "Actif"
+msgid "Actions"
+msgstr "Aktif"
+
+#: .\templates\users\dashboard.html:305
+#, fuzzy
+#| msgid "Entreprises"
+msgid "Aucune entreprise trouvée"
+msgstr "Antrepriz"
+
+#: .\templates\users\dashboard.html:306
+msgid "Commencez par en ajouter une."
+msgstr ""
+
+#: .\templates\users\edit_profile.html:5
+msgid "Modifier le Profil"
+msgstr ""
+
+#: .\templates\users\edit_profile.html:15
+msgid "Modifier Votre Profil"
+msgstr ""
+
+#: .\templates\users\edit_profile.html:16
+msgid "Mettez à jour vos informations"
+msgstr ""
+
+#: .\templates\users\edit_profile.html:37 .\templates\users\login.html:34
+#: .\templates\users\register.html:47
+msgid "Nom d'utilisateur"
+msgstr ""
+
+#: .\templates\users\edit_profile.html:53
+msgid "Prénom"
+msgstr ""
+
+#: .\templates\users\edit_profile.html:61
+msgid "Nom"
+msgstr ""
+
+#: .\templates\users\edit_profile.html:79
+msgid "Sauvegarder les modifications"
+msgstr ""
+
+#: .\templates\users\edit_profile.html:85
+msgid "Annuler et retourner"
+msgstr ""
+
+#: .\templates\users\login.html:15
+msgid "Bon retour !"
+msgstr ""
+
+#: .\templates\users\login.html:16
+msgid "Connectez-vous à votre espace"
+msgstr ""
+
+#: .\templates\users\login.html:44 .\templates\users\register.html:67
+msgid "Mot de passe"
+msgstr ""
+
+#: .\templates\users\login.html:56
+msgid "Se souvenir de moi"
+msgstr ""
+
+#: .\templates\users\login.html:58
+msgid "Oublié ?"
+msgstr ""
+
+#: .\templates\users\login.html:69
+msgid "Pas encore de compte ?"
+msgstr ""
+
+#: .\templates\users\login.html:70
+msgid "Créer un compte"
+msgstr ""
+
+#: .\templates\users\password_reset.html:5
+msgid "Mot de passe oublié"
+msgstr ""
+
+#: .\templates\users\password_reset.html:15
+msgid "Mot de passe oublié ?"
+msgstr ""
+
+#: .\templates\users\password_reset.html:16
+msgid "Entrez votre email pour le réinitialiser"
+msgstr ""
+
+#: .\templates\users\password_reset.html:44
+msgid "Envoyer le lien"
+msgstr ""
+
+#: .\templates\users\password_reset.html:51
+msgid "Je me souviens de mon mot de passe."
+msgstr ""
+
+#: .\templates\users\password_reset.html:52
+#: .\templates\users\password_reset_complete.html:17
+#: .\templates\users\register.html:102
+msgid "Se connecter"
+msgstr ""
+
+#: .\templates\users\password_reset_complete.html:4
+msgid "Mot de passe modifié"
+msgstr ""
+
+#: .\templates\users\password_reset_complete.html:12
+msgid "C'est fait !"
+msgstr ""
+
+#: .\templates\users\password_reset_complete.html:14
+msgid ""
+"Votre mot de passe a été modifié avec succès. Vous pouvez maintenant vous "
+"connecter."
+msgstr ""
+
+#: .\templates\users\password_reset_confirm.html:4
+#: .\templates\users\password_reset_confirm.html:13
+msgid "Nouveau mot de passe"
+msgstr ""
+
+#: .\templates\users\password_reset_confirm.html:14
+msgid "Entrez votre nouveau mot de passe"
+msgstr ""
+
+#: .\templates\users\password_reset_confirm.html:42
+msgid "Changer le mot de passe"
+msgstr ""
+
+#: .\templates\users\password_reset_confirm.html:49
+#, fuzzy
+#| msgid "Liens Rapides"
+msgid "Lien invalide"
+msgstr "Lyen Rapd"
+
+#: .\templates\users\password_reset_confirm.html:50
+msgid ""
+"Le lien de réinitialisation est invalide, possiblement parce qu'il a déjà "
+"été utilisé."
+msgstr ""
+
+#: .\templates\users\password_reset_confirm.html:52
+msgid "Demander un nouveau lien"
+msgstr ""
+
+#: .\templates\users\password_reset_done.html:4
+msgid "Email Envoyé"
+msgstr ""
+
+#: .\templates\users\password_reset_done.html:12
+msgid "Email Envoyé !"
+msgstr ""
+
+#: .\templates\users\password_reset_done.html:14
+msgid ""
+"Nous vous avons envoyé par email les instructions pour définir votre nouveau "
+"mot de passe. Si l'email que vous avez entré existe, vous le recevrez d'ici "
+"peu."
+msgstr ""
+
+#: .\templates\users\password_reset_done.html:17
+msgid "Si vous ne le recevez pas, vérifiez vos spams."
+msgstr ""
+
+#: .\templates\users\password_reset_email.html:2
+msgid "Quelqu'un a demandé à réinitialiser le mot de passe pour l'email :"
+msgstr ""
+
+#: .\templates\users\password_reset_email.html:4
+msgid "Si c'est vous, suivez le lien ci-dessous :"
+msgstr ""
+
+#: .\templates\users\password_reset_email.html:8
+msgid "Si vous n'avez pas demandé de réinitialisation, ignorez cet email."
+msgstr ""
+
+#: .\templates\users\password_reset_email.html:10
+msgid "L'équipe EsyConnect"
+msgstr ""
+
+#: .\templates\users\register.html:5
+msgid "Créer un Compte"
+msgstr ""
+
+#: .\templates\users\register.html:15
+msgid "Rejoignez-nous"
+msgstr ""
+
+#: .\templates\users\register.html:16
+msgid "Créez votre compte en quelques secondes"
+msgstr ""
+
+#: .\templates\users\register.html:29
+msgid "Veuillez corriger les erreurs suivantes:"
+msgstr ""
+
+#: .\templates\users\register.html:33
+msgid "Les mots de passe ne correspondent pas"
+msgstr ""
+
+#: .\templates\users\register.html:77
+msgid "Confirmer le mot de passe"
+msgstr ""
+
+#: .\templates\users\register.html:89
+msgid "J'accepte les conditions"
+msgstr ""
+
+#: .\templates\users\register.html:94
+msgid "Créer mon Compte"
+msgstr ""
+
+#: .\templates\users\register.html:101
+msgid "Déjà un compte ?"
+msgstr ""
+
+#: .\templates\users\reviews.html:77
+msgid "Gérez les retours de vos clients"
+msgstr ""
+
+#: .\templates\users\reviews.html:85
+msgid "Derniers Avis Reçus"
+msgstr ""
+
+#: .\templates\users\reviews.html:121
+msgid "Aucun avis pour le moment"
+msgstr ""
+
+#: .\templates\users\reviews.html:122
+msgid "Invitez vos clients à laisser un avis sur la page de votre entreprise."
+msgstr ""
+
+#: .\templates\users\subscription.html:77
+msgid "Gérez vos plans et facturations"
+msgstr ""
+
+#: .\templates\users\subscription.html:88
+#: .\templates\users\subscription.html:113
+msgid "Plan Actuel"
+msgstr ""
+
+#: .\templates\users\subscription.html:90
+msgid ""
+"Vous utilisez actuellement le plan basique gratuit. Passez à la vitesse "
+"supérieure !"
+msgstr ""
+
+#: .\templates\users\subscription.html:94
+msgid "Voir les Offres Premium"
+msgstr ""
+
+#: .\templates\users\subscription.html:105
+msgid "Idéal pour commencer"
+msgstr ""
+
+#: .\templates\users\subscription.html:121
+msgid "Pour les pros"
+msgstr ""
+
+#: .\templates\users\subscription.html:130
+#, fuzzy
+#| msgid "Premium"
+msgid "Passer Premium"
+msgstr "Premium"
+
+#: .\users\views.py:42
+msgid "Byenvini! Ou konekte tankou Mèt Biznis."
+msgstr ""
+
+#: .\users\views.py:45 .\users\views.py:48
+msgid "Byenvini! Ou konekte ak siksè."
+msgstr ""
+
+#: .\users\views.py:51
+msgid "Non itilizate a oubyen modpas pa kòrèk."
+msgstr ""
+
+#: .\users\views.py:90
+msgid "Byenvini sou EsyConnect! Kont ou kreye ak siksè tankou Mèt Biznis."
+msgstr ""
+
+#: .\users\views.py:95
+msgid "Gen yon pwoblèm ki rive pandan n ap kreye kont lan."
+msgstr ""
+
+#: .\users\views.py:166
+msgid "Profil ou an modifye ak siksè!"
+msgstr ""
+
+#, fuzzy
+#~| msgid "Rechercher une catégorie..."
+#~ msgid "Suggérer une catégorie ?"
+#~ msgstr "Chèche yon kategori..."
+
+#, fuzzy
+#~| msgid "Contact"
+#~ msgid "Contactez-nous"
+#~ msgstr "Kontak"
+
+#, fuzzy
+#~| msgid "Rechercher une entreprise..."
+#~ msgid "Chercher un biznis..."
+#~ msgstr "Chèche yon antrepriz..."
+
+#, fuzzy
+#~| msgid "Dashboard"
+#~ msgid "Mon Dashboard"
+#~ msgstr "Tablo bò"

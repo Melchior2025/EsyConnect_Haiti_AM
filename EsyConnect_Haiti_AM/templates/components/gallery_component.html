@@ -1,0 +1,33 @@
+{% load i18n %}
+<!-- Gallery Component -->
+<div class="masonry-grid">
+    {% for image in gallery_images %}
+    <div class="masonry-item gallery-item" onclick="openLightbox('{{ image.url }}')">
+        <img src="{{ image.thumbnail_url }}" 
+             alt="{{ image.alt }}" 
+             class="w-full rounded-xl shadow-lg cursor-pointer"
+             loading="lazy">
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-content">
+        <img id="lightbox-image" class="lightbox-image" src="" alt="">
+    </div>
+</div>
+
+<script>
+    function openLightbox(imageSrc) {
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+        lightbox.style.display = 'block';
+        lightboxImage.src = imageSrc;
+    }
+    
+    function closeLightbox() {
+        const lightbox = document.getElementById('lightbox');
+        lightbox.style.display = 'none';
+    }
+</script>

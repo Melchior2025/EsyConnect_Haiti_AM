@@ -1,0 +1,320 @@
+{% load i18n %}
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-24">
+            <!-- Logo -->
+            <div class="flex-shrink-0 flex items-center">
+                <a href="{% url 'business:home' %}" class="flex items-center space-x-4 group">
+                    {% if site_config.logo %}
+                    <img src="{{ site_config.logo.url }}" alt="{{ site_config.site_title|default:'EsyConnect Haïti' }}" class="w-14 h-14 object-contain rounded-2xl shadow-lg group-hover:rotate-12 group-hover:scale-105 transition-all duration-300">
+                    {% else %}
+                    <div class="w-14 h-14 bg-gradient-to-br from-indigo-600 via-esy-blue-600 to-blue-800 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-600/30 group-hover:rotate-12 group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                        <i class="fas fa-store text-white text-2xl relative z-10"></i>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <span class="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-esy-dark via-indigo-900 to-esy-blue-800">{{ site_config.site_title|default:'ESY<span class="text-indigo-600">CONNECT</span>'|safe }}</span>
+                        <p class="text-[11px] font-black text-indigo-400 uppercase tracking-[0.3em] mt-0.5">Haïti</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Search Bar (Desktop) -->
+            <div class="hidden xl:block flex-1 max-w-lg mx-8">
+                <form action="{% url 'business:search' %}" method="GET" class="relative group">
+                    <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-indigo-600 transition-colors duration-300 z-10"></i>
+                    <input type="text" name="q" placeholder="{% trans 'Chercher une entreprise, service, produit...' %}" 
+                           class="w-full pl-14 pr-4 py-3.5 rounded-2xl bg-gray-50/50 border border-gray-200/60 focus:bg-white focus:ring-4 focus:ring-indigo-600/10 focus:border-indigo-600 transition-all duration-300 font-medium text-sm shadow-inner hover:shadow-md hover:bg-white">
+                </form>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center space-x-2">
+                <a href="{% url 'business:home' %}" class="relative px-4 py-2 text-sm font-bold text-gray-600 hover:text-indigo-600 transition-colors duration-300 group">
+                    {% trans "Accueil" %}
+                    <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-indigo-600 group-hover:w-1/2 group-hover:left-1/4 transition-all duration-300 rounded-full"></span>
+                </a>
+                <a href="{% url 'business:categories' %}" class="relative px-4 py-2 text-sm font-bold text-gray-600 hover:text-indigo-600 transition-colors duration-300 group">
+                    {% trans "Catégories" %}
+                    <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-indigo-600 group-hover:w-1/2 group-hover:left-1/4 transition-all duration-300 rounded-full"></span>
+                </a>
+                <a href="{% url 'business:about' %}" class="relative px-4 py-2 text-sm font-bold text-gray-600 hover:text-indigo-600 transition-colors duration-300 group">
+                    {% trans "À Propos" %}
+                    <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-indigo-600 group-hover:w-1/2 group-hover:left-1/4 transition-all duration-300 rounded-full"></span>
+                </a>
+                <a href="{% url 'business:contact_general' %}" class="relative px-4 py-2 text-sm font-bold text-gray-600 hover:text-indigo-600 transition-colors duration-300 group">
+                    {% trans "Contact" %}
+                    <span class="absolute bottom-0 left-1/2 w-0 h-0.5 bg-indigo-600 group-hover:w-1/2 group-hover:left-1/4 transition-all duration-300 rounded-full"></span>
+                </a>
+                
+                <!-- Dark Mode Toggle -->
+                <button id="darkModeToggle" class="ml-4 flex items-center justify-center w-10 h-10 bg-white border border-gray-200 rounded-xl text-gray-600 hover:border-indigo-600 hover:text-indigo-600 shadow-sm transition-all duration-300">
+                    <i class="fas fa-moon" id="darkModeIcon"></i>
+                </button>
+                
+                <!-- Language Switcher -->
+                <div class="relative ml-4">
+                    <form action="{% url 'set_language' %}" method="post" id="lang-form" class="inline">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.path }}">
+                        <input name="language" type="hidden" id="lang-input" value="">
+                        
+                        <button type="button" id="lang-dropdown-btn" class="flex items-center space-x-2 bg-white border border-gray-200 px-4 py-2 rounded-xl text-xs font-black text-gray-600 uppercase hover:border-indigo-600 hover:text-indigo-600 shadow-sm transition-all duration-300">
+                            <i class="fas fa-globe"></i>
+                            <span>{{ request.LANGUAGE_CODE|upper }}</span>
+                            <i class="fas fa-chevron-down text-[10px] opacity-70"></i>
+                        </button>
+
+                        <div id="lang-dropdown-menu" class="hidden absolute right-0 mt-2 w-44 bg-white/95 backdrop-blur-md rounded-2xl shadow-[0_10px_40px_rgb(0,0,0,0.08)] border border-white py-2 z-50 animate-fade-in ring-1 ring-black/5">
+                            <button type="button" onclick="changeLanguage('fr')" class="w-full text-left px-5 py-3 text-xs font-bold text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 flex items-center gap-3">
+                                <span class="text-lg">🇫🇷</span> Français
+                            </button>
+                            <button type="button" onclick="changeLanguage('ht')" class="w-full text-left px-5 py-3 text-xs font-bold text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 flex items-center gap-3">
+                                <span class="text-lg">🇭🇹</span> Kreyòl
+                            </button>
+                            <button type="button" onclick="changeLanguage('en')" class="w-full text-left px-5 py-3 text-xs font-bold text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200 flex items-center gap-3">
+                                <span class="text-lg">🇬🇧</span> English
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                {% if user.is_authenticated %}
+    <div class="relative">
+        <button id="userBtn" class="flex items-center space-x-3 bg-white border border-gray-200 pl-2 pr-4 py-1.5 rounded-[1.25rem] shadow-sm hover:border-indigo-600 hover:shadow-md transition-all duration-300">
+            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-600 to-blue-700 flex items-center justify-center text-white font-black text-xs">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+            <span class="text-sm font-bold text-gray-700">{{ user.username|slice:":10" }}</span>
+            <i class="fas fa-chevron-down text-[10px] text-gray-400"></i>
+        </button>
+        <div id="userMenu" class="absolute right-0 mt-2 w-60 bg-white/95 backdrop-blur-md rounded-3xl shadow-[0_10px_40px_rgb(0,0,0,0.08)] border border-white py-3 hidden z-50 animate-fade-in ring-1 ring-black/5">
+            <div class="px-5 py-3 border-b border-gray-50 mb-2">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{% trans "Mon Espace" %}</p>
+            </div>
+            <a href="{% url 'users:business_dashboard' %}" class="flex items-center gap-3 px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200">
+                <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-indigo-100 transition-colors">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                {% trans "Vue d'ensemble" %}
+            </a>
+            <a href="{% url 'users:business_dashboard' %}" class="flex items-center gap-3 px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200">
+                <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-indigo-100 transition-colors">
+                    <i class="fas fa-building"></i>
+                </div>
+                {% trans "Mes Entreprises" %}
+            </a>
+            <a href="{% url 'business:favorites' %}" class="flex items-center gap-3 px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200">
+                <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-indigo-100 transition-colors">
+                    <i class="fas fa-heart"></i>
+                </div>
+                {% trans "Mes Favoris" %}
+            </a>
+            <a href="{% url 'users:edit_profile' %}" class="flex items-center gap-3 px-5 py-2.5 text-sm font-bold text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors duration-200">
+                <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-indigo-100 transition-colors">
+                    <i class="fas fa-cog"></i>
+                </div>
+                {% trans "Paramètres" %}
+            </a>
+            <div class="px-5 py-3 border-t border-gray-50 mt-2">
+                <a href="{% url 'users:logout' %}" class="flex items-center gap-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl px-3 py-2 transition-all duration-200">
+                    <i class="fas fa-sign-out-alt"></i> {% trans "Déconnexion" %}
+                </a>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="h-8 w-px bg-gray-200 mx-4"></div>
+    <a href="{% url 'users:login' %}" class="px-5 py-2.5 text-sm font-bold text-gray-700 hover:text-indigo-600 transition-colors duration-300">{% trans "Connexion" %}</a>
+    <a href="{% url 'users:register' %}" class="relative inline-flex items-center justify-center bg-gradient-to-r from-indigo-600 via-esy-blue-600 to-blue-700 text-white px-7 py-3 rounded-2xl font-black text-sm shadow-[0_8px_20px_rgb(79,70,229,0.3)] hover:shadow-[0_10px_25px_rgb(79,70,229,0.4)] transition-all duration-300 hover:-translate-y-0.5 overflow-hidden group">
+        <span class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+        <span class="relative z-10">{% trans "S'inscrire" %}</span>
+    </a>
+{% endif %}
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <div class="lg:hidden">
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-700 p-2 focus:outline-none hover:bg-gray-100 rounded-xl transition-all duration-200">
+                    <i class="fas text-2xl" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div x-show="mobileMenuOpen" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 -translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         class="lg:hidden bg-white/95 backdrop-blur-xl border-t border-gray-100 absolute w-full shadow-2xl">
+        <div class="px-4 pt-4 pb-6 space-y-3">
+            <!-- Mobile Search -->
+            <div class="mb-6">
+                <form action="{% url 'business:search' %}" method="GET" class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" name="q" placeholder="{% trans 'Chercher une entreprise...' %}" 
+                           class="w-full pl-12 pr-4 py-4 rounded-2xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-indigo-600 transition font-medium shadow-sm text-sm">
+                </form>
+            </div>
+
+            <!-- Mobile Language Switcher -->
+            <div class="flex items-center justify-between px-2 mb-6 bg-gray-50 rounded-2xl p-2 border border-gray-100">
+                <form action="{% url 'set_language' %}" method="post" class="flex space-x-2 w-full" id="mobile-lang-form">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.path }}">
+                    <input name="language" type="hidden" id="mobile-lang-input" value="">
+                    <button type="button" onclick="changeLanguage('fr')" class="flex-1 py-2.5 rounded-xl text-xs font-black {% if request.LANGUAGE_CODE == 'fr' %}bg-white text-indigo-600 shadow-sm border border-gray-200{% else %}text-gray-500 hover:bg-gray-100{% endif %} transition-all duration-200">🇫🇷 FR</button>
+                    <button type="button" onclick="changeLanguage('ht')" class="flex-1 py-2.5 rounded-xl text-xs font-black {% if request.LANGUAGE_CODE == 'ht' %}bg-white text-indigo-600 shadow-sm border border-gray-200{% else %}text-gray-500 hover:bg-gray-100{% endif %} transition-all duration-200">🇭🇹 HT</button>
+                    <button type="button" onclick="changeLanguage('en')" class="flex-1 py-2.5 rounded-xl text-xs font-black {% if request.LANGUAGE_CODE == 'en' %}bg-white text-indigo-600 shadow-sm border border-gray-200{% else %}text-gray-500 hover:bg-gray-100{% endif %} transition-all duration-200">🇬🇧 EN</button>
+                </form>
+            </div>
+            
+            <div class="px-3 py-2">
+                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{% trans "Menu Principal" %}</p>
+            </div>
+            <a href="{% url 'business:home' %}" class="flex items-center gap-4 px-4 py-3.5 text-base font-bold text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all duration-200">
+                <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400"><i class="fas fa-home"></i></div>
+                {% trans "Accueil" %}
+            </a>
+            <a href="{% url 'business:categories' %}" class="flex items-center gap-4 px-4 py-3.5 text-base font-bold text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all duration-200">
+                <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400"><i class="fas fa-th-large"></i></div>
+                {% trans "Catégories" %}
+            </a>
+            <a href="{% url 'business:about' %}" class="flex items-center gap-4 px-4 py-3.5 text-base font-bold text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all duration-200">
+                <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400"><i class="fas fa-info-circle"></i></div>
+                {% trans "À Propos" %}
+            </a>
+            <a href="{% url 'business:contact_general' %}" class="flex items-center gap-4 px-4 py-3.5 text-base font-bold text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all duration-200">
+                <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400"><i class="fas fa-envelope"></i></div>
+                {% trans "Contact" %}
+            </a>
+            
+            {% if user.is_authenticated %}
+                <div class="border-t border-gray-100 my-4"></div>
+                <div class="px-3 py-2">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{% trans "Mon Espace" %}</p>
+                </div>
+                <a href="{% url 'users:dashboard' %}" class="flex items-center gap-4 px-4 py-3.5 text-base font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-2xl transition-all duration-200">
+                    <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-indigo-600"><i class="fas fa-chart-pie"></i></div>
+                    {% trans "Dashboard" %}
+                </a>
+                <a href="{% url 'users:edit_profile' %}" class="flex items-center gap-4 px-4 py-3.5 text-base font-bold text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all duration-200">
+                    <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400"><i class="fas fa-cog"></i></div>
+                    {% trans "Paramètres" %}
+                </a>
+                <a href="{% url 'users:logout' %}" class="flex items-center gap-4 px-4 py-3.5 text-base font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-all duration-200 mt-2">
+                    <div class="w-10 h-10 bg-white border border-red-100 rounded-xl flex items-center justify-center text-red-400"><i class="fas fa-sign-out-alt"></i></div>
+                    {% trans "Déconnexion" %}
+                </a>
+            {% else %}
+                <div class="pt-8 flex flex-col space-y-3">
+                    <a href="{% url 'users:login' %}" class="flex items-center justify-center gap-3 w-full py-4 text-sm font-black text-gray-700 bg-gray-100 rounded-2xl transition-all duration-200 hover:bg-gray-200 border border-gray-200">
+                        {% trans "Connexion" %}
+                    </a>
+                    <a href="{% url 'users:register' %}" class="flex items-center justify-center gap-3 w-full py-4 text-sm font-black text-white bg-gradient-to-r from-indigo-600 to-blue-700 rounded-2xl shadow-lg shadow-indigo-600/30 transition-all duration-200">
+                        {% trans "S'inscrire" %}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const langDropdownBtn = document.getElementById('lang-dropdown-btn');
+    const langDropdownMenu = document.getElementById('lang-dropdown-menu');
+    const userBtn = document.getElementById('userBtn');
+    const userMenu = document.getElementById('userMenu');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const darkModeIcon = document.getElementById('darkModeIcon');
+    
+    // Dark Mode Toggle
+    if (darkModeToggle) {
+        // Check for saved preference with error handling for Tracking Prevention
+        let isDarkMode = false;
+        try {
+            isDarkMode = localStorage.getItem('darkMode') === 'true';
+        } catch (e) {
+            // localStorage not available (Tracking Prevention or private browsing)
+            console.log('localStorage not available, using default');
+        }
+        
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark');
+            darkModeIcon.classList.remove('fa-moon');
+            darkModeIcon.classList.add('fa-sun');
+        }
+        
+        darkModeToggle.addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            
+            // Save preference with error handling for Tracking Prevention
+            try {
+                localStorage.setItem('darkMode', isDark);
+            } catch (e) {
+                // localStorage not available (Tracking Prevention or private browsing)
+                console.log('localStorage not available, preference not saved');
+            }
+            
+            if (isDark) {
+                darkModeIcon.classList.remove('fa-moon');
+                darkModeIcon.classList.add('fa-sun');
+            } else {
+                darkModeIcon.classList.remove('fa-sun');
+                darkModeIcon.classList.add('fa-moon');
+            }
+        });
+    }
+
+    // Toggle language dropdown
+    if (langDropdownBtn && langDropdownMenu) {
+        langDropdownBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            langDropdownMenu.classList.toggle('hidden');
+            // Close user menu if open
+            if (userMenu) userMenu.classList.add('hidden');
+        });
+    }
+
+    // Toggle user menu
+    if (userBtn && userMenu) {
+        userBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userMenu.classList.toggle('hidden');
+            // Close language menu if open
+            if (langDropdownMenu) langDropdownMenu.classList.add('hidden');
+        });
+    }
+
+    // Close menus when clicking outside
+    document.addEventListener('click', function() {
+        if (langDropdownMenu) langDropdownMenu.classList.add('hidden');
+        if (userMenu) userMenu.classList.add('hidden');
+    });
+
+    // Close menus when pressing Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            if (langDropdownMenu) langDropdownMenu.classList.add('hidden');
+            if (userMenu) userMenu.classList.add('hidden');
+        }
+    });
+});
+
+function changeLanguage(langCode) {
+    const langInput = document.getElementById('lang-input');
+    const mobileLangInput = document.getElementById('mobile-lang-input');
+    
+    if (langInput) {
+        langInput.value = langCode;
+        document.getElementById('lang-form').submit();
+    } else if (mobileLangInput) {
+        mobileLangInput.value = langCode;
+        document.getElementById('mobile-lang-form').submit();
+    }
+}
+</script>

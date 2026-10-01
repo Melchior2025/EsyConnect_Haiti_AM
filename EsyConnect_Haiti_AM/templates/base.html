@@ -1,0 +1,115 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EsyConnect{% endblock %}</title>
+
+    <!-- Fix favicon 404 -->
+    <link rel="shortcut icon" href="#">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        esy: {
+                            dark: '#0f172a',
+                            gold: '#f59e0b',
+                            blue: {
+                                50: '#eff6ff',
+                                100: '#dbeafe',
+                                200: '#bfdbfe',
+                                300: '#93c5fd',
+                                400: '#60a5fa',
+                                500: '#3b82f6',
+                                600: '#2563eb',
+                                700: '#1d4ed8',
+                                800: '#1e40af',
+                                900: '#1e3a8a',
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    {% block extra_css %}
+    <style>
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+        }
+    </style>
+    {% endblock %}
+</head>
+
+<body class="bg-gray-50 text-gray-900">
+    <!-- Navbar générale publique -->
+    {% block navbar %}
+    {% include 'components/navbar.html' %}
+    {% endblock %}
+
+    <!-- Messages de notification -->
+    {% if messages %}
+    <div class="fixed top-24 right-4 z-50 flex flex-col gap-2">
+        {% for message in messages %}
+        <div
+            class="p-4 rounded-xl shadow-lg {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Contenu principal -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer général publique -->
+    {% block footer %}
+    {% include 'components/footer.html' %}
+    {% endblock %}
+
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

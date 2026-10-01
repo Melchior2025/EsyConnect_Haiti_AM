@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Mon Profil - {{ site_title|default:"EsyConnect" }}{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #f8fafc;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in-up {
+        animation: fadeInUp 0.5s ease-out forwards;
+        opacity: 0;
+    }
+    
+    .delay-100 { animation-delay: 100ms; }
+    .delay-200 { animation-delay: 200ms; }
+    .delay-300 { animation-delay: 300ms; }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 1);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+        border-radius: 1.5rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+        box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.1);
+        border-color: rgba(79, 70, 229, 0.2);
+        transform: translateY(-4px);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="flex h-screen w-full overflow-hidden bg-[#fafafa]">
+
+    <!-- SIDEBAR -->
+    {% include 'components/dashboard_sidebar.html' %}
+
+    <!-- MAIN AREA -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+
+        <!-- HEADER -->
+        {% include 'components/dashboard_header.html' %}
+
+        <!-- CONTENT SCROLL -->
+        <div class="relative z-10 flex-1 overflow-y-auto px-6 py-6 custom-scrollbar">
+
+            <!-- PAGE TITLE -->
+            <div class="mb-8 animate-fade-in-up">
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight">Mon Profil</h1>
+                <p class="text-sm text-gray-500 mt-1">Gérez vos informations personnelles et paramètres de compte</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- PROFILE CARD -->
+                <div class="glass-card p-8 flex flex-col items-center text-center animate-fade-in-up delay-100">
+                    <!-- Avatar -->
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white text-4xl font-black shadow-xl shadow-indigo-600/20 mb-5">
+                        {{ user.username|slice:":1"|upper }}
+                    </div>
+                    
+                    <h2 class="text-xl font-black text-gray-900 mb-1">{{ user.get_full_name|default:user.username }}</h2>
+                    <p class="text-sm text-gray-500 mb-4">{{ user.email|default:"Aucun email" }}</p>
+                    
+                    <!-- Role Badge -->
+                    <span class="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-4 py-2 uppercase tracking-widest rounded-full border border-indigo-100 shadow-sm mb-6">
+                        <i class="fas fa-shield-alt mr-1"></i> {{ user_profile.get_role_display|default:"Propriétaire" }}
+                    </span>
+                    
+                    <!-- Quick Stats -->
+                    <div class="w-full space-y-3 mt-2">
+                        <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            <span class="text-xs text-gray-500 font-semibold flex items-center gap-2">
+                                <i class="fas fa-building text-gray-400"></i> Entreprises
+                            </span>
+                            <span class="font-black text-gray-900">{{ user.businesses.count|default:0 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            <span class="text-xs text-gray-500 font-semibold flex items-center gap-2">
+                                <i class="fas fa-calendar-alt text-gray-400"></i> Membre depuis
+                            </span>
+                            <span class="font-bold text-gray-700 text-xs">{{ user.date_joined|date:"d M Y" }}</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            <span class="text-xs text-gray-500 font-semibold flex items-center gap-2">
+                                <i class="fas fa-clock text-gray-400"></i> Dernière connexion
+                            </span>
+                            <span class="font-bold text-gray-700 text-xs">{{ user.last_login|date:"d M Y H:i"|default:"Jamais" }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Edit Button -->
+                    <a href="{% url 'users:edit_profile' %}" class="mt-6 w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-indigo-600/20 hover:shadow-xl hover:scale-[1.02] transition-all">
+                        <i class="fas fa-edit"></i> Modifier le Profil
+                    </a>
+                </div>
+
+                <!-- DETAILS COLUMN -->
+                <div class="lg:col-span-2 space-y-6">
+
+                    <!-- PERSONAL INFO -->
+                    <div class="glass-card p-8 animate-fade-in-up delay-200">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest">Informations Personnelles</h3>
+                            <a href="{% url 'users:edit_profile' %}" class="text-indigo-600 hover:text-indigo-700 text-xs font-bold bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 transition-colors">
+                                <i class="fas fa-pen mr-1"></i> Modifier
+                            </a>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Nom d'utilisateur</label>
+                                <p class="text-gray-900 font-semibold text-sm bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                    <i class="fas fa-user text-gray-400 mr-2"></i>{{ user.username }}
+                                </p>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Email</label>
+                                <p class="text-gray-900 font-semibold text-sm bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                    <i class="fas fa-envelope text-gray-400 mr-2"></i>{{ user.email|default:"Non renseigné" }}
+                                </p>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Prénom</label>
+                                <p class="text-gray-900 font-semibold text-sm bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                    <i class="fas fa-id-card text-gray-400 mr-2"></i>{{ user.first_name|default:"Non renseigné" }}
+                                </p>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Nom</label>
+                                <p class="text-gray-900 font-semibold text-sm bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                    <i class="fas fa-id-card text-gray-400 mr-2"></i>{{ user.last_name|default:"Non renseigné" }}
+                                </p>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Téléphone</label>
+                                <p class="text-gray-900 font-semibold text-sm bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                    <i class="fas fa-phone text-gray-400 mr-2"></i>{{ user_profile.phone|default:"Non renseigné" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACCOUNT SECURITY -->
+                    <div class="glass-card p-8 animate-fade-in-up delay-300">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Sécurité du Compte</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-100 group hover:border-indigo-100 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">Mot de passe</p>
+                                        <p class="text-xs text-gray-500">Dernière modification inconnue</p>
+                                    </div>
+                                </div>
+                                <a href="{% url 'users:password_reset' %}" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-white px-3 py-2 rounded-lg border border-gray-200 hover:border-indigo-200 transition-all">
+                                    Changer
+                                </a>
+                            </div>
+                            
+                            <div class="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-100 group hover:border-indigo-100 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900">Statut du compte</p>
+                                        <p class="text-xs text-gray-500">
+                                            {% if user.is_active %}
+                                            <span class="text-emerald-600 font-bold"><i class="fas fa-check-circle mr-1"></i>Actif</span>
+                                            {% else %}
+                                            <span class="text-red-600 font-bold"><i class="fas fa-times-circle mr-1"></i>Inactif</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QUICK ACTIONS -->
+                    <div class="glass-card p-8 animate-fade-in-up delay-300">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">Actions Rapides</h3>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <a href="{% url 'users:dashboard' %}" class="flex flex-col items-center gap-3 p-5 bg-gray-50 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group">
+                                <div class="w-12 h-12 rounded-xl bg-white text-indigo-600 border border-gray-200 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-sm">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <span class="text-xs font-bold text-gray-700 group-hover:text-indigo-700">Vue d'ensemble</span>
+                            </a>
+                            
+                            <a href="{% url 'users:business_dashboard' %}" class="flex flex-col items-center gap-3 p-5 bg-gray-50 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group">
+                                <div class="w-12 h-12 rounded-xl bg-white text-emerald-600 border border-gray-200 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-sm">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <span class="text-xs font-bold text-gray-700 group-hover:text-indigo-700">Mes Entreprises</span>
+                            </a>
+                            
+                            <a href="{% url 'users:subscription_dashboard' %}" class="flex flex-col items-center gap-3 p-5 bg-gray-50 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/50 transition-all group">
+                                <div class="w-12 h-12 rounded-xl bg-white text-amber-500 border border-gray-200 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-sm">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                                <span class="text-xs font-bold text-gray-700 group-hover:text-indigo-700">Mon Abonnement</span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- PREMIUM FOOTER -->
+            <footer class="mt-12 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 bg-indigo-600 text-white flex items-center justify-center font-black text-sm rounded-lg shadow-md shadow-indigo-600/30">E</div>
+                        <h4 class="text-lg font-bold text-gray-900 tracking-tight">EsyConnect <span class="text-indigo-600">Pro</span></h4>
+                    </div>
+                    <p class="text-xs text-gray-500 font-medium">&copy; {% now "Y" %} EsyConnect Haiti. Tous droits réservés.</p>
+                </div>
+                <div class="flex flex-wrap gap-6 text-sm font-semibold text-gray-500">
+                    <a href="{% url 'business:contact_general' %}" class="hover:text-indigo-600 transition-colors flex items-center gap-2"><i class="fas fa-life-ring"></i> Support</a>
+                    <a href="#" class="hover:text-indigo-600 transition-colors flex items-center gap-2"><i class="fas fa-book"></i> Centre d'Aide</a>
+                    <a href="{% url 'users:edit_profile' %}" class="hover:text-indigo-600 transition-colors flex items-center gap-2"><i class="fas fa-cog"></i> Paramètres</a>
+                </div>
+            </footer>
+
+        </div>
+    </main>
+</div>
+{% endblock %}

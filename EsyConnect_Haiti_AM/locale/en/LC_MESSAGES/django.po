@@ -1,0 +1,449 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-14 11:50-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: .\business\admin.py:75
+msgid "Apparence"
+msgstr ""
+
+#: .\business\admin.py:78
+msgid "Messages"
+msgstr ""
+
+#: .\business\admin.py:81
+msgid "SEO"
+msgstr ""
+
+#: .\business\admin.py:84
+msgid "Contact"
+msgstr ""
+
+#: .\business\admin.py:87
+msgid "Maintenance"
+msgstr ""
+
+#: .\business\admin.py:90
+msgid "Timestamps"
+msgstr ""
+
+#: .\business\models.py:9
+msgid "Nom de la catégorie"
+msgstr ""
+
+#: .\business\models.py:10
+msgid "Nom qui sera affiché pour cette catégorie"
+msgstr ""
+
+#: .\business\models.py:14
+msgid "Icône"
+msgstr ""
+
+#: .\business\models.py:15
+msgid "Classe CSS ou nom de l'icône (ex: fa-store, fa-restaurant)"
+msgstr ""
+
+#: .\business\models.py:19 .\business\models.py:179 .\business\models.py:238
+#: .\business\models.py:283 .\business\models.py:370
+msgid "Date de création"
+msgstr ""
+
+#: .\business\models.py:23 .\business\models.py:183 .\business\models.py:242
+#: .\business\models.py:287 .\business\models.py:374
+msgid "Date de mise à jour"
+msgstr ""
+
+#: .\business\models.py:37
+msgid "Actif"
+msgstr ""
+
+#: .\business\models.py:38
+msgid "Inactif"
+msgstr ""
+
+#: .\business\models.py:39
+msgid "Suspendu"
+msgstr ""
+
+#: .\business\models.py:43
+msgid "Gratuit"
+msgstr ""
+
+#: .\business\models.py:44 .\business\models.py:127
+msgid "Premium"
+msgstr ""
+
+#: .\business\models.py:45
+msgid "Gold"
+msgstr ""
+
+#: .\business\models.py:50
+msgid "Nom de l'entreprise"
+msgstr ""
+
+#: .\business\models.py:51
+msgid "Nom officiel de l'entreprise"
+msgstr ""
+
+#: .\business\models.py:58
+msgid "Slug"
+msgstr ""
+
+#: .\business\models.py:59
+msgid "URL unique générée automatiquement depuis le nom"
+msgstr ""
+
+#: .\business\models.py:64
+msgid "Propriétaire"
+msgstr ""
+
+#: .\business\models.py:72
+msgid "Catégorie"
+msgstr ""
+
+#: .\business\models.py:76
+msgid "Description"
+msgstr ""
+
+#: .\business\models.py:77
+msgid "Description détaillée de l'entreprise et de ses services"
+msgstr ""
+
+#: .\business\models.py:81 .\business\models.py:402
+msgid "Téléphone"
+msgstr ""
+
+#: .\business\models.py:82 .\business\models.py:355
+msgid "Numéro de téléphone principal"
+msgstr ""
+
+#: .\business\models.py:88
+msgid "WhatsApp"
+msgstr ""
+
+#: .\business\models.py:89
+msgid "Numéro WhatsApp (optionnel)"
+msgstr ""
+
+#: .\business\models.py:92 .\business\models.py:403
+msgid "Email"
+msgstr ""
+
+#: .\business\models.py:93
+msgid "Adresse email professionnelle"
+msgstr ""
+
+#: .\business\models.py:96
+msgid "Adresse"
+msgstr ""
+
+#: .\business\models.py:97
+msgid "Adresse physique complète de l'entreprise"
+msgstr ""
+
+#: .\business\models.py:103
+msgid "Logo"
+msgstr ""
+
+#: .\business\models.py:104
+msgid "Logo de l'entreprise"
+msgstr ""
+
+#: .\business\models.py:110
+msgid "Bannière"
+msgstr ""
+
+#: .\business\models.py:111
+msgid "Image de bannière pour le profil"
+msgstr ""
+
+#: .\business\models.py:117
+msgid "Image de couverture"
+msgstr ""
+
+#: .\business\models.py:118
+msgid "Image de couverture pour la page d'accueil"
+msgstr ""
+
+#: .\business\models.py:122
+msgid "Vérifié"
+msgstr ""
+
+#: .\business\models.py:123
+msgid "Indique si l'entreprise a été vérifiée par l'administration"
+msgstr ""
+
+#: .\business\models.py:128
+msgid "Indique si l'entreprise a un compte premium"
+msgstr ""
+
+#: .\business\models.py:134
+msgid "Type de plan"
+msgstr ""
+
+#: .\business\models.py:135
+msgid "Plan d'abonnement de l'entreprise"
+msgstr ""
+
+#: .\business\models.py:141
+msgid "Statut"
+msgstr ""
+
+#: .\business\models.py:146 .\business\models.py:404
+msgid "Site web"
+msgstr ""
+
+#: .\business\models.py:147
+msgid "Site web de l'entreprise (optionnel)"
+msgstr ""
+
+#: .\business\models.py:152
+msgid "Facebook"
+msgstr ""
+
+#: .\business\models.py:153
+msgid "Page Facebook (optionnel)"
+msgstr ""
+
+#: .\business\models.py:158
+msgid "Instagram"
+msgstr ""
+
+#: .\business\models.py:159
+msgid "Profil Instagram (optionnel)"
+msgstr ""
+
+#: .\business\models.py:166
+msgid "Latitude"
+msgstr ""
+
+#: .\business\models.py:167 .\business\models.py:175
+msgid "Coordonnée GPS pour la localisation"
+msgstr ""
+
+#: .\business\models.py:174
+msgid "Longitude"
+msgstr ""
+
+#: .\business\models.py:219 .\business\models.py:269
+msgid "Entreprise"
+msgstr ""
+
+#: .\business\models.py:224 .\business\models.py:274
+msgid "Utilisateur"
+msgstr ""
+
+#: .\business\models.py:230 .\business\models.py:278 .\business\models.py:291
+msgid "Note"
+msgstr ""
+
+#: .\business\models.py:233
+msgid "Commentaire"
+msgstr ""
+
+#: .\business\models.py:234
+msgid "Votre avis détaillé sur cette entreprise"
+msgstr ""
+
+#: .\business\models.py:246 .\business\models.py:247
+msgid "Avis"
+msgstr ""
+
+#: .\business\models.py:279
+msgid "Note de 1 à 5 étoiles"
+msgstr ""
+
+#: .\business\models.py:292
+msgid "Notes"
+msgstr ""
+
+#: .\business\models.py:318
+msgid "Image d'arrière-plan Hero"
+msgstr ""
+
+#: .\business\models.py:319
+msgid "Image d'arrière-plan pour la section hero de la page d'accueil"
+msgstr ""
+
+#: .\business\models.py:322
+msgid "Message de bienvenue"
+msgstr ""
+
+#: .\business\models.py:323
+msgid "Message principal affiché sur la page d'accueil"
+msgstr ""
+
+#: .\business\models.py:329
+msgid "Sous-titre de bienvenue"
+msgstr ""
+
+#: .\business\models.py:330
+msgid "Sous-titre accompagnant le message de bienvenue"
+msgstr ""
+
+#: .\business\models.py:335
+msgid "Titre du site"
+msgstr ""
+
+#: .\business\models.py:336
+msgid "Titre principal du site affiché dans l'en-tête"
+msgstr ""
+
+#: .\business\models.py:341
+msgid "Meta description"
+msgstr ""
+
+#: .\business\models.py:342
+msgid "Description SEO pour les moteurs de recherche"
+msgstr ""
+
+#: .\business\models.py:347
+msgid "Email de contact"
+msgstr ""
+
+#: .\business\models.py:348
+msgid "Email principal pour les contacts"
+msgstr ""
+
+#: .\business\models.py:354
+msgid "Téléphone de contact"
+msgstr ""
+
+#: .\business\models.py:359
+msgid "Mode maintenance"
+msgstr ""
+
+#: .\business\models.py:360
+msgid "Activer pour mettre le site en mode maintenance"
+msgstr ""
+
+#: .\business\models.py:365
+msgid "Message de maintenance"
+msgstr ""
+
+#: .\business\models.py:366
+msgid "Message affiché pendant la maintenance"
+msgstr ""
+
+#: .\business\models.py:406
+msgid "Type de contact"
+msgstr ""
+
+#: .\business\models.py:409
+msgid "Adresse IP"
+msgstr ""
+
+#: .\business\models.py:410
+msgid "Adresse IP du visiteur"
+msgstr ""
+
+#: .\business\models.py:414
+msgid "User Agent"
+msgstr ""
+
+#: .\business\models.py:415
+msgid "Navigateur du visiteur"
+msgstr ""
+
+#: .\business\models.py:419
+msgid "Date du clic"
+msgstr ""
+
+#: .\business\models.py:423
+msgid "Suivi de lead"
+msgstr ""
+
+#: .\business\models.py:424
+msgid "Suivis de leads"
+msgstr ""
+
+#: .\templates\base.html:153
+msgid "Accueil"
+msgstr ""
+
+#: .\templates\base.html:158
+msgid "Catégories"
+msgstr ""
+
+#: .\templates\base.html:163 .\templates\business\home_premium.html:290
+msgid "Entreprises"
+msgstr ""
+
+#: .\templates\base.html:168
+msgid "Témoignages"
+msgstr ""
+
+#: .\templates\business\home.html:5 .\templates\business\home_premium.html:5
+#: .\templates\home.html:5 .\templates\home_backup.html:5
+msgid "Annuaire Professionnel du Cap-Haïtien"
+msgstr ""
+
+#: .\templates\business\home_premium.html:279
+msgid "Annuaire Professionnel Premium Cap-Haïtien"
+msgstr ""
+
+#: .\templates\business\home_premium.html:284
+msgid "Découvrez les Meilleures"
+msgstr ""
+
+#: .\templates\business\home_premium.html:285
+msgid "Entreprises de Cap-Haïtien"
+msgstr ""
+
+#: .\templates\business\home_premium.html:290
+msgid "Connectez-vous avec"
+msgstr ""
+
+#: .\templates\business\home_premium.html:290
+msgid "Vérifiées"
+msgstr ""
+
+#: .\templates\business\home_premium.html:293
+msgid "Boostez votre activité économique locale | 24/7 Disponibilité"
+msgstr ""
+
+#: .\templates\business\home_premium.html:357
+msgid "Explorer par Catégories Premium"
+msgstr ""
+
+#: .\templates\business\home_premium.html:359
+msgid "Catégories Professionnelles"
+msgstr ""
+
+#: .\templates\business\home_premium.html:361
+msgid "Accédez aux meilleures entreprises classées par secteur d'activité"
+msgstr ""
+
+#: .\templates\business\home_ultra_premium.html:5
+msgid "Annuaire Professionnel Premium du Cap-Haïtien"
+msgstr ""
+
+#: .\users\views.py:37
+msgid "Cet email est déjà utilisé. Veuillez en utiliser un autre."
+msgstr ""
+
+#: .\users\views.py:62
+msgid "Votre compte a été créé avec succès! Bienvenue sur EsyConnect!"
+msgstr ""
+
+#: .\users\views.py:69
+msgid "Une erreur inattendue est survenue. Veuillez réessayer."
+msgstr ""
+
+#: .\users\views.py:89
+msgid "Kont ou anrejistre! Byenvini sou EsyConnect!"
+msgstr ""

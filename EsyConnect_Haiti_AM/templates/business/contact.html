@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Contact" %} - EsyConnect Haïti{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="relative py-24 md:py-32 bg-esy-dark overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0 bg-gradient-to-br from-esy-blue-600/20 to-indigo-600/20"></div>
+    </div>
+    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+            {% trans "Contactez" %} <span class="text-esy-blue-500">{% trans "EsyConnect" %}</span>
+        </h1>
+        <p class="text-xl text-white/70 font-medium max-w-2xl mx-auto">
+            {% trans "Nous sommes à votre écoute" %}
+        </p>
+    </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section class="py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Contact Info Cards -->
+            <div class="space-y-6">
+                <!-- Phone Card -->
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-esy-blue-50 to-indigo-100 text-esy-blue-600 rounded-2xl flex items-center justify-center mb-6 text-2xl group-hover:from-esy-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all duration-300 shadow-lg">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h4 class="text-lg font-black text-esy-dark mb-2">{% trans "Téléphone" %}</h4>
+                    <p class="text-gray-500 font-medium text-lg">+509 1234 5678</p>
+                </div>
+
+                <!-- Email Card -->
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-esy-blue-50 to-indigo-100 text-esy-blue-600 rounded-2xl flex items-center justify-center mb-6 text-2xl group-hover:from-esy-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all duration-300 shadow-lg">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h4 class="text-lg font-black text-esy-dark mb-2">{% trans "Email" %}</h4>
+                    <p class="text-gray-500 font-medium text-lg">contact@esyconnect.ht</p>
+                </div>
+
+                <!-- Location Card -->
+                <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-esy-blue-50 to-indigo-100 text-esy-blue-600 rounded-2xl flex items-center justify-center mb-6 text-2xl group-hover:from-esy-blue-600 group-hover:to-indigo-600 group-hover:text-white transition-all duration-300 shadow-lg">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h4 class="text-lg font-black text-esy-dark mb-2">{% trans "Bureau" %}</h4>
+                    <p class="text-gray-500 font-medium text-lg">Cap-Haïtien, Haïti</p>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="lg:col-span-2 bg-white p-12 rounded-[3rem] border border-gray-100 shadow-2xl">
+                <h2 class="text-3xl font-black text-esy-dark mb-8">{% trans "Envoyez-nous un message" %}</h2>
+                <form action="{% url 'business:contact_general' %}" method="POST" class="space-y-8">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label class="block text-esy-dark font-black text-xs uppercase tracking-widest mb-4">{% trans "Nom Complet" %}</label>
+                            <input type="text" name="name" required 
+                                   class="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-esy-blue-600 focus:border-transparent font-medium transition-all duration-300 hover:bg-gray-100">
+                        </div>
+                        <div>
+                            <label class="block text-esy-dark font-black text-xs uppercase tracking-widest mb-4">{% trans "Adresse Email" %}</label>
+                            <input type="email" name="email" required 
+                                   class="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-esy-blue-600 focus:border-transparent font-medium transition-all duration-300 hover:bg-gray-100">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-esy-dark font-black text-xs uppercase tracking-widest mb-4">{% trans "Sujet" %}</label>
+                        <input type="text" name="subject" required 
+                               class="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-esy-blue-600 focus:border-transparent font-medium transition-all duration-300 hover:bg-gray-100">
+                    </div>
+                    <div>
+                        <label class="block text-esy-dark font-black text-xs uppercase tracking-widest mb-4">{% trans "Message" %}</label>
+                        <textarea name="message" rows="6" required 
+                                  class="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-esy-blue-600 focus:border-transparent font-medium transition-all duration-300 hover:bg-gray-100 resize-none"></textarea>
+                    </div>
+                    <button type="submit" 
+                            class="w-full bg-gradient-to-r from-esy-blue-600 to-indigo-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-esy-blue-600/20 hover:from-indigo-600 hover:to-esy-blue-700 hover:shadow-2xl hover:shadow-indigo-600/30 hover:scale-[1.02] transition-all duration-300">
+                        <i class="fas fa-paper-plane mr-3"></i> {% trans "Envoyer le Message" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

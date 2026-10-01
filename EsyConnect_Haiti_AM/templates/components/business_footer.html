@@ -1,0 +1,126 @@
+{% load i18n %}
+<footer class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-5">
+        <div class="absolute top-0 left-0 w-96 h-96 bg-gray-600 rounded-full filter blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-gray-700 rounded-full filter blur-3xl translate-x-1/2 translate-y-1/2"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <!-- Brand Info -->
+            <div class="lg:col-span-1">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="w-14 h-14 bg-gradient-to-br from-gray-700 to-gray-800 rounded-2xl flex items-center justify-center shadow-xl shadow-gray-700/30">
+                        <i class="fas fa-store text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-black tracking-tighter">ESY<span class="text-gray-400">CONNECT</span></h3>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Haïti</p>
+                    </div>
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                    {% trans "La plateforme numéro 1 pour trouver et promouvoir les entreprises en Haïti. Connectez-vous avec des milliers de businesses locaux." %}
+                </p>
+                <!-- Social Links -->
+                <div class="flex space-x-3">
+                    <a href="https://facebook.com/esyconnecthaiti" target="_blank" rel="noopener" aria-label="Facebook" class="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center hover:bg-gray-600 transition-all duration-200 transform hover:scale-110">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://instagram.com/esyconnecthaiti" target="_blank" rel="noopener" aria-label="Instagram" class="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center hover:bg-gray-600 transition-all duration-200 transform hover:scale-110">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://twitter.com/esyconnecthaiti" target="_blank" rel="noopener" aria-label="Twitter" class="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center hover:bg-gray-600 transition-all duration-200 transform hover:scale-110">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://wa.me/50912345678" target="_blank" rel="noopener" aria-label="WhatsApp" class="w-10 h-10 bg-gray-700/50 rounded-xl flex items-center justify-center hover:bg-gray-600 transition-all duration-200 transform hover:scale-110">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h4 class="text-lg font-black mb-6 flex items-center gap-2">
+                    <i class="fas fa-link text-gray-400"></i>
+                    {% trans "Liens Rapides" %}
+                </h4>
+                <ul class="space-y-3">
+                    <li><a href="{% url 'business:home' %}" class="text-gray-400 hover:text-white transition-all duration-200 flex items-center gap-2 text-sm"><i class="fas fa-chevron-right text-xs text-gray-400"></i> {% trans "Accueil" %}</a></li>
+                    <li><a href="{% url 'business:categories' %}" class="text-gray-400 hover:text-white transition-all duration-200 flex items-center gap-2 text-sm"><i class="fas fa-chevron-right text-xs text-gray-400"></i> {% trans "Catégories" %}</a></li>
+                    <li><a href="{% url 'business:about' %}" class="text-gray-400 hover:text-white transition-all duration-200 flex items-center gap-2 text-sm"><i class="fas fa-chevron-right text-xs text-gray-400"></i> {% trans "À Propos" %}</a></li>
+                    <li><a href="{% url 'business:contact_general' %}" class="text-gray-400 hover:text-white transition-all duration-200 flex items-center gap-2 text-sm"><i class="fas fa-chevron-right text-xs text-gray-400"></i> {% trans "Contact" %}</a></li>
+                    <li><a href="{% url 'users:register' %}" class="text-gray-400 hover:text-white transition-all duration-200 flex items-center gap-2 text-sm"><i class="fas fa-chevron-right text-xs text-gray-400"></i> {% trans "S'inscrire" %}</a></li>
+                </ul>
+            </div>
+
+            <!-- Categories -->
+            <div>
+                <h4 class="text-lg font-black mb-6 flex items-center gap-2">
+                    <i class="fas fa-th-large text-gray-400"></i>
+                    {% trans "Catégories Populaires" %}
+                </h4>
+                <ul class="space-y-3">
+                    <li><a href="{% url 'business:categories' %}" class="text-gray-400 hover:text-white transition-all duration-200 flex items-center gap-2 text-sm"><i class="fas fa-utensils text-xs text-gray-400"></i> {% trans "Restaurants" %}</a></li>
+                    <li><a href="{% url 'business:categories' %}" class="text-gray-400 hover:text-white transition-all duration-200 flex items-center gap-2 text-sm"><i class="fas fa-hotel text-xs text-gray-400"></i> {% trans "Hôtels" %}</a></li>
+                    <li><a href="{% url 'business:categories' %}" class="text-gray-400 hover:text-white transition-all duration-200 flex items-center gap-2 text-sm"><i class="fas fa-shopping-bag text-xs text-gray-400"></i> {% trans "Commerces" %}</a></li>
+                    <li><a href="{% url 'business:categories' %}" class="text-gray-400 hover:text-white transition-all duration-200 flex items-center gap-2 text-sm"><i class="fas fa-heartbeat text-xs text-gray-400"></i> {% trans "Santé" %}</a></li>
+                    <li><a href="{% url 'business:categories' %}" class="text-gray-400 hover:text-white transition-all duration-200 flex items-center gap-2 text-sm"><i class="fas fa-graduation-cap text-xs text-gray-400"></i> {% trans "Éducation" %}</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div>
+                <h4 class="text-lg font-black mb-6 flex items-center gap-2">
+                    <i class="fas fa-envelope text-gray-400"></i>
+                    {% trans "Contact" %}
+                </h4>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-gray-700/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-map-marker-alt text-gray-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-white">{% trans "Adresse" %}</p>
+                            <p class="text-xs text-gray-400">Cap-Haïtien, Haïti</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-gray-700/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-phone text-gray-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-white">{% trans "Téléphone" %}</p>
+                            <p class="text-xs text-gray-400">+509 1234 5678</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-gray-700/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-white">{% trans "Email" %}</p>
+                            <p class="text-xs text-gray-400">contact@esyconnect.ht</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="border-t border-gray-700/50 mt-12 pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-400 text-sm text-center md:text-left">
+                    &copy; {% now "Y" %} EsyConnect Haïti. {% trans "Tous droits réservés." %}
+                </p>
+                <div class="flex items-center gap-4 text-sm">
+                    <a href="{% url 'business:about' %}" class="text-gray-400 hover:text-white transition-all duration-200">{% trans "Politique de Confidentialité" %}</a>
+                    <span class="text-gray-600">|</span>
+                    <a href="{% url 'business:about' %}" class="text-gray-400 hover:text-white transition-all duration-200">{% trans "Conditions d'Utilisation" %}</a>
+                    <span class="text-gray-600">|</span>
+                    <a href="{% url 'business:about' %}" class="text-gray-400 hover:text-white transition-all duration-200">{% trans "Mentions Légales" %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

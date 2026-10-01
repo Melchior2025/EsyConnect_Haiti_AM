@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Toutes les Catégories" %} - EsyConnect Haïti{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<div class="bg-esy-dark py-20">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-6xl font-black text-white mb-6">{% trans "Explorer par" %} <span class="text-esy-blue-500">{% trans "Catégories" %}</span></h1>
+        <p class="text-xl text-white/60 font-medium max-w-2xl mx-auto">
+            {% trans "Trouvez exactement le service qu'il vous faut parmi nos secteurs d'activité vérifiés." %}
+        </p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-20">
+    <!-- SEARCH & FILTER -->
+    <div class="mb-16 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div class="text-center md:text-left">
+            <h2 class="text-2xl font-black text-esy-dark mb-2">{{ categories|length }} {% trans "Secteurs d'activité" %}</h2>
+            <p class="text-gray-400 font-bold text-sm uppercase tracking-widest">{% trans "Classés par ordre alphabétique" %}</p>
+        </div>
+        
+        <div class="w-full md:w-96 relative">
+            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="categorySearch" placeholder="{% trans 'Chercher une catégorie...' %}" 
+                   class="w-full pl-14 pr-6 py-4 rounded-2xl bg-white border border-gray-100 shadow-sm focus:ring-2 focus:ring-esy-blue-600 focus:border-transparent transition-all font-medium">
+        </div>
+    </div>
+
+    <!-- CATEGORIES GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        {% for category in categories %}
+        <a href="{% url 'business:category' category.id %}" class="group bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-center">
+            <div class="w-20 h-20 bg-esy-blue-50 text-esy-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-8 text-3xl group-hover:bg-esy-blue-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                <i class="{{ category.icon|default:'fas fa-store' }}"></i>
+            </div>
+            <h3 class="text-xl font-black text-esy-dark mb-3">{{ category.name }}</h3>
+            <p class="text-gray-400 font-bold text-xs uppercase tracking-widest mb-6">
+                {{ category.business_count|default:0 }} {% trans "Entreprises" %}
+            </p>
+            <div class="inline-flex items-center text-esy-blue-600 font-black text-sm group-hover:gap-2 transition-all">
+                {% trans "Voir les biznis" %} <i class="fas fa-arrow-right ml-2 text-xs"></i>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- CTA -->
+<div class="bg-gray-50 py-24 border-t border-gray-100">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-black text-esy-dark mb-6">{% trans "Votre domaine n'est pas encore listé ?" %}</h2>
+        <p class="text-gray-500 font-medium text-lg mb-12">
+            {% trans "Soyez le premier à inscrire votre entreprise dans une nouvelle catégorie et dominez votre marché." %}
+        </p>
+        <a href="{% url 'business:register' %}" class="bg-esy-blue-600 text-white px-12 py-5 rounded-[2rem] font-black text-xl shadow-xl hover:scale-105 transition transform">
+            <i class="fas fa-plus-circle mr-3"></i> {% trans "Ajouter mon Biznis" %}
+        </a>
+    </div>
+</div>
+{% endblock %}

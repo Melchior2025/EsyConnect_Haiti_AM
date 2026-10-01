@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Inscrire mon Biznis" %} - EsyConnect Haïti{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    .form-section {
+        background: white;
+        border-radius: 2.5rem;
+        border: 1px solid #f1f5f9;
+        padding: 3rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .form-section:hover {
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    
+    .input-label {
+        display: block;
+        font-weight: 800;
+        font-size: 0.875rem;
+        color: #0f172a;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .custom-input {
+        width: 100%;
+        padding: 1.25rem 1.5rem;
+        border-radius: 1.5rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .custom-input:focus {
+        border-color: #3b82f6;
+        background: white;
+        outline: none;
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
+    }
+    
+    .upload-zone {
+        border: 3px dashed #e2e8f0;
+        border-radius: 2rem;
+        padding: 3rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+    
+    .upload-zone:hover {
+        border-color: #3b82f6;
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    }
+    
+    .step-indicator {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .step-number {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 1.5rem;
+        background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+        color: white;
+        font-weight: 900;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="relative bg-esy-dark py-24 overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0 bg-gradient-to-br from-esy-blue-600/20 to-indigo-600/20"></div>
+    </div>
+    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
+        <div class="inline-flex items-center px-4 py-2 rounded-full bg-esy-blue-600/20 border border-esy-blue-400/30 text-esy-blue-100 text-sm font-bold mb-8">
+            <i class="fas fa-rocket mr-2"></i> {% trans "Inscription Premium" %}
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+            {% if is_edit %}{% trans "Modifier votre" %}{% else %}{% trans "Ajouter votre" %}{% endif %} 
+            <span class="text-esy-blue-500">{% trans "Biznis" %}</span>
+        </h1>
+        <p class="text-xl text-white/70 font-medium max-w-2xl mx-auto">
+            {% if is_edit %}{% trans "Mettez à jour vos informations pour rester compétitif." %}{% else %}{% trans "Rejoignez la plus grande communauté d'affaires du Cap-Haïtien." %}{% endif %}
+        </p>
+    </div>
+</section>
+
+<!-- FORM SECTION -->
+<section class="py-16 bg-gray-50">
+    <div class="max-w-5xl mx-auto px-4">
+        <form method="POST" enctype="multipart/form-data" action="{% if is_edit %}{% url 'business:edit' business.id %}{% else %}{% url 'business:register_business' %}{% endif %}" class="space-y-12">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="bg-red-50 border-2 border-red-100 p-8 rounded-[2.5rem] text-red-600 mb-8">
+                <h4 class="font-black mb-4 uppercase text-xs tracking-widest text-lg">{% trans "Oups ! Erreur dans le formulaire" %}</h4>
+                <ul class="text-sm font-medium list-disc pl-6 space-y-2">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}<li>{{ field }}: {{ error }}</li>{% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- STEP 1: INFOS GÉNÉRALES -->
+            <div class="form-section">
+                <div class="step-indicator">
+                    <div class="step-number">1</div>
+                    <h3 class="text-2xl font-black text-esy-dark">{% trans "Informations Générales" %}</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="md:col-span-2">
+                        <label class="input-label">{% trans "Nom de l'entreprise" %}</label>
+                        {{ form.name }}
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">{% trans "Catégorie" %}</label>
+                        <select name="category" class="custom-input cursor-pointer appearance-none">
+                            {% for value, label in form.category.field.choices %}
+                                <option value="{{ value }}" {% if form.category.value == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                            <option value="autre">{% trans "Autre / Suggérer une catégorie..." %}</option>
+                        </select>
+                    </div>
+                    
+                    <div id="customCategoryWrapper" class="hidden">
+                        <label class="input-label">{% trans "Nom de la nouvelle catégorie" %}</label>
+                        <input type="text" name="custom_category" class="custom-input" placeholder="{% trans 'Ex: Services techniques' %}">
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">{% trans "Ville" %}</label>
+                        <input type="text" name="city" value="{{ business.city|default:'' }}" class="custom-input" placeholder="Ex: Cap-Haïtien">
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">{% trans "Zone" %}</label>
+                        <select name="zone" class="custom-input cursor-pointer appearance-none">
+                            {% for value, label in form.zone.field.choices %}
+                                <option value="{{ value }}" {% if form.zone.value == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="input-label">{% trans "Description complète" %}</label>
+                        {{ form.description }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: CONTACT & LOCALISATION -->
+            <div class="form-section">
+                <div class="step-indicator">
+                    <div class="step-number">2</div>
+                    <h3 class="text-2xl font-black text-esy-dark">{% trans "Contact & Localisation" %}</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="input-label">{% trans "Téléphone" %}</label>
+                        {{ form.phone }}
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">{% trans "WhatsApp" %}</label>
+                        {{ form.whatsapp }}
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="input-label">{% trans "Adresse Complète" %}</label>
+                        {{ form.address }}
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">{% trans "Email" %}</label>
+                        {{ form.email }}
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">{% trans "Site Web" %}</label>
+                        {{ form.website }}
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label class="input-label">{% trans "Horaires d'ouverture" %}</label>
+                        {{ form.horaires }}
+                    </div>
+                    
+                    <div class="md:col-span-2 p-8 bg-gradient-to-br from-gray-50 to-white rounded-[2rem] border-2 border-gray-100">
+                        {% comment %} New VIP geolocation button {% endcomment %}
+<div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+    <p class="text-esy-dark font-black text-sm uppercase tracking-widest">{% trans "Coordonnées GPS" %}</p>
+    <button type="button" id="btn-geoloc" class="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg flex items-center gap-2 transition duration-200 shadow-md">
+        📍 Me géolocaliser automatiquement
+    </button>
+</div>
+
+
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <input type="text" name="latitude" id="id_latitude" class="custom-input" placeholder="Latitude">
+                            <input type="text" name="longitude" id="id_longitude" class="custom-input" placeholder="Longitude">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: RÉSEAUX SOCIAUX -->
+            <div class="form-section">
+                <div class="step-indicator">
+                    <div class="step-number">3</div>
+                    <h3 class="text-2xl font-black text-esy-dark">{% trans "Réseaux Sociaux" %}</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="input-label">{% trans "Facebook" %}</label>
+                        {{ form.facebook }}
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">{% trans "Instagram" %}</label>
+                        {{ form.instagram }}
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">{% trans "Twitter / X" %}</label>
+                        {{ form.twitter }}
+                    </div>
+                    
+                    <div>
+                        <label class="input-label">{% trans "LinkedIn" %}</label>
+                        {{ form.linkedin }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: IMAGES & BRANDING -->
+            <div class="form-section">
+                <div class="step-indicator">
+                    <div class="step-number">4</div>
+                    <h3 class="text-2xl font-black text-esy-dark">{% trans "Images & Branding" %}</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="upload-zone group cursor-pointer">
+                        <label class="cursor-pointer block">
+                            <i class="fas fa-image text-gray-300 text-5xl mb-4 group-hover:text-esy-blue-600 transition"></i>
+                            <p class="text-esy-dark font-black text-lg mb-2">{% trans "Logo de l'entreprise" %}</p>
+                            <p class="text-xs text-gray-400 font-bold mb-6">JPG, PNG (Max 2MB)</p>
+                            <input type="file" name="logo" class="hidden">
+                            <span class="bg-esy-blue-50 text-esy-blue-600 px-8 py-3 rounded-2xl text-sm font-black group-hover:bg-esy-blue-600 group-hover:text-white transition">{% trans "Choisir un fichier" %}</span>
+                        </label>
+                    </div>
+                    
+                    <div class="upload-zone group cursor-pointer">
+                        <label class="cursor-pointer block">
+                            <i class="fas fa-panorama text-gray-300 text-5xl mb-4 group-hover:text-esy-blue-600 transition"></i>
+                            <p class="text-esy-dark font-black text-lg mb-2">{% trans "Image de Couverture" %}</p>
+                            <p class="text-xs text-gray-400 font-bold mb-6">Optimisée pour le Hero (16:9)</p>
+                            <input type="file" name="banner" class="hidden">
+                            <span class="bg-esy-blue-50 text-esy-blue-600 px-8 py-3 rounded-2xl text-sm font-black group-hover:bg-esy-blue-600 group-hover:text-white transition">{% trans "Choisir un fichier" %}</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mt-6 p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                    <p class="text-esy-blue-700 font-bold text-sm">
+                        📸 {% trans "La gestion de la galerie photo détaillée (images supplémentaires avec descriptions) sera disponible dans votre tableau de bord après la création du business." %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <div class="text-center pt-8">
+                <button type="submit" class="bg-gradient-to-r from-esy-blue-600 to-indigo-600 text-white px-16 py-6 rounded-[2.5rem] font-black text-xl shadow-2xl shadow-esy-blue-600/30 hover:from-indigo-600 hover:to-esy-blue-700 hover:shadow-3xl hover:shadow-indigo-600/30 hover:scale-[1.02] transition transform">
+                    <i class="fas {% if is_edit %}fa-save{% else %}fa-rocket{% endif %} mr-3"></i> 
+                    {% if is_edit %}{% trans "Enregistrer les modifications" %}{% else %}{% trans "Lancer mon Biznis kounye a !" %}{% endif %}
+                </button>
+                <p class="text-center mt-6 text-gray-400 font-bold text-sm">
+                    <i class="fas fa-shield-halved mr-2"></i> {% trans "Vos données sont sécurisées et vérifiées." %}
+                </p>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Toggle custom category input
+    const categorySelect = document.querySelector('select[name="category"]');
+    const customWrapper = document.getElementById('customCategoryWrapper');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            if (this.value === 'autre') {
+                customWrapper.classList.remove('hidden');
+            } else {
+                customWrapper.classList.add('hidden');
+            }
+        });
+        if (categorySelect.value === 'autre') {
+            customWrapper.classList.remove('hidden');
+        }
+    }
+    
+    // Script de géolocalisation automatique
+    document.getElementById('btn-geoloc').addEventListener('click', function() {
+        const btn = this;
+        const latInput = document.getElementById('id_latitude');
+        const lngInput = document.getElementById('id_longitude');
+        
+        if (navigator.geolocation) {
+            btn.innerHTML = "⏳ Recherche de votre position...";
+            btn.disabled = true;
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // On injecte les valeurs proprement
+                    latInput.value = position.coords.latitude.toFixed(6);
+                    lngInput.value = position.coords.longitude.toFixed(6);
+                    
+                    btn.innerHTML = "✅ Position enregistrée !";
+                    btn.className = "mt-2 bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg flex items-center gap-2 shadow-md";
+                    btn.disabled = false;
+                },
+                function(error) {
+                    btn.disabled = false;
+                    btn.innerHTML = "📍 Réessayer";
+                    
+                    // Message d'aide si on est sur localhost sans HTTPS
+                    if (error.code === error.PERMISSION_DENIED) {
+                        alert("Avis : Veuillez autoriser l'accès à la localisation dans votre navigateur ou tapez les coordonnées directement dans les cases.");
+                    } else {
+                        alert("Impossible de récupérer la position automatiquement. Vous pouvez remplir les champs manuellement.");
+                    }
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        } else {
+            alert("Votre navigateur ne supporte pas la géolocalisation.");
+        }
+    });
+</script>
+{% endblock %}

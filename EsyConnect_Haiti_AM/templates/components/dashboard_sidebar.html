@@ -1,0 +1,76 @@
+{% load i18n %}
+<aside id="mobile-sidebar"
+    class="w-64 bg-white text-gray-900 flex flex-col h-full flex-shrink-0 absolute md:relative z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 overflow-y-auto custom-scrollbar shadow-2xl md:shadow-none border-r border-gray-200">
+    <div class="p-6 border-b border-gray-100">
+        <div class="flex justify-between items-center md:block">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-gray-800 to-gray-900 text-white flex items-center justify-center font-black text-lg rounded-xl shadow-lg shadow-gray-800/30">
+                    E
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold tracking-tight text-gray-900">EsyConnect</h2>
+                    <span class="text-[10px] uppercase tracking-widest text-gray-500 font-semibold">Pro Dashboard</span>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()" class="md:hidden text-gray-400 hover:text-gray-900 transition-colors">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <nav class="space-y-1.5 p-4 flex-1">
+        <p class="text-[10px] uppercase tracking-widest text-gray-500 font-bold px-3 mb-3">Menu Principal</p>
+        
+        <a href="{% url 'users:dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 {% if request.resolver_match.url_name == 'dashboard' %}bg-gray-100 text-gray-900 font-semibold border border-gray-200 shadow-inner{% else %}text-gray-500 hover:text-gray-900 hover:bg-gray-50 font-medium{% endif %} rounded-xl transition-all text-sm">
+            <i class="fas fa-chart-pie w-5 text-center"></i> Vue d'ensemble
+        </a>
+        
+        <a href="{% url 'users:business_dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 {% if request.resolver_match.url_name == 'business_dashboard' %}bg-gray-100 text-gray-900 font-semibold border border-gray-200 shadow-inner{% else %}text-gray-500 hover:text-gray-900 hover:bg-gray-50 font-medium{% endif %} rounded-xl transition-all text-sm">
+            <i class="fas fa-building w-5 text-center"></i> Mes Entreprises
+        </a>
+        <a href="{% url 'business:register' %}" class="flex items-center gap-3 px-3 py-2.5 {% if request.resolver_match.url_name == 'register_business' or request.resolver_match.url_name == 'register' %}bg-gray-100 text-gray-900 font-semibold border border-gray-200 shadow-inner{% else %}text-gray-500 hover:text-gray-900 hover:bg-gray-50 font-medium{% endif %} rounded-xl transition-all text-sm">
+            <i class="fas fa-plus w-5 text-center"></i> Ajouter un Biznis
+        </a>
+        <a href="{% url 'business:favorites' %}" class="flex items-center gap-3 px-3 py-2.5 {% if request.resolver_match.url_name == 'favorites' %}bg-gray-100 text-gray-900 font-semibold border border-gray-200 shadow-inner{% else %}text-gray-500 hover:text-gray-900 hover:bg-gray-50 font-medium{% endif %} rounded-xl transition-all text-sm">
+            <i class="fas fa-bookmark w-5 text-center"></i> Mes Favoris
+        </a>
+
+        <p class="text-[10px] uppercase tracking-widest text-gray-500 font-bold px-3 mb-3 mt-6">Outils & Croissance</p>
+        <a href="{% url 'users:reviews_dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 {% if request.resolver_match.url_name == 'reviews_dashboard' %}bg-gray-100 text-gray-900 font-semibold border border-gray-200 shadow-inner{% else %}text-gray-500 hover:text-gray-900 hover:bg-gray-50 font-medium{% endif %} rounded-xl transition-all text-sm">
+            <i class="fas fa-star w-5 text-center"></i> Mes Avis
+        </a>
+        <a href="{% url 'users:subscription_dashboard' %}" class="flex items-center gap-3 px-3 py-2.5 {% if request.resolver_match.url_name == 'subscription_dashboard' %}bg-gray-100 text-gray-900 font-semibold border border-gray-200 shadow-inner{% else %}text-gray-500 hover:text-gray-900 hover:bg-gray-50 font-medium{% endif %} rounded-xl transition-all text-sm">
+            <i class="fas fa-crown w-5 text-center"></i> Mon Abonnement
+        </a>
+        
+        <p class="text-[10px] uppercase tracking-widest text-gray-500 font-bold px-3 mb-3 mt-6">Paramètres</p>
+        <a href="{% url 'users:edit_profile' %}" class="flex items-center gap-3 px-3 py-2.5 {% if request.resolver_match.url_name == 'edit_profile' %}bg-gray-100 text-gray-900 font-semibold border border-gray-200 shadow-inner{% else %}text-gray-500 hover:text-gray-900 hover:bg-gray-50 font-medium{% endif %} rounded-xl transition-all text-sm">
+            <i class="fas fa-cog w-5 text-center"></i> Paramètres
+        </a>
+    </nav>
+
+    <!-- User Profile Area at Bottom -->
+    <div class="mt-auto p-4 bg-gray-50 border-t border-gray-100">
+        <div class="flex items-center gap-3 mb-4 px-2">
+            <div class="w-10 h-10 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center font-bold text-sm text-white shadow-inner">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+            <div class="overflow-hidden flex-1">
+                <p class="text-sm font-semibold truncate text-gray-900">{{ user.get_full_name|default:user.username|default:"Utilisateur" }}</p>
+                <p class="text-[11px] text-gray-500 truncate">{{ user_profile.get_role_display|default:"Propriétaire" }}</p>
+            </div>
+        </div>
+        <a href="{% url 'users:logout' %}" class="flex items-center justify-center gap-2 w-full py-2 bg-white hover:bg-gray-100 text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-gray-300 rounded-xl transition-all font-medium text-xs">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </a>
+    </div>
+</aside>
+
+<script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('mobile-sidebar');
+        if (sidebar) {
+            sidebar.classList.toggle('-translate-x-full');
+        }
+    }
+</script>

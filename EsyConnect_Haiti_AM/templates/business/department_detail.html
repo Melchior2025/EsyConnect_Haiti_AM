@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ department.name }} - {% trans "Département" %} - EsyConnect Haïti{% endblock %}
+
+{% block content %}
+<section class="py-20 bg-gradient-to-br from-esy-blue-900 to-esy-dark text-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center">
+            <h1 class="text-5xl font-black mb-4">{{ department.name }}</h1>
+            <p class="text-xl text-white/80 mb-8">{% trans "Découvrez toutes les entreprises de ce département" %}</p>
+            <div class="flex justify-center gap-8 text-lg">
+                <div class="bg-white/10 px-6 py-3 rounded-2xl">
+                    <span class="font-black text-2xl">{{ business_count }}</span>
+                    <span class="text-white/70 ml-2">{% trans "Entreprises" %}</span>
+                </div>
+                <div class="bg-white/10 px-6 py-3 rounded-2xl">
+                    <span class="font-black text-2xl">{{ villes.count }}</span>
+                    <span class="text-white/70 ml-2">{% trans "Villes" %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Villes du département -->
+{% if villes %}
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-black text-esy-dark mb-8 text-center">{% trans "Villes du département" %}</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {% for ville in villes %}
+            <a href="{% url 'business:ville_detail' ville.slug %}" 
+               class="bg-white p-6 rounded-2xl text-center shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-100">
+                <i class="fas fa-city text-esy-blue-600 text-2xl mb-3"></i>
+                <h3 class="font-bold text-esy-dark">{{ ville.nom }}</h3>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Entreprises du département -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-black text-esy-dark mb-8 text-center">{% trans "Entreprises dans" %} {{ department.name }}</h2>
+        
+        {% if businesses %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for business in businesses %}
+            <div class="business-card bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300">
+                <div class="relative h-64 overflow-hidden bg-gray-50 flex items-center justify-center p-4">
+                    {% if business.logo %}
+                    <img src="{{ business.logo.url }}"
+                        class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                        alt="{{ business.name }}">
+                    {% else %}
+                    <div class="w-full h-full bg-esy-blue-900 flex items-center justify-center text-white/20 text-5xl">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="absolute top-4 left-4 flex gap-2">
+                        {% if business.is_pro %}
+                        <span class="premium-badge px-4 py-1.5 rounded-full text-[10px] uppercase shadow-lg">PREMIUM</span>
+                        {% endif %}
+                        {% if business.is_verified %}
+                        <span class="verified-badge px-4 py-1.5 rounded-full text-[10px] uppercase shadow-lg">VÉRIFIÉ</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <p class="text-esy-blue-600 font-bold text-xs uppercase tracking-widest mb-1">
+                                {{ business.category.name }}</p>
+                            <h3 class="text-2xl font-black text-esy-dark">{{ business.name }}</h3>
+                        </div>
+                        <div class="bg-gray-100 p-3 rounded-2xl">
+                            <i class="fas fa-heart text-gray-300"></i>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-500 font-medium mb-8 line-clamp-2">{{ business.description|default:"Aucune description fournie pour le moment."|truncatewords:20 }}</p>
+                    
+                    <div class="flex items-center text-gray-400 text-sm font-bold mb-8">
+                        <i class="fas fa-map-marker-alt mr-2 text-esy-blue-600"></i> {{ business.address }}
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <a href="{% url 'business:detail' business.id %}"
+                            class="flex-1 bg-esy-dark text-white py-4 rounded-2xl font-black text-center hover:bg-esy-blue-900 transition shadow-lg">
+                            {% trans "Voir Profil" %}
+                        </a>
+                        <a href="tel:{{ business.phone }}"
+                            class="w-14 h-14 bg-esy-blue-50 text-esy-blue-600 rounded-2xl flex items-center justify-center hover:bg-esy-blue-600 hover:text-white transition shadow-sm">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16">
+            <i class="fas fa-store text-gray-300 text-6xl mb-4"></i>
+            <p class="text-gray-500 text-xl">{% trans "Aucune entreprise trouvée dans ce département" %}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

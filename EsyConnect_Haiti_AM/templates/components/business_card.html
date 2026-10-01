@@ -1,0 +1,72 @@
+{% load i18n %}
+<div class="esy-card group overflow-hidden business-card" 
+     data-rating="{{ business.get_average_rating|default:'0.0' }}" 
+     data-premium="{{ business.is_pro|yesno:'1,0' }}" 
+     data-recent="{{ business.created_at|date:'U' }}"
+     data-aos="fade-up">
+    <!-- Image Container -->
+    <div class="relative h-64 overflow-hidden bg-gray-50 flex items-center justify-center p-4">
+        {% if business.cover_image %}
+            <img src="{{ business.cover_image.url }}" class="max-w-full max-h-full object-contain group-hover:scale-110 transition duration-500" alt="{{ business.name }}">
+        {% else %}
+            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                <i class="fas fa-store text-gray-400 text-4xl"></i>
+            </div>
+        {% endif %}
+        
+        <!-- Category Badge -->
+        <div class="absolute top-4 left-4">
+            <span class="bg-white/90 backdrop-blur-md text-esy-dark px-4 py-1.5 rounded-full text-xs font-black uppercase shadow-sm">
+                {{ business.category.name|default:"General" }}
+            </span>
+        </div>
+
+        {% if business.is_pro %}
+        <div class="absolute top-4 right-4">
+            <div class="bg-esy-gold text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase shadow-lg flex items-center">
+                <i class="fas fa-crown mr-1"></i> VIP
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Content -->
+    <div class="p-6">
+        <div class="flex justify-between items-start mb-3">
+            <div class="flex items-center gap-2 truncate pr-4">
+                <h3 class="text-lg font-black text-esy-dark group-hover:text-esy-blue-600 transition truncate">
+                    {{ business.name }}
+                </h3>
+                {% if business.is_verified %}
+                <div class="flex-shrink-0 text-esy-blue-500 bg-esy-blue-50 w-5 h-5 rounded-full flex items-center justify-center text-[10px]" title="{% trans 'Vérifié' %}">
+                    <i class="fas fa-check"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="flex items-center text-esy-gold text-[10px] font-black bg-esy-blue-50 px-2 py-1 rounded-lg">
+                <i class="fas fa-star mr-1"></i> {{ business.get_average_rating|default:"5.0" }}
+            </div>
+        </div>
+        
+        <p class="text-gray-500 text-xs font-medium line-clamp-2 mb-6 h-8">
+            {{ business.description|truncatewords:12 }}
+        </p>
+
+        <!-- Location & Contact -->
+        <div class="space-y-2 mb-6">
+            <div class="flex items-center text-xs text-gray-400 font-bold">
+                <i class="fas fa-map-marker-alt w-4 text-esy-blue-600"></i>
+                <span class="truncate">{{ business.address|truncatechars:30 }}</span>
+            </div>
+            <div class="flex items-center text-xs text-gray-400 font-bold">
+                <i class="fas fa-phone w-4 text-esy-blue-600"></i>
+                <span>{{ business.phone }}</span>
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <a href="{% url 'business:detail' business.id %}" class="block w-full text-center bg-esy-blue-50 text-esy-blue-600 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-esy-blue-600 hover:text-white transition shadow-sm">
+            {% trans "Voir le profil" %}
+        </a>
+    </div>
+</div>

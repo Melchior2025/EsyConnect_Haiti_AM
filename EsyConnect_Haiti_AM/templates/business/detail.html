@@ -1,0 +1,1249 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ business.name }} | {{ business.category.name }} | {% trans "EsyConnect Haïti" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<!-- SEO Meta Tags -->
+<meta name="description" content="{{ business.description|truncatewords:30 }} - {{ business.name }} à {{ business.address|truncatewords:5 }}. Note: {{ business.get_average_rating|default:"0.0" }}/5 ({{ reviews|length }} avis). {% trans "Découvrez" %} {{ business.name }} {% trans "sur EsyConnect Haïti" %}.">
+<meta name="keywords" content="{{ business.name }}, {{ business.category.name }}, {{ business.address|truncatewords:3 }}, {% trans "Haïti" %}, {% trans "Cap-Haïtien" %}, {% trans "entreprises" %}, {% trans "business" %}">
+<meta name="author" content="{{ business.name }}">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="business.business">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:title" content="{{ business.name }} | {{ business.category.name }}">
+<meta property="og:description" content="{{ business.description|truncatewords:30 }}">
+{% if business.logo %}
+<meta property="og:image" content="{{ request.build_absolute_uri }}{{ business.logo.url }}">
+{% elif business.banner %}
+<meta property="og:image" content="{{ request.build_absolute_uri }}{{ business.banner.url }}">
+{% endif %}
+<meta property="og:site_name" content="EsyConnect Haïti">
+<meta property="og:locale" content="fr_HT">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="{{ request.build_absolute_uri }}">
+<meta name="twitter:title" content="{{ business.name }} | {{ business.category.name }}">
+<meta name="twitter:description" content="{{ business.description|truncatewords:30 }}">
+{% if business.logo %}
+<meta name="twitter:image" content="{{ request.build_absolute_uri }}{{ business.logo.url }}">
+{% elif business.banner %}
+<meta name="twitter:image" content="{{ request.build_absolute_uri }}{{ business.banner.url }}">
+{% endif %}
+
+<!-- Canonical URL -->
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+<!-- Schema.org LocalBusiness -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "{{ business.name }}",
+  "description": "{{ business.description|escapejs }}",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "{{ business.address|escapejs }}",
+    "addressLocality": "Cap-Haïtien",
+    "addressCountry": "HT"
+  },
+  {% if business.phone %}
+  "telephone": "{{ business.phone }}",
+  {% endif %}
+  {% if business.email %}
+  "email": "{{ business.email }}",
+  {% endif %}
+  {% if business.website %}
+  "url": "{{ business.website }}",
+  {% endif %}
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ business.get_average_rating|default:"0.0" }}",
+    "reviewCount": "{{ reviews|length }}"
+  },
+  "priceRange": "$$"
+}
+</script>
+
+<style>
+    .detail-hero {
+        padding: 0;
+        position: relative;
+        overflow: hidden;
+        min-height: 500px;
+    }
+    
+    .detail-hero-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        background-color: #1e3a8a;
+    }
+    
+    .info-card {
+        background: white;
+        border-radius: 2.5rem;
+        border: 1px solid #f1f5f9;
+        padding: 2.5rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .info-card:hover {
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+    
+    .action-btn-lg {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem 2.5rem;
+        border-radius: 1.5rem;
+        font-weight: 800;
+        transition: all 0.3s ease;
+        gap: 0.75rem;
+        white-space: nowrap;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .action-btn-lg:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        padding: 1.25rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 1.5rem;
+        transition: all 0.3s ease;
+        border: 1px solid #e2e8f0;
+    }
+    
+    .contact-item:hover {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border-color: #3b82f6;
+        transform: translateX(5px);
+    }
+    
+    .verified-badge {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    .premium-badge {
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: white;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
+    }
+    
+    /* Hide global navbar on microsite */
+    .global-navbar {
+        display: none !important;
+    }
+    
+    /* Adjust header positions - no global navbar anymore */
+    header:nth-of-type(2) {
+        top: 0;
+    }
+    
+    nav.sticky {
+        top: 72px;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<!-- HEADER ESYCONNECT -->
+<header class="bg-esy-dark text-white py-3">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-esy-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-store text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black">EsyConnect</h1>
+                    <p class="text-xs text-gray-400 font-bold">{% trans "Haïti" %}</p>
+                </div>
+            </a>
+            <a href="/" class="flex items-center gap-2 px-4 py-2 bg-esy-blue-600 text-white rounded-xl font-bold text-sm hover:bg-esy-blue-700 transition">
+                <i class="fas fa-arrow-left"></i>
+                {% trans "Retour à la plateforme" %}
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- HEADER BUSINESS -->
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+        <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+            <!-- Logo & Info -->
+            <div class="flex items-center gap-4">
+                {% if business.logo %}
+                <img src="{{ business.logo.url }}" class="w-16 h-16 rounded-xl object-contain border-2 border-gray-200" alt="{{ business.name }}">
+                {% else %}
+                <div class="w-16 h-16 bg-gradient-to-br from-esy-blue-100 to-indigo-100 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-store text-esy-blue-600 text-2xl"></i>
+                </div>
+                {% endif %}
+                <div>
+                    <h1 class="text-xl font-black text-esy-dark">{{ business.name }}</h1>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500 font-bold">{{ business.category.name }}</span>
+                        {% if business.is_verified %}
+                        <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                            <i class="fas fa-check-circle mr-1"></i>{% trans "Vérifié" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Boutons d'action -->
+            <div class="flex items-center gap-2 flex-wrap">
+                {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'business:toggle_favorite' business.id %}" id="favoriteForm">
+                    {% csrf_token %}
+                    <button type="submit" id="favoriteBtn" class="flex items-center gap-2 px-4 py-2 bg-pink-600 text-white rounded-xl font-bold text-sm hover:bg-pink-700 transition">
+                        <i class="fas fa-heart" id="favoriteIcon"></i>
+                        <span id="favoriteText">{% trans "Favori" %}</span>
+                    </button>
+                </form>
+                {% endif %}
+                {% if business.phone %}
+                <a href="tel:{{ business.phone }}" class="flex items-center gap-2 px-4 py-2 bg-esy-blue-600 text-white rounded-xl font-bold text-sm hover:bg-esy-blue-700 transition">
+                    <i class="fas fa-phone"></i>
+                    {% trans "Appeler" %}
+                </a>
+                {% endif %}
+                {% if business.latitude and business.longitude %}
+                <a href="https://www.google.com/maps/search/?api=1&query={{ business.latitude }},{{ business.longitude }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl font-bold text-sm hover:bg-purple-700 transition">
+                    <i class="fas fa-route"></i>
+                    {% trans "Itinéraire" %}
+                </a>
+                {% endif %}
+                {% if business.whatsapp %}
+                <a href="https://wa.me/{{ clean_phone }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl font-bold text-sm hover:bg-green-700 transition">
+                    <i class="fab fa-whatsapp"></i>
+                    WhatsApp
+                </a>
+                {% endif %}
+
+                {% if business.website %}
+                <a href="{{ business.website }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-xl font-bold text-sm hover:bg-gray-700 transition">
+                    <i class="fas fa-globe"></i>
+                    {% trans "Site Web" %}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- NAVIGATION INTERNE BUSINESS -->
+<nav class="bg-white border-b border-gray-200 sticky top-[72px] z-40">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex items-center gap-6 overflow-x-auto py-3">
+            <a href="#hero" class="text-sm font-bold text-gray-600 hover:text-esy-blue-600 transition whitespace-nowrap">{% trans "Accueil" %}</a>
+            <a href="#about" class="text-sm font-bold text-gray-600 hover:text-esy-blue-600 transition whitespace-nowrap">{% trans "À Propos" %}</a>
+            <a href="#services" class="text-sm font-bold text-gray-600 hover:text-esy-blue-600 transition whitespace-nowrap">{% trans "Services" %}</a>
+            <a href="#products" class="text-sm font-bold text-gray-600 hover:text-esy-blue-600 transition whitespace-nowrap">{% trans "Produits" %}</a>
+            <a href="#gallery" class="text-sm font-bold text-gray-600 hover:text-esy-blue-600 transition whitespace-nowrap">{% trans "Galerie" %}</a>
+            <a href="#reviews" class="text-sm font-bold text-gray-600 hover:text-esy-blue-600 transition whitespace-nowrap">{% trans "Avis" %}</a>
+            <a href="#contact" class="text-sm font-bold text-gray-600 hover:text-esy-blue-600 transition whitespace-nowrap">{% trans "Contact" %}</a>
+            <a href="#location" class="text-sm font-bold text-gray-600 hover:text-esy-blue-600 transition whitespace-nowrap">{% trans "Localisation" %}</a>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO BUSINESS -->
+<section id="hero" class="detail-hero text-white relative">
+    <div class="absolute inset-0 z-0">
+        {% if business.banner %}
+        <img src="{{ business.banner.url }}" class="detail-hero-bg" alt="{{ business.name }}" loading="lazy">
+        <div class="absolute inset-0 bg-gradient-to-r from-esy-dark/95 via-esy-dark/80 to-transparent"></div>
+        {% else %}
+        <div class="w-full h-full bg-gradient-to-br from-esy-dark to-esy-blue-900"></div>
+        {% endif %}
+    </div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-16">
+        <div class="flex flex-col lg:flex-row items-center gap-12">
+            <!-- Info Business -->
+            <div class="flex-1">
+                <div class="flex flex-wrap gap-3 mb-6">
+                    {% if business.is_verified %}
+                    <span class="verified-badge px-4 py-2 rounded-full text-xs uppercase shadow-lg flex items-center">
+                        <i class="fas fa-check-circle mr-2"></i>{% trans "VÉRIFIÉE" %}
+                    </span>
+                    {% endif %}
+                    {% if business.is_pro %}
+                    <span class="premium-badge px-4 py-2 rounded-full text-xs uppercase shadow-lg flex items-center">
+                        <i class="fas fa-crown mr-2"></i>PREMIUM
+                    </span>
+                    {% endif %}
+                </div>
+                <h1 class="text-5xl md:text-7xl font-black mb-6 tracking-tight">{{ business.name }}</h1>
+                <p class="text-white/90 text-xl mb-8 max-w-2xl">{{ business.description }}</p>
+                
+                <!-- Stats -->
+                <div class="flex flex-wrap gap-6 mb-8">
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-md px-6 py-3 rounded-xl">
+                        <i class="fas fa-star text-yellow-400 text-2xl"></i>
+                        {% if business.get_average_rating > 0 %}
+                            <span class="font-black text-2xl">{{ business.get_average_rating }}</span>
+                        {% else %}
+                            <span class="font-black text-lg bg-white/20 px-2 py-1 rounded-lg">{% trans "Nouveau" %}</span>
+                        {% endif %}
+                        <span class="text-white/70">({{ reviews|length }} {% trans "avis" %})</span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-white/10 backdrop-blur-md px-6 py-3 rounded-xl">
+                        <i class="fas fa-eye text-esy-blue-300 text-2xl"></i>
+                        <span class="font-black text-2xl">{{ business.view_count|default:0 }}</span>
+                        <span class="text-white/70">{% trans "vues" %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="max-w-7xl mx-auto px-4 pb-24">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <!-- LEFT COLUMN: CONTENT -->
+        <div class="lg:col-span-2 space-y-12">
+            <!-- BUSINESS INFO BAR -->
+            <div class="bg-gradient-to-r from-esy-blue-600 to-indigo-600 rounded-3xl p-8 text-white shadow-2xl">
+                <div class="flex flex-wrap justify-between items-center gap-6">
+                    {% if reviews %}
+                        <div class="flex items-center gap-4 min-w-max">
+                            <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
+                                <i class="fas fa-star text-esy-gold text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-4xl font-black">{{ business.get_average_rating|default:"0.0" }}</div>
+                                <div class="text-sm text-esy-blue-100">{% trans "Note moyenne" %}</div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center gap-4 min-w-max">
+                            <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
+                                <i class="fas fa-star text-esy-gold text-2xl"></i>
+                            </div>
+                            <div>
+                                <div class="text-4xl font-black">{% trans "Nouveau" %}</div>
+                                <div class="text-sm text-esy-blue-100">{% trans "Pas encore d'avis" %}</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="flex items-center gap-4 min-w-max">
+                        <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center shrink-0">
+                            <i class="fas fa-clock text-esy-gold text-2xl"></i>
+                        </div>
+                        <div>
+                            <div class="text-lg font-black">{% trans "Ouvert maintenant" %}</div>
+                            <div class="text-sm text-esy-blue-100">8:00 - 20:00</div>
+                        </div>
+                    </div>
+                    <button class="bg-white text-esy-blue-600 px-8 py-4 rounded-2xl font-bold hover:bg-esy-blue-50 transition shadow-lg shrink-0">
+                        <i class="fas fa-heart mr-2"></i>{% trans "Favori" %}
+                    </button>
+                </div>
+            </div>
+
+            <!-- ABOUT -->
+            <div id="about" class="info-card">
+                <h2 class="text-3xl font-black text-esy-dark mb-6">{% trans "À propos de" %} {{ business.name }}</h2>
+                <p class="text-gray-600 text-lg leading-relaxed mb-8">
+                    {{ business.description|default:"Pas de description disponible." }}
+                </p>
+                
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200">
+                    {% if reviews %}
+                        <div class="text-center">
+                            <div class="text-4xl font-black text-esy-blue-600 mb-2">{{ business.get_average_rating|default:"0.0" }}</div>
+                            <div class="text-xs text-gray-500 font-bold uppercase">{% trans "Note" %}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-black text-esy-blue-600 mb-2">{{ reviews|length }}</div>
+                            <div class="text-xs text-gray-500 font-bold uppercase">{% trans "Avis" %}</div>
+                        </div>
+                    {% else %}
+                        <div class="text-center">
+                            <div class="text-4xl font-black text-esy-blue-600 mb-2">{% trans "Nouveau" %}</div>
+                            <div class="text-xs text-gray-500 font-bold uppercase">{% trans "Statut" %}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-4xl font-black text-esy-blue-600 mb-2">0</div>
+                            <div class="text-xs text-gray-500 font-bold uppercase">{% trans "Avis" %}</div>
+                        </div>
+                    {% endif %}
+                    <div class="text-center">
+                        <div class="text-4xl font-black text-esy-blue-600 mb-2">{{ business.view_count|default:0 }}</div>
+                        <div class="text-xs text-gray-500 font-bold uppercase">{% trans "Vues" %}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SERVICES & PRODUCTS -->
+            <div id="services" class="info-card">
+                <h2 class="text-3xl font-black text-esy-dark mb-6">{% trans "Services & Produits" %}</h2>
+                
+                <!-- Services -->
+                {% if business.services.all %}
+                <div class="mb-8">
+                    <h3 class="text-xl font-black text-esy-dark mb-4">{% trans "Nos Services" %}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for service in business.services.all %}
+                        <div class="p-6 bg-gradient-to-br from-esy-blue-50 to-indigo-50 rounded-2xl border border-esy-blue-100 hover:shadow-lg transition">
+                            <div class="flex justify-between items-start mb-3">
+                                <h4 class="font-black text-esy-dark text-lg">{{ service.name }}</h4>
+                                {% if service.is_promotion %}
+                                <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{% trans "PROMO" %}</span>
+                                {% endif %}
+                            </div>
+                            <p class="text-gray-600 text-sm mb-4">{{ service.description|truncatewords:20 }}</p>
+                            <div class="flex items-center gap-2">
+                                {% if service.is_promotion and service.promotion_price %}
+                                <span class="text-lg font-black text-red-600">{{ service.promotion_price }} HTG</span>
+                                <span class="text-sm text-gray-400 line-through">{{ service.price }} HTG</span>
+                                {% elif service.price %}
+                                <span class="text-lg font-black text-esy-blue-600">{{ service.price }} HTG</span>
+                                {% else %}
+                                <span class="text-sm text-gray-500">{% trans "Sur demande" %}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Products -->
+                {% if business.products.all %}
+                <div>
+                    <h3 class="text-xl font-black text-esy-dark mb-4">{% trans "Nos Produits" %}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {% for product in business.products.all %}
+                        <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition">
+                            {% if product.image %}
+                            <div class="aspect-square bg-gray-100 flex items-center justify-center p-4">
+                                <img src="{{ product.image.url }}" class="max-h-full max-w-full object-contain" alt="{{ product.name }}">
+                            </div>
+                            {% else %}
+                            <div class="w-full aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                <i class="fas fa-box text-gray-400 text-4xl"></i>
+                            </div>
+                            {% endif %}
+                            <div class="p-4">
+                                <h4 class="font-black text-esy-dark text-lg mb-2">{{ product.name }}</h4>
+                                <p class="text-gray-600 text-sm mb-3">{{ product.description|truncatewords:15 }}</p>
+                                <div class="flex justify-between items-center">
+                                    {% if product.price %}
+                                    <span class="text-lg font-black text-esy-blue-600">{{ product.price }} HTG</span>
+                                    {% else %}
+                                    <span class="text-sm text-gray-500">{% trans "Sur demande" %}</span>
+                                    {% endif %}
+                                    {% if product.in_stock %}
+                                    <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">{% trans "En stock" %}</span>
+                                    {% else %}
+                                    <span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full">{% trans "Rupture" %}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Fallback if no services or products -->
+                {% if not business.services.all and not business.products.all %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-6 bg-gradient-to-br from-esy-blue-50 to-indigo-50 rounded-2xl border border-esy-blue-100">
+                        <div class="w-12 h-12 bg-esy-blue-600 rounded-xl flex items-center justify-center text-white mb-4">
+                            <i class="fas fa-concierge-bell text-xl"></i>
+                        </div>
+                        <h3 class="font-black text-esy-dark text-lg mb-2">{% trans "Services Premium" %}</h3>
+                        <p class="text-gray-600 text-sm">{% trans "Découvrez nos services de qualité supérieure adaptés à vos besoins." %}</p>
+                    </div>
+                    <div class="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-100">
+                        <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center text-white mb-4">
+                            <i class="fas fa-tags text-xl"></i>
+                        </div>
+                        <h3 class="font-black text-esy-dark text-lg mb-2">{% trans "Offres Spéciales" %}</h3>
+                        <p class="text-gray-600 text-sm">{% trans "Profitez de nos promotions et offres exclusives." %}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- GALLERY -->
+            <div id="gallery" class="info-card">
+                <h2 class="text-3xl font-black text-esy-dark mb-6">{% trans "Galerie Photos" %}</h2>
+                
+                {% if gallery_images %}
+                <!-- Gallery Slider -->
+                <div class="relative">
+                    <div class="overflow-hidden rounded-2xl bg-gray-100 aspect-video">
+                        <div class="flex transition-transform duration-500" id="gallery-slider">
+                            {% for image in gallery_images %}
+                            <div class="min-w-full flex flex-col items-center justify-center p-4">
+                                <img src="{{ image.image.url }}" class="max-h-full max-w-full object-contain rounded-xl shadow-2xl" alt="{{ image.title|default:business.name }}">
+                        <div class="mt-2 text-center w-full px-1">
+                            {% if image.title %}
+                                <p class="text-xs font-bold text-gray-800 truncate leading-tight">{{ image.title }}</p>
+                            {% endif %}
+                            {% if image.description %}
+                                <p class="text-[10px] text-gray-500 line-clamp-1 mt-0.5">{{ image.description }}</p>
+                            {% endif %}
+                        </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Slider Controls -->
+                    <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg hover:bg-white transition z-10">
+                        <i class="fas fa-chevron-left text-esy-dark"></i>
+                    </button>
+                    <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg hover:bg-white transition z-10">
+                        <i class="fas fa-chevron-right text-esy-dark"></i>
+                    </button>
+                    
+                    <!-- Slider Indicators -->
+                    <div class="flex justify-center gap-2 mt-4">
+                        {% for image in gallery_images %}
+                        <button onclick="goToSlide({{ forloop.counter0 }})" class="slider-dot w-3 h-3 rounded-full {% if forloop.first %}bg-esy-blue-600{% else %}bg-gray-300{% endif %}"></button>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Gallery Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                    {% for image in gallery_images %}
+                    <div class="relative group cursor-pointer overflow-hidden rounded-2xl aspect-square bg-gray-100" onclick="openLightbox('{{ image.image.url }}')">
+                        <img src="{{ image.image.url }}" class="w-full h-full object-contain p-2 transform group-hover:scale-105 transition duration-300" alt="{{ image.title|default:business.name }}">
+                        <div class="absolute bottom-0 left-0 w-full bg-white/90 backdrop-blur-sm p-2 text-center z-10">
+                            {% if image.title %}
+                                <p class="text-xs font-bold text-gray-800 truncate leading-tight">{{ image.title }}</p>
+                            {% endif %}
+                            {% if image.description %}
+                                <p class="text-[10px] text-gray-500 line-clamp-1 mt-0.5">{{ image.description }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="absolute inset-0 bg-esy-dark/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                            <i class="fas fa-search-plus text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <!-- No photos message -->
+                <div class="text-center py-12 bg-gray-50 rounded-2xl">
+                    <i class="fas fa-images text-gray-300 text-5xl mb-4"></i>
+                    <p class="text-gray-500 font-bold">{% trans "Aucune photo disponible pour le moment" %}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Lightbox Modal -->
+            <div id="lightbox" class="fixed inset-0 z-[9999] bg-black/90 hidden items-center justify-center">
+                <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 transition">
+                    <i class="fas fa-times"></i>
+                </button>
+                <img id="lightbox-image" src="" class="max-w-[90vw] max-h-[90vh] object-contain" alt="">
+            </div>
+
+            <!-- REVIEWS SECTION -->
+            <div id="reviews" class="info-card">
+                <div class="flex justify-between items-center mb-10">
+                    <h2 class="text-3xl font-black text-esy-dark">{% trans "Avis des clients" %}</h2>
+                    <div class="flex items-center bg-yellow-50 px-6 py-3 rounded-2xl border border-yellow-200">
+                        <i class="fas fa-star text-yellow-500 mr-3 text-xl"></i>
+                        <span class="font-black text-yellow-600 text-xl">
+                            {% if business.get_average_rating > 0 %}
+                                {{ business.get_average_rating }}
+                            {% else %}
+                                {% trans "Nouveau" %}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Review List -->
+                <div class="space-y-8 mb-12">
+                    {% for review in reviews %}
+                    <div class="p-8 bg-gradient-to-br from-gray-50 to-white rounded-3xl border border-gray-100 shadow-sm">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 bg-gradient-to-br from-esy-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xl mr-5 shadow-lg">
+                                    {{ review.user.username|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <h4 class="font-black text-esy-dark text-lg">{{ review.user.username }}</h4>
+                                    <p class="text-xs text-gray-400 font-bold uppercase">{{ review.created_at|date:"d M Y" }}</p>
+                                </div>
+                            </div>
+                            <div class="flex text-yellow-500 text-sm">
+                                {% if review.rating %}
+                                    {% for i in "12345" %}
+                                        <i class="fas fa-star {% if forloop.counter <= review.rating.score %}text-yellow-500{% else %}text-gray-200{% endif %}"></i>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <p class="text-gray-600 font-medium leading-relaxed text-lg">{{ review.comment }}</p>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-16">
+                        <i class="fas fa-comment-slash text-gray-200 text-6xl mb-6"></i>
+                        <p class="text-gray-400 font-bold text-lg">{% trans "Pas encore d'avis. Soyez le premier !" %}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Add Review Form -->
+                {% if user.is_authenticated %}
+                <div class="bg-white border-2 border-esy-blue-50 p-10 rounded-3xl shadow-lg">
+                    <h3 class="text-2xl font-black text-esy-dark mb-8">{% trans "Laissez votre avis" %}</h3>
+                    <form action="{% url 'business:review' business.id %}" method="POST" class="space-y-8">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-6">{% trans "Note" %}</label>
+                            <div class="flex gap-4 items-center">
+                                <input type="hidden" name="rating" id="selected-rating" value="" required>
+                                {% for i in "12345" %}
+                                <button type="button" class="star-btn text-4xl transition-all duration-200 transform hover:scale-110" data-rating="{{ forloop.counter }}">
+                                    <i class="far fa-star text-gray-300 hover:text-amber-400"></i>
+                                </button>
+                                {% endfor %}
+                            </div>
+                            <p id="rating-text" class="text-sm font-bold text-gray-400 mt-3">{% trans "Sélectionnez une note" %}</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black text-gray-400 uppercase tracking-widest mb-6">{% trans "Votre Commentaire" %}</label>
+                            <textarea name="review_text" rows="5" required class="w-full p-6 rounded-3xl bg-gray-50 border-none focus:ring-2 focus:ring-esy-blue-600 font-medium text-lg" placeholder="Parlez-nous de votre expérience..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-esy-dark to-esy-blue-900 text-white py-5 rounded-2xl font-black text-lg hover:from-esy-blue-900 hover:to-indigo-900 transition shadow-xl">
+                            {% trans "Publier mon avis" %}
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="bg-gradient-to-br from-gray-50 to-white p-10 rounded-3xl text-center border-2 border-dashed border-gray-200">
+                    <p class="text-gray-500 font-bold mb-6 text-lg">{% trans "Vous devez être connecté pour laisser un avis." %}</p>
+                    <a href="{% url 'users:login' %}" class="inline-block bg-esy-blue-600 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-lg hover:bg-esy-blue-700 transition">{% trans "Se Connecter" %}</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: SIDEBAR -->
+        <div class="space-y-8">
+            <!-- CONTACT INFO -->
+            <div id="contact" class="info-card">
+                <h3 class="text-2xl font-black text-esy-dark mb-8">{% trans "Coordonnées" %}</h3>
+                <div class="space-y-6">
+                    <div class="contact-item">
+                        <div class="w-14 h-14 bg-gradient-to-br from-esy-blue-50 to-indigo-100 text-esy-blue-600 rounded-2xl flex items-center justify-center mr-5 shrink-0 shadow-sm">
+                            <i class="fas fa-map-marker-alt text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 font-bold uppercase mb-1">{% trans "Adresse" %}</p>
+                            <p class="text-esy-dark font-bold">{{ business.address }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if business.phone %}
+                    <a href="tel:{{ business.phone }}" class="contact-item block">
+                        <div class="w-14 h-14 bg-gradient-to-br from-green-50 to-emerald-100 text-green-600 rounded-2xl flex items-center justify-center mr-5 shrink-0 shadow-sm">
+                            <i class="fas fa-phone text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 font-bold uppercase mb-1">{% trans "Téléphone" %}</p>
+                            <p class="text-esy-dark font-bold">{{ formatted_phone|default:business.phone }}</p>
+                        </div>
+                    </a>
+                    {% endif %}
+
+                    {% if business.email %}
+                    <a href="mailto:{{ business.email }}" class="contact-item block">
+                        <div class="w-14 h-14 bg-gradient-to-br from-purple-50 to-violet-100 text-purple-600 rounded-2xl flex items-center justify-center mr-5 shrink-0 shadow-sm">
+                            <i class="fas fa-envelope text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 font-bold uppercase mb-1">{% trans "Email" %}</p>
+                            <p class="text-esy-dark font-bold">{{ business.email }}</p>
+                        </div>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- HOURS -->
+                <div class="mt-8 pt-8 border-t border-gray-200">
+                    <h4 class="text-sm font-black text-esy-dark uppercase mb-6">{% trans "Horaires d'ouverture" %}</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 font-medium">{% trans "Lundi - Vendredi" %}</span>
+                            <span class="text-esy-dark font-bold">9:00 - 18:00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 font-medium">{% trans "Samedi" %}</span>
+                            <span class="text-esy-dark font-bold">9:00 - 14:00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 font-medium">{% trans "Dimanche" %}</span>
+                            <span class="text-red-600 font-bold">{% trans "Fermé" %}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INTERACTIVE MAP -->
+                <div id="location" class="mt-8 h-96 rounded-3xl overflow-hidden border-2 border-gray-200 shadow-inner relative bg-gray-100">
+                    <div id="business-map" class="w-full h-full" 
+                         data-lat="{{ business.latitude|default_if_none:19.757 }}" 
+                         data-lng="{{ business.longitude|default_if_none:-72.204 }}"
+                         data-has-coords="{% if business.latitude and business.longitude %}true{% else %}false{% endif %}"></div>
+                    <style>
+                        #business-map .leaflet-control-zoom {
+                            border: none !important;
+                            box-shadow: none !important;
+                        }
+                        #business-map .leaflet-control-zoom a {
+                            background-color: white !important;
+                            color: #1e40af !important;
+                            border: 2px solid #e5e7eb !important;
+                            border-radius: 12px !important;
+                            width: 36px !important;
+                            height: 36px !important;
+                            line-height: 36px !important;
+                            font-size: 18px !important;
+                            font-weight: bold !important;
+                        }
+                        #business-map .leaflet-control-zoom a:hover {
+                            background-color: #eff6ff !important;
+                        }
+                        #business-map .leaflet-control-attribution {
+                            display: none !important;
+                        }
+                    </style>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // WhatsApp click tracking
+                            const whatsappBtn = document.getElementById('whatsapp-btn');
+                            if (whatsappBtn) {
+                                whatsappBtn.addEventListener('click', function(e) {
+                                    const trackUrl = this.getAttribute('data-track-url');
+                                    
+                                    // Track the click via AJAX
+                                    fetch(trackUrl, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRFToken': getCookie('csrftoken')
+                                        },
+                                        body: JSON.stringify({})
+                                    }).then(response => response.json())
+                                      .then(data => {
+                                          console.log('WhatsApp click tracked:', data);
+                                      })
+                                      .catch(error => {
+                                          console.error('Error tracking WhatsApp click:', error);
+                                      });
+                                });
+                            }
+                            
+                            // Helper function to get CSRF token
+                            function getCookie(name) {
+                                let cookieValue = null;
+                                if (document.cookie && document.cookie !== '') {
+                                    const cookies = document.cookie.split(';');
+                                    for (let i = 0; i < cookies.length; i++) {
+                                        const cookie = cookies[i].trim();
+                                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                            break;
+                                        }
+                                    }
+                                }
+                                return cookieValue;
+                            }
+                            
+                            // Leaflet map initialization
+                            if (typeof L !== 'undefined') {
+                                const mapElement = document.getElementById('business-map');
+                                if (mapElement) {
+                                    mapElement.style.height = '384px';
+                                    mapElement.style.width = '100%';
+                                    
+                                    const lat = parseFloat(mapElement.dataset.lat);
+                                    const lng = parseFloat(mapElement.dataset.lng);
+                                    const hasCoords = mapElement.dataset.hasCoords === 'true';
+                                    
+                                    const map = L.map('business-map', {
+                                        zoomControl: true,
+                                        scrollWheelZoom: true
+                                    }).setView([lat, lng], 16);
+                                    
+                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                                        maxZoom: 19
+                                    }).addTo(map);
+                                    
+                                    if (hasCoords && !isNaN(lat) && !isNaN(lng)) {
+                                        const customIcon = L.icon({
+                                            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                                            iconSize: [30, 47],
+                                            iconAnchor: [15, 47],
+                                            popupAnchor: [1, -39],
+                                            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+                                            shadowSize: [47, 47]
+                                        });
+                                        
+                                        L.marker([lat, lng], {icon: customIcon}).addTo(map)
+                                            .bindPopup('<b>{{ business.name }}</b><br>{{ business.address }}')
+                                            .openPopup();
+                                    } else {
+                                        // Show message if no coordinates
+                                        mapElement.innerHTML = '<div class="flex items-center justify-center h-full bg-gray-100"><div class="text-center p-8"><i class="fas fa-map-marker-alt text-gray-400 text-4xl mb-4"></i><p class="text-gray-600 font-bold">{% trans "Coordonnées GPS non disponibles" %}</p></div></div>';
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+
+            <!-- SOCIAL LINKS -->
+            {% if business.facebook or business.instagram or business.website or business.tiktok or business.linkedin or business.youtube %}
+            <div class="info-card">
+                <h3 class="text-xl font-black text-esy-dark mb-6">{% trans "Suivez-nous" %}</h3>
+                <div class="flex gap-4 flex-wrap">
+                    {% if business.facebook %}
+                    <a href="{{ business.facebook }}" target="_blank" class="w-14 h-14 bg-gradient-to-br from-blue-50 to-blue-100 text-blue-600 rounded-2xl flex items-center justify-center hover:from-blue-600 hover:to-blue-700 hover:text-white transition shadow-sm">
+                        <i class="fab fa-facebook-f text-xl"></i>
+                    </a>
+                    {% endif %}
+                    {% if business.instagram %}
+                    <a href="{{ business.instagram }}" target="_blank" class="w-14 h-14 bg-gradient-to-br from-pink-50 to-pink-100 text-pink-600 rounded-2xl flex items-center justify-center hover:from-pink-600 hover:to-pink-700 hover:text-white transition shadow-sm">
+                        <i class="fab fa-instagram text-xl"></i>
+                    </a>
+                    {% endif %}
+                    {% if business.tiktok %}
+                    <a href="{{ business.tiktok }}" target="_blank" class="w-14 h-14 bg-gradient-to-br from-gray-900 to-black text-white rounded-2xl flex items-center justify-center hover:from-gray-800 hover:to-gray-900 transition shadow-sm">
+                        <i class="fab fa-tiktok text-xl"></i>
+                    </a>
+                    {% endif %}
+                    {% if business.linkedin %}
+                    <a href="{{ business.linkedin }}" target="_blank" class="w-14 h-14 bg-gradient-to-br from-blue-50 to-blue-100 text-blue-700 rounded-2xl flex items-center justify-center hover:from-blue-600 hover:to-blue-700 hover:text-white transition shadow-sm">
+                        <i class="fab fa-linkedin-in text-xl"></i>
+                    </a>
+                    {% endif %}
+                    {% if business.youtube %}
+                    <a href="{{ business.youtube }}" target="_blank" class="w-14 h-14 bg-gradient-to-br from-red-50 to-red-100 text-red-600 rounded-2xl flex items-center justify-center hover:from-red-600 hover:to-red-700 hover:text-white transition shadow-sm">
+                        <i class="fab fa-youtube text-xl"></i>
+                    </a>
+                    {% endif %}
+                    {% if business.website %}
+                    <a href="{{ business.website }}" target="_blank" class="w-14 h-14 bg-gradient-to-br from-gray-50 to-gray-100 text-gray-600 rounded-2xl flex items-center justify-center hover:from-esy-dark hover:to-gray-900 hover:text-white transition shadow-sm">
+                        <i class="fas fa-globe text-xl"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- BUSINESS STATISTICS -->
+            <div class="info-card">
+                <h3 class="text-xl font-black text-esy-dark mb-6">{% trans "Statistiques" %}</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gradient-to-br from-esy-blue-50 to-indigo-50 p-4 rounded-2xl text-center">
+                        <i class="fas fa-eye text-esy-blue-600 text-2xl mb-2"></i>
+                        <div class="text-2xl font-black text-esy-dark">{{ business.view_count|default:0 }}</div>
+                        <div class="text-xs text-gray-500 font-bold uppercase">{% trans "Vues" %}</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl text-center">
+                        <i class="fas fa-phone text-green-600 text-2xl mb-2"></i>
+                        <div class="text-2xl font-black text-esy-dark">{{ business.call_count|default:0 }}</div>
+                        <div class="text-xs text-gray-500 font-bold uppercase">{% trans "Appels" %}</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl text-center">
+                        <i class="fab fa-whatsapp text-green-600 text-2xl mb-2"></i>
+                        <div class="text-2xl font-black text-esy-dark">{{ business.whatsapp_clicks|default:0 }}</div>
+                        <div class="text-xs text-gray-500 font-bold uppercase">{% trans "Clics WhatsApp" %}</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-50 to-violet-50 p-4 rounded-2xl text-center">
+                        <i class="fas fa-share text-purple-600 text-2xl mb-2"></i>
+                        <div class="text-2xl font-black text-esy-dark">{{ business.share_count|default:0 }}</div>
+                        <div class="text-xs text-gray-500 font-bold uppercase">{% trans "Partages" %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SIMILAR BUSINESSES -->
+    <div id="similar" class="mt-16">
+        <h2 class="text-3xl font-black text-esy-dark mb-8">{% trans "Entreprises similaires" %}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for similar in similar_businesses %}
+            <a href="/{{ similar.id }}/" class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transition group">
+                <div class="relative aspect-video bg-gray-100">
+                    {% if similar.banner %}
+                    <img src="{{ similar.banner.url }}" class="w-full h-full object-contain p-2" alt="{{ similar.name }}">
+                    {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-esy-blue-100 to-indigo-100 flex items-center justify-center">
+                        <i class="fas fa-store text-esy-blue-600 text-4xl"></i>
+                    </div>
+                    {% endif %}
+                    <div class="absolute bottom-4 left-4">
+                        {% if similar.logo %}
+                        <img src="{{ similar.logo.url }}" class="w-16 h-16 rounded-xl object-contain bg-white shadow-lg border-2 border-white p-1" alt="{{ similar.name }}">
+                        {% else %}
+                        <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-lg border-2 border-white">
+                            <i class="fas fa-store text-esy-blue-600 text-xl"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if similar.is_premium %}
+                    <div class="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-md">
+                        PREMIUM
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-bold text-esy-blue-600 bg-esy-blue-50 px-2 py-1 rounded-full">{{ similar.category.name }}</span>
+                        {% if similar.is_verified %}
+                        <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                            <i class="fas fa-check-circle mr-1"></i>{% trans "Vérifié" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <h3 class="font-black text-esy-dark text-lg mb-2 group-hover:text-esy-blue-600 transition">{{ similar.name }}</h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ similar.description|truncatewords:15 }}</p>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-star text-yellow-400"></i>
+                            <span class="font-bold text-esy-dark">{{ similar.get_average_rating|default:"0.0" }}</span>
+                            <span class="text-xs text-gray-400">({{ similar.reviews.count }} {% trans "avis" %})</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-gray-400 text-sm">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ similar.address|truncatewords:3 }}</span>
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 bg-gradient-to-r from-esy-blue-600 to-indigo-600 text-white py-3 rounded-xl font-bold text-sm hover:from-esy-blue-700 hover:to-indigo-700 transition shadow-md">
+                        {% trans "Voir le profil" %}
+                    </button>
+                </div>
+            </a>
+            {% empty %}
+            <div class="col-span-3 text-center py-12">
+                <i class="fas fa-store-slash text-gray-300 text-5xl mb-4"></i>
+                <p class="text-gray-500 font-bold">{% trans "Aucune entreprise similaire trouvée" %}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER BUSINESS -->
+<footer class="bg-gray-100 border-t border-gray-200 mt-20">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <!-- Logo & Info -->
+            <div>
+                {% if business.logo %}
+                <img src="{{ business.logo.url }}" class="w-16 h-16 rounded-xl object-contain mb-4" alt="{{ business.name }}">
+                {% else %}
+                <div class="w-16 h-16 bg-gradient-to-br from-esy-blue-100 to-indigo-100 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-store text-esy-blue-600 text-2xl"></i>
+                </div>
+                {% endif %}
+                <h3 class="text-xl font-black text-esy-dark mb-2">{{ business.name }}</h3>
+                <p class="text-gray-600 text-sm mb-4">{{ business.description|truncatewords:20 }}</p>
+                <div class="flex gap-3">
+                    {% if business.facebook %}
+                    <a href="{{ business.facebook }}" target="_blank" class="w-10 h-10 bg-esy-blue-600 text-white rounded-xl flex items-center justify-center hover:bg-esy-blue-700 transition">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    {% endif %}
+                    {% if business.instagram %}
+                    <a href="{{ business.instagram }}" target="_blank" class="w-10 h-10 bg-pink-600 text-white rounded-xl flex items-center justify-center hover:bg-pink-700 transition">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    {% endif %}
+                    {% if business.tiktok %}
+                    <a href="{{ business.tiktok }}" target="_blank" class="w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center hover:bg-gray-800 transition">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Contact -->
+            <div>
+                <h4 class="font-black text-esy-dark mb-4">{% trans "Contact" %}</h4>
+                <ul class="space-y-3">
+                    {% if business.phone %}
+                    <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-phone text-esy-blue-600"></i>
+                        <a href="tel:{{ business.phone }}" class="hover:text-esy-blue-600 transition">{{ business.phone }}</a>
+                    </li>
+                    {% endif %}
+                    {% if business.whatsapp %}
+                    <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fab fa-whatsapp text-green-600"></i>
+                        <a href="https://wa.me/{{ clean_phone }}" target="_blank" class="hover:text-green-600 transition">WhatsApp</a>
+                    </li>
+                    {% endif %}
+                    {% if business.email %}
+                    <li class="flex items-center gap-2 text-gray-600">
+                        <i class="fas fa-envelope text-esy-blue-600"></i>
+                        <a href="mailto:{{ business.email }}" class="hover:text-esy-blue-600 transition">{{ business.email }}</a>
+                    </li>
+                    {% endif %}
+                    {% if business.address %}
+                    <li class="flex items-start gap-2 text-gray-600">
+                        <i class="fas fa-map-marker-alt text-esy-blue-600 mt-1"></i>
+                        <span>{{ business.address }}</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            
+            <!-- Horaires -->
+            <div>
+                <h4 class="font-black text-esy-dark mb-4">{% trans "Horaires" %}</h4>
+                <ul class="space-y-2 text-gray-600 text-sm">
+                    <li class="flex justify-between">
+                        <span>{% trans "Lundi - Vendredi" %}</span>
+                        <span class="font-bold">9:00 - 18:00</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span>{% trans "Samedi" %}</span>
+                        <span class="font-bold">9:00 - 14:00</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span>{% trans "Dimanche" %}</span>
+                        <span class="font-bold text-red-600">{% trans "Fermé" %}</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Liens Rapides -->
+            <div>
+                <h4 class="font-black text-esy-dark mb-4">{% trans "Liens Rapides" %}</h4>
+                <ul class="space-y-2">
+                    <li><a href="#hero" class="text-gray-600 hover:text-esy-blue-600 transition text-sm">{% trans "Accueil" %}</a></li>
+                    <li><a href="#about" class="text-gray-600 hover:text-esy-blue-600 transition text-sm">{% trans "À Propos" %}</a></li>
+                    <li><a href="#services" class="text-gray-600 hover:text-esy-blue-600 transition text-sm">{% trans "Services" %}</a></li>
+                    <li><a href="#products" class="text-gray-600 hover:text-esy-blue-600 transition text-sm">{% trans "Produits" %}</a></li>
+                    <li><a href="#gallery" class="text-gray-600 hover:text-esy-blue-600 transition text-sm">{% trans "Galerie" %}</a></li>
+                    <li><a href="#reviews" class="text-gray-600 hover:text-esy-blue-600 transition text-sm">{% trans "Avis" %}</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Smooth scroll for navigation
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const navHeight = 64; // Height of the fixed navigation
+                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - navHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Star rating system
+        const starButtons = document.querySelectorAll('.star-btn');
+        const selectedRatingInput = document.getElementById('selected-rating');
+        const ratingText = document.getElementById('rating-text');
+        let selectedRating = 0;
+
+        const ratingLabels = {
+            1: 'Médiocre',
+            2: 'Passable',
+            3: 'Bon',
+            4: 'Très bon',
+            5: 'Excellent'
+        };
+
+        starButtons.forEach((btn, index) => {
+            const rating = parseInt(btn.getAttribute('data-rating'));
+
+            // Hover effect
+            btn.addEventListener('mouseenter', function() {
+                highlightStars(rating);
+            });
+
+            // Click effect
+            btn.addEventListener('click', function() {
+                selectedRating = rating;
+                selectedRatingInput.value = rating;
+                ratingText.textContent = ratingLabels[rating];
+                ratingText.classList.remove('text-gray-400');
+                ratingText.classList.add('text-amber-500');
+                highlightStars(rating);
+            });
+        });
+
+        // Reset to selected rating when leaving the star container
+        const starContainer = document.querySelector('.star-btn').parentElement;
+        starContainer.addEventListener('mouseleave', function() {
+            highlightStars(selectedRating);
+        });
+
+        function highlightStars(rating) {
+            starButtons.forEach((btn, index) => {
+                const starIcon = btn.querySelector('i');
+                const btnRating = parseInt(btn.getAttribute('data-rating'));
+                
+                if (btnRating <= rating) {
+                    starIcon.classList.remove('far', 'text-gray-300');
+                    starIcon.classList.add('fas', 'text-amber-400');
+                } else {
+                    starIcon.classList.remove('fas', 'text-amber-400');
+                    starIcon.classList.add('far', 'text-gray-300');
+                }
+            });
+        }
+
+        // Toggle favorite function with AJAX
+        const favoriteForm = document.getElementById('favoriteForm');
+        if (favoriteForm) {
+            favoriteForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const businessId = {{ business.id }};
+                
+                fetch(`/business/${businessId}/toggle-favorite/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: new FormData(favoriteForm)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const favoriteIcon = document.getElementById('favoriteIcon');
+                        const favoriteText = document.getElementById('favoriteText');
+                        const favoriteBtn = document.getElementById('favoriteBtn');
+                        
+                        if (data.is_favorited) {
+                            favoriteIcon.classList.remove('far');
+                            favoriteIcon.classList.add('fas');
+                            favoriteText.textContent = '{% trans "Favorisé" %}';
+                            favoriteBtn.classList.remove('bg-pink-600', 'hover:bg-pink-700');
+                            favoriteBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                        } else {
+                            favoriteIcon.classList.remove('fas');
+                            favoriteIcon.classList.add('far');
+                            favoriteText.textContent = '{% trans "Favori" %}';
+                            favoriteBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                            favoriteBtn.classList.add('bg-pink-600', 'hover:bg-pink-700');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        }
+
+        // Gallery Slider
+        let currentSlide = 0;
+        const slider = document.getElementById('gallery-slider');
+        const dots = document.querySelectorAll('.slider-dot');
+        
+        function updateSlider() {
+            if (slider) {
+                slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('bg-esy-blue-600', index === currentSlide);
+                    dot.classList.toggle('bg-gray-300', index !== currentSlide);
+                });
+            }
+        }
+        
+        window.nextSlide = function() {
+            const totalSlides = slider ? slider.children.length : 3;
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        };
+        
+        window.prevSlide = function() {
+            const totalSlides = slider ? slider.children.length : 3;
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        };
+        
+        window.goToSlide = function(index) {
+            currentSlide = index;
+            updateSlider();
+        };
+
+        // Lightbox
+        window.openLightbox = function(imageSrc) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImage = document.getElementById('lightbox-image');
+            if (lightbox && lightboxImage) {
+                lightboxImage.src = imageSrc;
+                lightbox.classList.remove('hidden');
+                lightbox.classList.add('flex');
+            }
+        };
+
+        window.closeLightbox = function() {
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox) {
+                lightbox.classList.add('hidden');
+                lightbox.classList.remove('flex');
+            }
+        };
+    });
+</script>
+{% endblock %}
+
+{% block footer %}
+<!-- Le footer global est masqué sur le microsite -->
+{% endblock %}

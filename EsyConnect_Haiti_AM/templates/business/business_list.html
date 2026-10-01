@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% if query %}
+        {% trans "Résultats pour" %} "{{ query }}"
+    {% elif category %}
+        {{ category.name }}
+    {% else %}
+        {% trans "Toutes les Entreprises" %}
+    {% endif %} - EsyConnect Haïti
+{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="relative bg-esy-dark py-24 overflow-hidden">
+    <div class="absolute inset-0 opacity-20">
+        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1950&q=80" alt="background" class="w-full h-full object-cover">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-t from-esy-dark to-transparent"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 text-center text-white">
+        <div class="inline-flex items-center px-4 py-2 rounded-full bg-esy-blue-600/20 border border-esy-blue-400/30 text-esy-blue-100 text-sm font-bold mb-6">
+            <i class="fas fa-search mr-2"></i> {% trans "Annuaire Premium" %}
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black mb-6 tracking-tight">
+            {% if query %}
+                {% trans "Résultats pour" %} <span class="text-esy-blue-500">"{{ query }}"</span>
+            {% elif category %}
+                {{ category.name }}
+            {% else %}
+                {% trans "Découvrez les" %} <span class="text-esy-blue-500">{% trans "Entreprises" %}</span>
+            {% endif %}
+        </h1>
+        <p class="text-xl opacity-90 max-w-2xl mx-auto font-medium">
+            {% trans "Explorez le meilleur du commerce local au Cap-Haïtien." %}
+        </p>
+    </div>
+</section>
+
+<!-- FILTER & SEARCH BAR -->
+<section class="bg-white border-b border-gray-100 sticky top-[80px] z-40 shadow-sm py-6">
+    <div class="max-w-7xl mx-auto px-4">
+        <form method="GET" action="{% url 'business:search' %}" class="space-y-6">
+            <div class="flex flex-col lg:flex-row gap-4 bg-gray-50 p-3 rounded-[2.5rem] border border-gray-200">
+                <div class="flex-1 relative">
+                    <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" name="q" value="{{ query|default:'' }}" 
+                           placeholder="{% trans 'Nom, service ou adresse...' %}" 
+                           class="w-full pl-14 pr-6 py-4 rounded-[2rem] bg-white border-none focus:ring-2 focus:ring-esy-blue-600 shadow-sm transition-all font-medium">
+                </div>
+                
+                <div class="lg:w-64 relative">
+                    <i class="fas fa-layer-group absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
+                    <select name="category" class="w-full pl-14 pr-6 py-4 rounded-[2rem] bg-white border-none focus:ring-2 focus:ring-esy-blue-600 shadow-sm transition-all appearance-none cursor-pointer font-medium">
+                        <option value="">{% trans "Toutes les catégories" %}</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if category_id|add:0 == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="lg:w-64 relative">
+                    <i class="fas fa-map-marker-alt absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
+                    <select name="departement" id="departement-select" class="w-full pl-14 pr-6 py-4 rounded-[2rem] bg-white border-none focus:ring-2 focus:ring-esy-blue-600 shadow-sm transition-all appearance-none cursor-pointer font-medium">
+                        <option value="">{% trans "Tous les départements" %}</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept.id }}" {% if departement_query == dept.slug %}selected{% endif %}>{{ dept.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="lg:w-64 relative">
+                    <i class="fas fa-city absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
+                    <select name="ville" id="ville-select" class="w-full pl-14 pr-6 py-4 rounded-[2rem] bg-white border-none focus:ring-2 focus:ring-esy-blue-600 shadow-sm transition-all appearance-none cursor-pointer font-medium">
+                        <option value="">{% trans "Toutes les villes" %}</option>
+                        {% for ville in villes %}
+                            <option value="{{ ville.slug }}" {% if ville_query == ville.slug %}selected{% endif %}>{{ ville.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <button type="submit" class="bg-esy-blue-600 text-white px-10 py-4 rounded-[2rem] font-black hover:bg-esy-blue-700 transition-all shadow-xl shadow-esy-blue-600/30">
+                    {% trans "Rechercher" %}
+                </button>
+            </div>
+            
+            <!-- Quick Filters -->
+            <div class="flex flex-wrap gap-4 justify-center items-center text-sm">
+                <span class="text-esy-dark font-black uppercase tracking-widest text-xs">{% trans "Filtres rapides :" %}</span>
+                <label class="flex items-center gap-2 bg-white border border-gray-200 hover:border-esy-blue-400 hover:bg-esy-blue-50 px-5 py-2.5 rounded-full transition-all cursor-pointer shadow-sm">
+                    <input type="checkbox" name="verified" class="rounded text-esy-blue-600 focus:ring-esy-blue-500">
+                    <span class="text-gray-700 font-bold">{% trans "Vérifiés" %}</span>
+                </label>
+                <label class="flex items-center gap-2 bg-white border border-gray-200 hover:border-esy-gold/40 hover:bg-yellow-50 px-5 py-2.5 rounded-full transition-all cursor-pointer shadow-sm">
+                    <input type="checkbox" name="premium" class="rounded text-esy-gold focus:ring-esy-gold">
+                    <span class="text-gray-700 font-bold">{% trans "Premium" %}</span>
+                </label>
+                <label class="flex items-center gap-2 bg-white border border-gray-200 hover:border-green-400 hover:bg-green-50 px-5 py-2.5 rounded-full transition-all cursor-pointer shadow-sm">
+                    <input type="checkbox" name="open_now" class="rounded text-green-500 focus:ring-green-500">
+                    <span class="text-gray-700 font-bold">{% trans "Ouvert maintenant" %}</span>
+                </label>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- RESULTS SECTION -->
+<section class="py-16 bg-gray-50 min-h-[60vh]">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- LEFT COLUMN: ADVANCED FILTERS -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 sticky top-[200px]">
+                    <h3 class="text-xl font-black text-esy-dark mb-8">{% trans "Filtres avancés" %}</h3>
+                    
+                    <!-- Category Filter -->
+                    <div class="mb-8">
+                        <h4 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">{% trans "Catégories" %}</h4>
+                        <div class="space-y-3 max-h-64 overflow-y-auto">
+                            {% for cat in categories %}
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="category_filter" value="{{ cat.id }}" class="rounded text-esy-blue-600 focus:ring-esy-blue-500 w-5 h-5">
+                                <span class="text-gray-700 font-medium group-hover:text-esy-blue-600 transition">{{ cat.name }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Status Filter -->
+                    <div class="mb-8">
+                        <h4 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">{% trans "Statut" %}</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="verified_filter" class="rounded text-green-500 focus:ring-green-500 w-5 h-5">
+                                <span class="text-gray-700 font-medium group-hover:text-green-600 transition">{% trans "Vérifié" %}</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="premium_filter" class="rounded text-esy-gold focus:ring-esy-gold w-5 h-5">
+                                <span class="text-gray-700 font-medium group-hover:text-esy-gold transition">{% trans "Premium" %}</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Location Filter -->
+                    <div class="mb-8">
+                        <h4 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-4">{% trans "Quartier" %}</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="location_filter" value="center" class="rounded text-esy-blue-600 focus:ring-esy-blue-500 w-5 h-5">
+                                <span class="text-gray-700 font-medium group-hover:text-esy-blue-600 transition">{% trans "Centre-ville" %}</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="location_filter" value="north" class="rounded text-esy-blue-600 focus:ring-esy-blue-500 w-5 h-5">
+                                <span class="text-gray-700 font-medium group-hover:text-esy-blue-600 transition">{% trans "Nord" %}</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="location_filter" value="south" class="rounded text-esy-blue-600 focus:ring-esy-blue-500 w-5 h-5">
+                                <span class="text-gray-700 font-medium group-hover:text-esy-blue-600 transition">{% trans "Sud" %}</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="location_filter" value="east" class="rounded text-esy-blue-600 focus:ring-esy-blue-500 w-5 h-5">
+                                <span class="text-gray-700 font-medium group-hover:text-esy-blue-600 transition">{% trans "Est" %}</span>
+                            </label>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <input type="checkbox" name="location_filter" value="west" class="rounded text-esy-blue-600 focus:ring-esy-blue-500 w-5 h-5">
+                                <span class="text-gray-700 font-medium group-hover:text-esy-blue-600 transition">{% trans "Ouest" %}</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-esy-blue-600 text-white py-4 rounded-2xl font-black hover:bg-esy-blue-700 transition shadow-lg">
+                        {% trans "Appliquer les filtres" %}
+                    </button>
+                </div>
+            </div>
+            
+            <!-- RIGHT COLUMN: BUSINESS CARDS -->
+            <div class="lg:col-span-3">
+                {% if businesses %}
+                    <div class="flex items-center justify-between mb-8">
+                        <h3 class="text-2xl font-black text-esy-dark">{{ businesses|length }} {% trans "Résultats trouvés" %}</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {% for business in businesses %}
+                        <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
+                            <div class="relative h-48 overflow-hidden">
+                                {% if business.logo %}
+                                <img src="{{ business.logo.url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="{{ business.name }}">
+                                {% else %}
+                                <div class="w-full h-full bg-gradient-to-br from-esy-blue-50 to-indigo-100 flex items-center justify-center text-esy-blue-600 text-5xl">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="absolute top-4 left-4 flex gap-2">
+                                    {% if business.is_pro %}
+                                    <span class="premium-badge px-3 py-1 rounded-full text-[10px] uppercase shadow-lg">PREMIUM</span>
+                                    {% endif %}
+                                    {% if business.is_verified %}
+                                    <span class="verified-badge px-3 py-1 rounded-full text-[10px] uppercase shadow-lg">VÉRIFIÉ</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                <p class="text-esy-blue-600 font-bold text-xs uppercase tracking-widest mb-2">{{ business.category.name }}</p>
+                                <h4 class="text-xl font-black text-esy-dark mb-3 group-hover:text-esy-blue-600 transition">{{ business.name }}</h4>
+                                <p class="text-gray-500 font-medium mb-4 line-clamp-2">{{ business.description|truncatewords:15 }}</p>
+                                
+                                <div class="flex items-center text-gray-400 text-sm font-bold mb-4">
+                                    <i class="fas fa-map-marker-alt mr-2 text-esy-blue-600"></i> {{ business.address|truncatewords:3 }}
+                                </div>
+                                
+                                <div class="flex gap-3">
+                                    <a href="{% url 'business:detail' business.id %}" class="flex-1 bg-esy-dark text-white py-3 rounded-xl font-black text-center hover:bg-esy-blue-900 transition shadow">
+                                        {% trans "Voir" %}
+                                    </a>
+                                    <a href="tel:{{ business.phone }}" class="w-12 h-12 bg-esy-blue-50 text-esy-blue-600 rounded-xl flex items-center justify-center hover:bg-esy-blue-600 hover:text-white transition">
+                                        <i class="fas fa-phone"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- PAGINATION DYNAMIQUE -->
+                    {% if businesses.has_other_pages %}
+                    <div class="mt-16 flex justify-center gap-3">
+                        {% if businesses.has_previous %}
+                        <a href="?page={{ businesses.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" class="w-12 h-12 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold hover:border-esy-blue-400 hover:text-esy-blue-600 transition flex items-center justify-center">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                        {% endif %}
+                        
+                        {% for num in businesses.paginator.page_range %}
+                            {% if businesses.number == num %}
+                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" class="w-12 h-12 rounded-2xl bg-esy-blue-600 shadow-lg shadow-esy-blue-600/30 text-white font-black flex items-center justify-center">{{ num }}</a>
+                            {% elif num > businesses.number|add:'-3' and num < businesses.number|add:'3' %}
+                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" class="w-12 h-12 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold hover:border-esy-blue-400 hover:text-esy-blue-600 transition flex items-center justify-center">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if businesses.has_next %}
+                        <a href="?page={{ businesses.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" class="w-12 h-12 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold hover:border-esy-blue-400 hover:text-esy-blue-600 transition flex items-center justify-center">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                {% else %}
+                    <!-- NO RESULTS -->
+                    <div class="max-w-xl mx-auto text-center py-24 bg-white rounded-[3rem] border border-gray-100 shadow-xl">
+                        <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 text-gray-300">
+                            <i class="fas fa-search-minus text-4xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-black text-esy-dark mb-4">{% trans "Oups ! Aucun résultat" %}</h2>
+                        <p class="text-gray-500 font-medium mb-10 px-8">
+                            {% trans "Nous n'avons trouvé aucune entreprise correspondant à votre recherche. Essayez avec d'autres mots clés ou une autre catégorie." %}
+                        </p>
+                        <a href="{% url 'business:home' %}" class="inline-flex items-center bg-esy-blue-600 text-white px-10 py-4 rounded-[2rem] font-black text-lg shadow-xl shadow-esy-blue-600/30 hover:scale-105 transition transform">
+                            <i class="fas fa-home mr-3"></i> {% trans "Retour à l'accueil" %}
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const departementSelect = document.getElementById('departement-select');
+    const villeSelect = document.getElementById('ville-select');
+    
+    if (departementSelect && villeSelect) {
+        departementSelect.addEventListener('change', function() {
+            const departementId = this.value;
+            
+            // Vider le select ville
+            villeSelect.innerHTML = '<option value="">{% trans "Toutes les villes" %}</option>';
+            
+            if (departementId) {
+                // Charger les villes via AJAX
+                fetch(`/ajax/load-villes/?departement_id=${departementId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(ville => {
+                            const option = document.createElement('option');
+                            option.value = ville.id || ville.slug;
+                            option.textContent = ville.name || ville.nom;
+                            villeSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Erreur lors du chargement des villes:', error));
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

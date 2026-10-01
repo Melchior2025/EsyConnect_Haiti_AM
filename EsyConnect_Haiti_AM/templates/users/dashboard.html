@@ -1,0 +1,458 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Vue d'ensemble - {{ site_title|default:"EsyConnect" }}{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #fafafa;
+        color: #111827;
+    }
+
+    /* Minimalist Professional SaaS Cards */
+    .saas-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+        border-radius: 8px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .saas-card:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border-color: #d1d5db;
+    }
+
+    /* Data Table Styling */
+    .saas-table th {
+        background-color: #f9fafb;
+        color: #6b7280;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+    }
+
+    .saas-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+        color: #374151;
+        font-size: 0.875rem;
+    }
+
+    .saas-table tr:hover td {
+        background-color: #f9fafb;
+    }
+
+    /* Scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="flex h-screen w-full overflow-hidden bg-[#fafafa]">
+
+    <!-- SIDEBAR -->
+    {% include 'components/dashboard_sidebar.html' %}
+
+    <!-- MAIN AREA -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+
+        <!-- HEADER -->
+        {% include 'components/dashboard_header.html' %}
+
+        <!-- CONTENT SCROLL -->
+        <div class="relative z-10 flex-1 overflow-y-auto px-8 py-8 custom-scrollbar">
+
+            <!-- KPI METRICS GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Entreprises -->
+                <div class="saas-card p-5">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Total
+                                Entreprises</p>
+                            <h3 class="text-2xl font-bold text-gray-900">{{ stats.total_businesses|default:0 }}</h3>
+                        </div>
+                        <span
+                            class="text-emerald-600 bg-emerald-50 text-xs font-bold px-2 py-0.5 rounded border border-emerald-100 flex items-center">
+                            <i class="fas fa-building mr-1 text-[10px]"></i>
+                        </span>
+                    </div>
+                    <div class="mt-3 flex items-center gap-2">
+                        <span class="text-emerald-600 text-xs font-semibold flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i> +12%
+                        </span>
+                        <span class="text-gray-400 text-xs">ce mois</span>
+                    </div>
+                </div>
+
+                <!-- Vues Cumulées -->
+                <div class="saas-card p-5">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Vues
+                                Cumulées</p>
+                            <h3 class="text-2xl font-bold text-gray-900">{{ stats.total_views|default:0 }}</h3>
+                        </div>
+                        <span
+                            class="text-indigo-600 bg-indigo-50 text-xs font-bold px-2 py-0.5 rounded border border-indigo-100 flex items-center">
+                            <i class="fas fa-eye mr-1 text-[10px]"></i>
+                        </span>
+                    </div>
+                    <div class="mt-3 flex items-center gap-2">
+                        <span class="text-emerald-600 text-xs font-semibold flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i> +8%
+                        </span>
+                        <span class="text-gray-400 text-xs">ce mois</span>
+                    </div>
+                </div>
+
+                <!-- Demandes de Contact -->
+                <div class="saas-card p-5">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Demandes de
+                                Contact</p>
+                            <h3 class="text-2xl font-bold text-gray-900">{{ stats.total_leads|default:0 }}</h3>
+                        </div>
+                        <span
+                            class="text-amber-600 bg-amber-50 text-xs font-bold px-2 py-0.5 rounded border border-amber-100 flex items-center">
+                            <i class="fas fa-phone mr-1 text-[10px]"></i>
+                        </span>
+                    </div>
+                    <div class="mt-3 flex items-center gap-2">
+                        <span class="text-emerald-600 text-xs font-semibold flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i> +5%
+                        </span>
+                        <span class="text-gray-400 text-xs">ce mois</span>
+                    </div>
+                </div>
+
+                <!-- Note Moyenne -->
+                <div class="saas-card p-5">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">Note
+                                Moyenne</p>
+                            <h3 class="text-2xl font-bold text-gray-900">4.5</h3>
+                        </div>
+                        <span
+                            class="text-rose-600 bg-rose-50 text-xs font-bold px-2 py-0.5 rounded border border-rose-100 flex items-center">
+                            <i class="fas fa-star mr-1 text-[10px]"></i>
+                        </span>
+                    </div>
+                    <div class="mt-3 flex items-center gap-2">
+                        <span class="text-gray-400 text-xs">basé sur {{ stats.total_reviews|default:0 }} avis</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN AREA CHART -->
+            <div class="saas-card p-6 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900">Évolution du Trafic (6 derniers mois)</h3>
+                        <p class="text-xs text-gray-500 font-medium mt-0.5">Comparaison entre les vues globales et
+                            l'acquisition de leads.</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-1.5"><span
+                                class="w-3 h-3 rounded-full bg-gray-800"></span><span
+                                class="text-xs text-gray-600 font-medium">Vues</span></div>
+                        <div class="flex items-center gap-1.5"><span
+                                class="w-3 h-3 rounded-full bg-gray-300"></span><span
+                                class="text-xs text-gray-600 font-medium">Leads</span></div>
+                    </div>
+                </div>
+                <div class="h-64 w-full relative">
+                    <canvas id="mainAreaChart"></canvas>
+                </div>
+            </div>
+
+            <!-- SPLIT SECTION: DATA TABLE & DOUGHNUT -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+
+                <!-- DATA TABLE (2/3) -->
+                <div class="lg:col-span-2 saas-card overflow-hidden flex flex-col">
+                    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
+                        <h3 class="text-sm font-bold text-gray-900">Top Entreprises Performantes</h3>
+                        <a href="{% url 'users:business_dashboard' %}"
+                            class="text-xs font-semibold text-gray-500 hover:text-gray-900 transition-colors">Voir tout
+                            &rarr;</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full saas-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom de l'entreprise</th>
+                                    <th>Catégorie</th>
+                                    <th>Vues</th>
+                                    <th>Contacts</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for business in businesses|slice:":5" %}
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            {% if business.logo %}
+                                            <img src="{{ business.logo.url }}"
+                                                class="w-8 h-8 rounded object-cover border border-gray-200" alt="Logo">
+                                            {% else %}
+                                            <div
+                                                class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center text-gray-500 font-bold text-xs border border-gray-200">
+                                                {{ business.name|slice:":1" }}</div>
+                                            {% endif %}
+                                            <a href="{% url 'business:detail' business.id %}"
+                                                class="font-semibold text-gray-900 hover:underline">{{ business.name
+                                                }}</a>
+                                        </div>
+                                    </td>
+                                    <td>{{ business.category.name|default:'—' }}</td>
+                                    <td class="font-medium">{{ business.view_count|default:0 }}</td>
+                                    <td class="font-medium text-gray-500">{{
+                                        business.contacts_count|default:0 }}</td>
+                                    <td>
+                                        {% if business.is_active %}
+                                        <span
+                                            class="bg-gray-100 text-gray-700 px-2 py-1 rounded text-[10px] font-bold border border-gray-200">Actif</span>
+                                        {% else %}
+                                        <span
+                                            class="bg-gray-50 text-gray-400 px-2 py-1 rounded text-[10px] font-bold border border-gray-200">En
+                                            attente</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="flex gap-2">
+                                            <a href="{% url 'business:detail' business.id %}"
+                                                class="w-8 h-8 flex items-center justify-center rounded bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-900 border border-gray-200 transition-colors"
+                                                title="Voir">
+                                                <i class="fas fa-eye text-xs"></i>
+                                            </a>
+                                            <a href="{% url 'business:edit' business.id %}"
+                                                class="w-8 h-8 flex items-center justify-center rounded bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-gray-900 border border-gray-200 transition-colors"
+                                                title="Éditer">
+                                                <i class="fas fa-edit text-xs"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-12">
+                                        <div class="flex flex-col items-center">
+                                            <div
+                                                class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-gray-200">
+                                                <i class="fas fa-building text-gray-300 text-2xl"></i>
+                                            </div>
+                                            <h3 class="text-sm font-bold text-gray-900 mb-1">Aucune entreprise trouvée
+                                            </h3>
+                                            <p class="text-xs text-gray-500 mb-4">Commencez par ajouter votre première
+                                                entreprise</p>
+                                            <a href="{% url 'business:register' %}"
+                                                class="inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-xs font-semibold transition-colors">
+                                                <i class="fas fa-plus"></i> Ajouter une entreprise
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- DOUGHNUT CHART (1/3) -->
+                <div class="saas-card p-6 flex flex-col">
+                    <h3 class="text-sm font-bold text-gray-900 mb-1">Répartition Géographique</h3>
+                    <p class="text-xs text-gray-500 font-medium mb-6">Distribution de vos entreprises par zone</p>
+                    <div class="h-64 relative w-full flex items-center justify-center">
+                        <canvas id="zoneChart"></canvas>
+                    </div>
+                    <div class="mt-4 flex flex-wrap justify-center gap-4 text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-3 h-3 rounded" style="background-color: #4f46e5;"></span>
+                            <span class="text-gray-600">Cap-Haïtien</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-3 h-3 rounded" style="background-color: #10b981;"></span>
+                            <span class="text-gray-600">Port-au-Prince</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-3 h-3 rounded" style="background-color: #f59e0b;"></span>
+                            <span class="text-gray-600">Delmas</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-3 h-3 rounded" style="background-color: #6b7280;"></span>
+                            <span class="text-gray-600">Autres</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <footer
+                class="mt-8 pt-6 pb-2 border-t border-gray-200 flex items-center justify-between text-xs font-medium text-gray-500">
+                <p>EsyConnect &copy; {% now "Y" %}</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-gray-900 transition-colors">Documentation</a>
+                    <a href="{% url 'business:contact_general' %}"
+                        class="hover:text-gray-900 transition-colors">Support</a>
+                </div>
+            </footer>
+
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Configuration Globale
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#6b7280';
+        Chart.defaults.scale.grid.color = '#f3f4f6';
+
+        const tooltipConfig = {
+            backgroundColor: '#111827',
+            padding: 12,
+            cornerRadius: 4,
+            titleFont: { size: 12, weight: '600' },
+            bodyFont: { size: 12, weight: '400' },
+            borderWidth: 1,
+            borderColor: '#374151',
+            displayColors: false
+        };
+
+        const mLabels = {{ monthly_labels|default:"[]"|safe }};
+        const mViews = {{ monthly_views|default:"[]"|safe }};
+        const mLeads = {{ monthly_leads|default:"[]"|safe }};
+        const defaultData = [0, 0, 0, 0, 0, 0];
+
+        // --- Main Area Chart ---
+        const mainCtx = document.getElementById('mainAreaChart');
+        if (mainCtx) {
+            const ctx = mainCtx.getContext('2d');
+            const gradientViews = ctx.createLinearGradient(0, 0, 0, 350);
+            gradientViews.addColorStop(0, 'rgba(17, 24, 39, 0.1)');
+            gradientViews.addColorStop(1, 'rgba(17, 24, 39, 0.0)');
+
+            new Chart(mainCtx, {
+                type: 'line',
+                data: {
+                    labels: mLabels.length ? mLabels : ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                    datasets: [
+                        {
+                            label: 'Vues Globales',
+                            data: mViews.length ? mViews : defaultData,
+                            borderColor: '#111827',
+                            backgroundColor: gradientViews,
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            clip: false,
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#111827',
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Leads Générés',
+                            data: mLeads.length ? mLeads : defaultData,
+                            borderColor: '#9ca3af',
+                            backgroundColor: 'transparent',
+                            fill: false,
+                            tension: 0.4,
+                            borderWidth: 2,
+                            clip: false,
+                            borderDash: [5, 5],
+                            pointBackgroundColor: '#fff',
+                            pointBorderColor: '#9ca3af',
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: tooltipConfig
+                    },
+                    scales: {
+                        x: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 11, weight: '500' } } },
+                        y: { beginAtZero: true, grace: '5%', border: { display: false }, ticks: { font: { size: 11 }, maxTicksLimit: 6 } }
+                    }
+                }
+            });
+        }
+
+        // --- Zone Doughnut ---
+        const zoneCtx = document.getElementById('zoneChart');
+        if (zoneCtx) {
+            const zLabels = {{ zone_labels|default:"[]"|safe }};
+            const zData = {{ zone_data|default:"[]"|safe }};
+            const hasData = zData.reduce((a, b) => a + b, 0) > 0;
+            const modernColors = ['#4f46e5', '#10b981', '#f59e0b', '#6b7280'];
+
+            new Chart(zoneCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: hasData ? zLabels : ['Aucune'],
+                    datasets: [{
+                        data: hasData ? zData : [1],
+                        backgroundColor: hasData ? modernColors : ['#f3f4f6'],
+                        borderWidth: 1,
+                        borderColor: '#ffffff',
+                        hoverOffset: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: hasData, ...tooltipConfig }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

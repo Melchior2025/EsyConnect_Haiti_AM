@@ -1,0 +1,140 @@
+# French translations for EsyConnect Haïti
+# Copyright (C) 2024 EsyConnect Haïti
+# This file is distributed under the same license as the EsyConnect Haïti package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: EsyConnect Haïti 1.0\n"
+"Report-Msgid-Bugs-To: contact@esyconnect.ht\n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: EsyConnect Team <contact@esyconnect.ht>\n"
+"Language-Team: French <fr@li.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: templates/base.html:103
+msgid "Tableau de bord"
+msgstr "Tableau de bord"
+
+#: templates/base.html:106
+msgid "Déconnexion"
+msgstr "Déconnexion"
+
+#: templates/base.html:109
+msgid "Connexion"
+msgstr "Connexion"
+
+#: templates/base.html:111
+msgid "S'inscrire"
+msgstr "S'inscrire"
+
+#: templates/base.html:125
+msgid "À propos"
+msgstr "À propos"
+
+#: templates/base.html:127
+msgid "EsyConnect Haïti est l'annuaire professionnel de référence pour le Cap-Haïtien et ses environs."
+msgstr "EsyConnect Haïti est l'annuaire professionnel de référence pour le Cap-Haïtien et ses environs."
+
+#: templates/base.html:132
+msgid "Contact"
+msgstr "Contact"
+
+#: templates/base.html:142
+msgid "Suivez-nous"
+msgstr "Suivez-nous"
+
+#: templates/base.html:152
+msgid "Tous droits réservés."
+msgstr "Tous droits réservés."
+
+#: templates/home.html:5
+msgid "Annuaire professionnel du Cap-Haïtien"
+msgstr "Annuaire professionnel du Cap-Haïtien"
+
+#: templates/home.html:12
+msgid "Bienvenue sur EsyConnect Haïti"
+msgstr "Bienvenue sur EsyConnect Haïti"
+
+#: templates/home.html:22
+msgid "Rechercher une entreprise, un service..."
+msgstr "Rechercher une entreprise, un service..."
+
+#: templates/home.html:26
+msgid "Toutes catégories"
+msgstr "Toutes catégories"
+
+#: templates/home.html:28
+msgid "Rechercher"
+msgstr "Rechercher"
+
+#: templates/home.html:40
+msgid "Explorer par catégorie"
+msgstr "Explorer par catégorie"
+
+#: templates/home.html:42
+msgid "Trouvez facilement ce que vous cherchez dans nos catégories spécialisées"
+msgstr "Trouvez facilement ce que vous cherchez dans nos catégories spécialisées"
+
+#: templates/home.html:66
+msgid "Aucune catégorie disponible pour le moment"
+msgstr "Aucune catégorie disponible pour le moment"
+
+#: templates/home.html:75
+msgid "Voir toutes les catégories"
+msgstr "Voir toutes les catégories"
+
+#: templates/home.html:84
+msgid "Entreprises à la Une"
+msgstr "Entreprises à la Une"
+
+#: templates/home.html:86
+msgid "Découvrez nos entreprises partenaires Premium"
+msgstr "Découvrez nos entreprises partenaires Premium"
+
+#: templates/home.html:115
+msgid "Vérifié"
+msgstr "Vérifié"
+
+#: templates/home.html:140
+msgid "Voir détails"
+msgstr "Voir détails"
+
+#: templates/home.html:158
+msgid "Voir toutes les entreprises"
+msgstr "Voir toutes les entreprises"
+
+#: templates/home.html:170
+msgid "Entreprises"
+msgstr "Entreprises"
+
+#: templates/home.html:173
+msgid "Catégories"
+msgstr "Catégories"
+
+#: templates/home.html:176
+msgid "Vérifiées"
+msgstr "Vérifiées"
+
+#: templates/home.html:179
+msgid "Premium"
+msgstr "Premium"
+
+#: templates/home.html:191
+msgid "Propriétaire d'entreprise ?"
+msgstr "Propriétaire d'entreprise ?"
+
+#: templates/home.html:193
+msgid "Rejoignez EsyConnect Haïti et faites connaître votre entreprise à des milliers de clients potentiels."
+msgstr "Rejoignez EsyConnect Haïti et faites connaître votre entreprise à des milliers de clients potentiels."
+
+#: templates/home.html:197
+msgid "S'inscrire gratuitement"
+msgstr "S'inscrire gratuitement"
+
+#: templates/home.html:199
+msgid "Découvrir Premium"
+msgstr "Découvrir Premium"

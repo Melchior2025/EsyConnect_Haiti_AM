@@ -1,0 +1,304 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block title %}Mes Entreprises - {{ site_title|default:"EsyConnect" }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Adjust icon container size */
+  .kpi-icon {
+    @apply flex items-center justify-center w-10 h-10 rounded-full;
+  }
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-slate-50">
+    <!-- Sidebar uniquement pour le dashboard -->
+    {% include 'components/dashboard_sidebar.html' %}
+    
+    <!-- Contenu du Dashboard -->
+    <main class="flex-1 p-8 overflow-y-auto">
+        {% include 'components/dashboard_header.html' %}
+        <div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- Total Entreprises -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Total Entreprises</p>
+          <h3 class="text-2xl font-bold text-slate-900">{{ stats.total_businesses|default:0 }}</h3>
+          <p class="text-xs font-medium text-slate-500">+0% ce mois</p>
+        </div>
+        <div class="kpi-icon bg-slate-100 text-slate-600">
+          <i class="fas fa-building"></i>
+        </div>
+      </div>
+      <!-- Entreprises Actives -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Actives</p>
+          <h3 class="text-2xl font-bold text-slate-900">{{ stats.active_businesses|default:0 }}</h3>
+          <p class="text-xs font-medium text-slate-500">+0% ce mois</p>
+        </div>
+        <div class="kpi-icon bg-emerald-50 text-emerald-600">
+          <i class="fas fa-check-circle"></i>
+        </div>
+      </div>
+      <!-- En Attente -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">En attente</p>
+          <h3 class="text-2xl font-bold text-slate-900">{{ stats.pending_businesses|default:0 }}</h3>
+          <p class="text-xs font-medium text-slate-500">+0% ce mois</p>
+        </div>
+        <div class="kpi-icon bg-amber-50 text-amber-600">
+          <i class="fas fa-clock"></i>
+        </div>
+      </div>
+      <!-- Pro (Premium) -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Premium</p>
+          <h3 class="text-2xl font-bold text-slate-900">{{ stats.premium_businesses|default:0 }}</h3>
+          <p class="text-xs font-medium text-slate-500">+0% ce mois</p>
+        </div>
+        <div class="kpi-icon bg-indigo-50 text-indigo-600">
+          <i class="fas fa-crown"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Views Chart -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-4">Évolution des Vues</h3>
+        <div class="relative h-64 w-full">
+          <canvas id="viewsChart" class="w-full h-64" style="max-height:260px;"></canvas>
+          {% if not monthly_views %}
+            <div class="absolute inset-0 flex items-center justify-center text-slate-500 text-sm">Aucune donnée récente</div>
+          {% endif %}
+        </div>
+      </div>
+      <!-- Category Doughnut Chart -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+        <h3 class="text-base font-bold text-slate-90 mb-4">Répartition par Catégorie</h3>
+        <div class="relative h-64 w-full">
+          <canvas id="categoryChart" class="w-full h-64" style="max-height:260px;"></canvas>
+          {% if not cat_data %}
+            <div class="absolute inset-0 flex items-center justify-center text-slate-500 text-sm">Aucune donnée récente</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Business Table -->
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50/80 flex justify-between items-center">
+        <h2 class="text-sm font-bold text-slate-900">Portefeuille d'Entreprises</h2>
+        <span class="text-xs text-slate-500 font-medium">{{ businesses|length }} entrée{{ businesses|length|pluralize:"s" }}</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase text-xs font-semibold">
+            <tr>
+              <th class="px-4 py-3 text-left">Entreprise</th>
+              <th class="px-4 py-3 text-left">Performance (Vues / Contacts)</th>
+              <th class="px-4 py-3 text-left">Statut</th>
+              <th class="px-4 py-3 text-left">Plan</th>
+              <th class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {% for business in businesses %}
+            <tr class="hover:bg-slate-50/50 transition">
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-4">
+                  {% if business.logo %}
+                    <img src="{{ business.logo.url }}" class="w-10 h-10 rounded border border-slate-200 object-cover" alt="Logo">
+                  {% else %}
+                    <div class="w-10 h-10 rounded bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-sm border border-slate-200">
+                      {{ business.name|slice:":1" }}
+                    </div>
+                  {% endif %}
+                  <div>
+                    <a href="{% url 'business:detail' business.id %}" class="font-bold text-slate-900 hover:text-slate-600 transition-colors">{{ business.name }}</a>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5">{{ business.category.name|default:'Sans Catégorie' }}</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex gap-4">
+                  <div title="Vues">
+                    <p class="text-xs text-slate-400 font-semibold mb-0.5"><i class="fas fa-eye text-[10px]"></i></p>
+                    <p class="text-sm font-bold text-slate-700">{{ business.view_count|default:0 }}</p>
+                  </div>
+                  <div title="Contacts">
+                    <p class="text-xs text-slate-400 font-semibold mb-0.5"><i class="fas fa-comments text-[10px]"></i></p>
+                    <p class="text-sm font-bold text-slate-700">{{ business.contacts_count }}</p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-4 py-3">
+                {% if business.is_active %}
+                  <span class="inline-flex items-center gap-1.5 bg-slate-50 text-slate-700 px-2.5 py-1 rounded-md text-[11px] font-semibold border border-slate-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Actif
+                  </span>
+                {% else %}
+                  <span class="inline-flex items-center gap-1.5 bg-slate-50 text-slate-500 px-2.5 py-1 rounded-md text-[11px] font-semibold border border-slate-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> En attente
+                  </span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3">
+                {% if business.is_pro %}
+                  <span class="bg-slate-800 text-white px-2 py-1 rounded text-[10px] font-bold tracking-wide">PRO</span>
+                {% else %}
+                  <span class="text-slate-400 text-xs font-semibold">Standard</span>
+                {% endif %}
+              </td>
+              <td class="px-4 py-3 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <a href="{% url 'business:detail' business.id %}" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200" title="Voir le microsite"><i class="fas fa-external-link-alt text-xs text-slate-600"></i></a>
+                  <a href="{% url 'business:manage_gallery' business.id %}" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200" title="Gérer la galerie"><i class="fas fa-image text-xs text-slate-600"></i></a>
+                  <a href="{% url 'business:edit' business.id %}" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200" title="Modifier"><i class="fas fa-pen text-xs text-slate-600"></i></a>
+                  <form action="{% url 'business:delete' business.id %}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette entreprise ?');" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200 text-slate-600" title="Supprimer"><i class="fas fa-trash text-xs"></i></button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="py-12 text-center">
+                <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 mx-auto mb-3 border border-slate-200">
+                  <i class="fas fa-store"></i>
+                </div>
+                <h3 class="text-sm font-bold text-slate-900 mb-1">Aucune entreprise trouvée</h3>
+                <p class="text-xs text-slate-500 mb-4">Commencez par enregistrer votre première entreprise.</p>
+                <a href="{% url 'business:register' %}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium text-sm shadow-sm transition">
+                  Créer maintenant
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- Pagination -->
+      {% if is_paginated %}
+      <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+        <p class="text-xs font-medium text-slate-500">Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}</p>
+        <nav class="flex items-center gap-1">
+          {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-slate-500 hover:bg-slate-50 text-xs">&laquo;</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-slate-500 hover:bg-slate-50 text-xs">&raquo;</a>
+          {% endif %}
+        </nav>
+      </div>
+      {% endif %}
+    </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#6b7280';
+    Chart.defaults.scale.grid.color = '#f3f4f6';
+    const tooltipConfig = {
+      backgroundColor: '#111827',
+      padding: 12,
+      cornerRadius: 6,
+      titleFont: { size: 12, weight: '600', family: "'Inter', sans-serif" },
+      bodyFont: { size: 12, weight: '400', family: "'Inter', sans-serif" },
+      borderWidth: 1,
+      borderColor: '#374151',
+      displayColors: true,
+      boxPadding: 4,
+      usePointStyle: true
+    };
+
+    // Views chart (line)
+    const monthlyLabels = {{ monthly_labels|safe }};
+    const monthlyViews = {{ monthly_views|safe }};
+    const viewsCtx = document.getElementById('viewsChart');
+    if (viewsCtx) {
+      const ctx2d = viewsCtx.getContext('2d');
+      const gradient = ctx2d.createLinearGradient(0,0,0,250);
+      gradient.addColorStop(0, 'rgba(17,24,39,0.15)');
+      gradient.addColorStop(1, 'rgba(17,24,39,0)');
+      new Chart(viewsCtx, {
+        type: 'line',
+        data: {
+          labels: monthlyLabels.length ? monthlyLabels : ['—'],
+          datasets: [{
+            label: 'Vues Globales',
+            data: monthlyViews.length ? monthlyViews : [0],
+            borderColor: '#111827',
+            backgroundColor: gradient,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: '#111827',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointHoverBackgroundColor: '#111827',
+            pointHoverBorderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { display: false }, tooltip: tooltipConfig },
+          scales: {
+            y: { beginAtZero: true, border: { display: false }, grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, maxTicksLimit: 6 } },
+            x: { border: { display: false }, grid: { display: false }, ticks: { font: { size: 11, weight: '500' } } }
+          }
+        }
+      });
+    }
+
+    // Category chart (doughnut)
+    const catLabels = {{ cat_labels|safe }};
+    const catData = {{ cat_data|safe }};
+    const categoryCtx = document.getElementById('categoryChart');
+    if (categoryCtx) {
+      new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+          labels: catLabels.length ? catLabels : ['—'],
+          datasets: [{
+            data: catData.length ? catData : [0],
+            backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#f43f5e'], // emerald, indigo, amber, rose
+            hoverBackgroundColor: ['#059669', '#4f46e5', '#d97706', '#e11d48'],
+            borderWidth: 1,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '70%',
+          plugins: { legend: { position: 'bottom' }, tooltip: tooltipConfig }
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

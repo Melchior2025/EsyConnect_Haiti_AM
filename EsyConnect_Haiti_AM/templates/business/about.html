@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "À Propos" %} - EsyConnect Haïti{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<div class="bg-esy-dark py-24 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-20">
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1950&q=80" class="w-full h-full object-cover">
+    </div>
+    <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+        <h1 class="text-4xl md:text-6xl font-black text-white mb-6">{% trans "Notre" %} <span class="text-esy-blue-500">{% trans "Mission" %}</span></h1>
+        <p class="text-xl text-white/60 font-medium max-w-2xl mx-auto">
+            {% trans "Propulser l'économie locale du Cap-Haïtien en connectant les entreprises avec leurs clients." %}
+        </p>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-24">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <div>
+            <h2 class="text-4xl font-black text-esy-dark mb-8">{% trans "Qui sommes-nous ?" %}</h2>
+            <div class="space-y-6 text-gray-500 font-medium leading-relaxed">
+                <p>
+                    {% trans "EsyConnect est la plateforme de référence pour la visibilité des entreprises dans le Nord d'Haïti. Nous croyons que chaque business, petit ou grand, mérite une présence digitale de qualité." %}
+                </p>
+                <p>
+                    {% trans "Notre plateforme permet aux entrepreneurs de gérer leur image, de recevoir des avis clients et d'augmenter leur portée géographique sans investissements massifs en marketing." %}
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-8 mt-12">
+                <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100">
+                    <h4 class="text-3xl font-black text-esy-blue-600 mb-1">500+</h4>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">{% trans "Entreprises" %}</p>
+                </div>
+                <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100">
+                    <h4 class="text-3xl font-black text-esy-gold mb-1">10k+</h4>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">{% trans "Visiteurs" %}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="relative">
+            <div class="bg-esy-blue-600 rounded-[3rem] p-1 shadow-2xl">
+                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80" class="rounded-[2.8rem] w-full h-[500px] object-cover">
+            </div>
+            <div class="absolute -bottom-10 -right-10 bg-white p-8 rounded-3xl shadow-2xl hidden md:block border border-gray-50">
+                <p class="text-esy-blue-600 font-black text-xl italic">"Siksè se pou nou tout"</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

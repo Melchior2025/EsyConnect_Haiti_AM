@@ -1,0 +1,407 @@
+{% load i18n %}
+
+<!-- ========================= -->
+<!-- GLOBAL HAITI MAP -->
+<!-- ========================= -->
+<div id="global-map"
+    class="w-full bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden rounded-2xl shadow-xl border-4 border-white"
+    style="height:500px;">
+
+    <!-- MAP -->
+    <div id="leaflet-global-map" class="h-full w-full z-0"></div>
+
+    <!-- ========================= -->
+    <!-- MAP CONTROLS -->
+    <!-- ========================= -->
+    <div class="absolute top-6 right-6 z-[1000] flex flex-col gap-3">
+
+        <button onclick="globalZoomIn()"
+            class="w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center text-esy-blue-600 hover:bg-esy-blue-600 hover:text-white transition-all duration-300 hover:scale-110">
+            <i class="fas fa-plus"></i>
+        </button>
+
+        <button onclick="globalZoomOut()"
+            class="w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center text-esy-blue-600 hover:bg-esy-blue-600 hover:text-white transition-all duration-300 hover:scale-110">
+            <i class="fas fa-minus"></i>
+        </button>
+
+        <button onclick="globalResetMap()"
+            class="w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center text-esy-blue-600 hover:bg-esy-blue-600 hover:text-white transition-all duration-300 hover:scale-110">
+            <i class="fas fa-crosshairs"></i>
+        </button>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- INFO PANEL -->
+    <!-- ========================= -->
+    <div
+        class="absolute top-6 left-6 z-[1000] bg-white/95 backdrop-blur-md p-6 rounded-3xl shadow-2xl border border-gray-100 hidden md:block max-w-sm">
+
+        <div class="flex items-center gap-4 mb-4">
+
+            <div class="w-14 h-14 bg-esy-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-map-marked-alt text-white text-2xl"></i>
+            </div>
+
+            <div>
+                <h4 class="text-2xl font-black text-esy-dark">
+                    {% trans "Carte Interactive" %}
+                </h4>
+
+                <p class="text-xs uppercase tracking-widest text-gray-400 font-bold">
+                    {% trans "EsyConnect Haïti" %}
+                </p>
+            </div>
+
+        </div>
+
+        <p class="text-gray-500 text-sm leading-relaxed mb-4">
+            {% trans "Découvrez les entreprises, commerces et services disponibles dans toute la République d’Haïti." %}
+        </p>
+
+        <div class="flex items-center justify-between">
+
+            <div class="flex items-center text-esy-blue-600 font-bold text-xs uppercase tracking-widest">
+                <span class="w-2 h-2 bg-esy-blue-600 rounded-full mr-2 animate-pulse"></span>
+
+                {{ all_businesses.count }}
+                {% trans "Biznis Disponibles" %}
+            </div>
+
+            <div class="text-xs text-gray-400 font-semibold">
+                🇭🇹 Haiti
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================= -->
+<!-- LEAFLET CSS -->
+<!-- ========================= -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<!-- ========================= -->
+<!-- LEAFLET JS -->
+<!-- ========================= -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- ========================= -->
+<!-- MAP SCRIPT -->
+<!-- ========================= -->
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        if (typeof L === 'undefined') {
+            console.error('Leaflet not loaded');
+            return;
+        }
+
+        // ====================================
+        // LIMITES GÉOGRAPHIQUES D’HAÏTI
+        // ====================================
+        const haitiBounds = [
+            [17.8, -75.0], // Sud-Ouest
+            [20.2, -71.5]  // Nord-Est
+        ];
+
+        // ====================================
+        // INITIALISATION DE LA CARTE
+        // ====================================
+        const map = L.map('leaflet-global-map', {
+
+            zoomControl: false,
+            scrollWheelZoom: true,
+            minZoom: 7,
+            maxZoom: 18,
+
+            // Empêche de sortir d’Haïti
+            maxBounds: haitiBounds,
+            maxBoundsViscosity: 1.0
+
+        });
+
+        // ====================================
+        // AFFICHER TOUT HAÏTI
+        // ====================================
+        map.fitBounds(haitiBounds);
+
+        // ====================================
+        // TILE LAYER PROFESSIONNEL
+        // ====================================
+        L.tileLayer(
+            'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+            {
+                attribution:
+                    '&copy; OpenStreetMap contributors &copy; CARTO',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }
+        ).addTo(map);
+
+        // ====================================
+        // DATA DJANGO
+        // ====================================
+        const businesses = {{ businesses_json|default:"[]"|safe }};
+
+    // ====================================
+    // TABLEAU DES MARKERS
+    // ====================================
+    const markers = [];
+
+    // ====================================
+    // CUSTOM ICON
+    // ====================================
+    const customIcon = L.divIcon({
+
+        className: '',
+
+        html: `
+            <div class="relative">
+
+                <div class="absolute -inset-2 bg-esy-blue-600 rounded-full opacity-20 animate-ping"></div>
+
+                <div class="relative bg-gradient-to-br from-esy-blue-600 to-esy-blue-700 text-white rounded-xl w-12 h-12 flex items-center justify-center shadow-xl border-2 border-white transition-transform duration-300 hover:scale-110">
+
+                    <i class="fas fa-store text-lg"></i>
+
+                </div>
+
+                <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-esy-blue-600 rotate-45 border-2 border-white"></div>
+
+            </div>
+        `,
+
+        iconSize: [48, 48],
+        iconAnchor: [24, 24],
+        popupAnchor: [0, -24]
+
+    });
+
+    // ====================================
+    // AJOUT DES ENTREPRISES
+    // ====================================
+    businesses.forEach(biz => {
+
+        // Vérification coordonnées Haïti
+        if (
+            biz.latitude &&
+            biz.longitude &&
+            biz.latitude >= 17 &&
+            biz.latitude <= 21 &&
+            biz.longitude >= -75 &&
+            biz.longitude <= -71
+        ) {
+
+            // =========================
+            // CRÉATION MARKER
+            // =========================
+            const marker = L.marker(
+                [biz.latitude, biz.longitude],
+                { icon: customIcon }
+            ).addTo(map);
+
+            // =========================
+            // LOGO
+            // =========================
+            const logoHtml = biz.logo
+
+                ? `
+                    <img src="${biz.logo}"
+                         class="w-16 h-16 rounded-xl object-cover border-2 border-white shadow-lg"
+                         alt="${biz.name}">
+                  `
+
+                : `
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-esy-blue-500 to-esy-blue-700 flex items-center justify-center text-white text-2xl font-black shadow-lg border-2 border-white">
+                        ${biz.name.charAt(0).toUpperCase()}
+                    </div>
+                  `;
+
+            // =========================
+            // POPUP
+            // =========================
+            const popupContent = `
+
+                <div class="min-w-[320px] overflow-hidden rounded-2xl">
+
+                    <!-- HEADER -->
+                    <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 p-5 text-white">
+
+                        <div class="flex items-start gap-4">
+
+                            ${logoHtml}
+
+                            <div class="flex-1">
+
+                                <h3 class="font-black text-lg leading-tight mb-1">
+                                    ${biz.name}
+                                </h3>
+
+                                <p class="text-indigo-200 text-sm font-medium">
+                                    ${biz.category_name || 'Business'}
+                                </p>
+
+                                <div class="mt-2 flex flex-wrap gap-2">
+
+                                    ${biz.is_premium
+                    ? `
+                                            <span class="bg-yellow-400 text-white text-xs font-black px-2 py-1 rounded-full shadow">
+                                                PREMIUM
+                                            </span>
+                                          `
+                    : ''
+                }
+
+                                    ${biz.is_verified
+                    ? `
+                                            <span class="bg-blue-400 text-white text-xs font-black px-2 py-1 rounded-full shadow">
+                                                VERIFIED
+                                            </span>
+                                          `
+                    : ''
+                }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="bg-white p-5">
+
+                        <!-- RATING -->
+                        <div class="flex items-center justify-between mb-4">
+
+                            <div class="flex items-center gap-2">
+
+                                <i class="fas fa-star text-yellow-400"></i>
+
+                                <span class="font-bold text-gray-800">
+                                    ${biz.rating || 'N/A'}
+                                </span>
+
+                                <span class="text-xs text-gray-400">
+                                    (${biz.review_count || 0} avis)
+                                </span>
+
+                            </div>
+
+                            ${biz.whatsapp_clicks
+                    ? `
+                                    <div class="flex items-center gap-1 text-green-600 text-xs font-bold">
+                                        <i class="fab fa-whatsapp"></i>
+                                        ${biz.whatsapp_clicks} clics
+                                    </div>
+                                  `
+                    : ''
+                }
+
+                        </div>
+
+                        <!-- ADDRESS -->
+                        ${biz.address
+                    ? `
+                                <div class="flex items-start gap-2 text-sm text-gray-500 mb-4">
+                                    <i class="fas fa-map-marker-alt mt-1 text-esy-blue-600"></i>
+                                    <span>${biz.address}</span>
+                                </div>
+                              `
+                    : ''
+                }
+
+                        <!-- BUTTONS -->
+                        <div class="space-y-2">
+
+                            <a href="/${biz.id}/"
+                               class="block w-full bg-indigo-600 text-white text-center py-3 rounded-xl font-bold hover:bg-indigo-700 transition-all duration-300 shadow-lg">
+
+                                <i class="fas fa-eye mr-2"></i>
+                                {% trans "Voir les détails" %}
+
+                            </a>
+
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${biz.latitude},${biz.longitude}"
+                               target="_blank"
+                               class="block w-full bg-blue-600 text-white text-center py-3 rounded-xl font-bold hover:bg-blue-700 transition-all duration-300 shadow-lg">
+
+                                🚘 Google Maps
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+            // =========================
+            // BIND POPUP
+            // =========================
+            marker.bindPopup(popupContent, {
+                maxWidth: 380,
+                className: 'custom-popup'
+            });
+
+            markers.push(marker);
+
+        }
+
+    });
+
+    // ====================================
+    // BOUTONS DE CONTRÔLE
+    // ====================================
+    window.globalZoomIn = function () {
+        map.zoomIn();
+    };
+
+    window.globalZoomOut = function () {
+        map.zoomOut();
+    };
+
+    // RESET SUR TOUT HAÏTI
+    window.globalResetMap = function () {
+        map.fitBounds(haitiBounds);
+    };
+
+    // Ensure Leaflet knows the container size after layout
+    setTimeout(function () {
+        map.invalidateSize();
+    }, 200);
+});
+
+</script>
+
+<!-- ========================= -->
+<!-- POPUP STYLE -->
+<!-- ========================= -->
+<style>
+    .custom-popup .leaflet-popup-content-wrapper {
+        border-radius: 1rem;
+        overflow: hidden;
+        padding: 0;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .custom-popup .leaflet-popup-content {
+        margin: 0;
+    }
+
+    .custom-popup .leaflet-popup-tip {
+        background: white;
+    }
+
+    #leaflet-global-map { height: 100%; width: 100%; }
+        font-family: inherit;
+        border-radius: 1rem;
+    }
+</style>

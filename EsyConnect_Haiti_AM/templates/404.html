@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}404 - {% trans "Page Non Trouvée" %} - EsyConnect Haïti{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-24">
+    <div class="max-w-xl w-full text-center">
+        <div class="relative mb-16">
+            <h1 class="text-[12rem] md:text-[18rem] font-black text-gray-100 leading-none select-none">404</h1>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-32 h-32 md:w-48 md:h-48 bg-esy-blue-600 rounded-[2.5rem] rotate-12 flex items-center justify-center shadow-2xl shadow-esy-blue-600/30">
+                    <i class="fas fa-ghost text-white text-5xl md:text-7xl"></i>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="text-3xl md:text-5xl font-black text-esy-dark mb-6">{% trans "Oups ! Page Perdue." %}</h2>
+        <p class="text-xl text-gray-400 font-medium mb-12">
+            {% trans "Il semble que vous ayez pris un mauvais virage au Cap-Haïtien. La page que vous cherchez est introuvable." %}
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-6 justify-center">
+            <a href="{% url 'business:home' %}" class="bg-esy-blue-600 text-white px-10 py-5 rounded-[2rem] font-black text-lg shadow-xl shadow-esy-blue-600/20 hover:scale-105 transition transform">
+                <i class="fas fa-home mr-3"></i>{% trans "Retour à l'accueil" %}
+            </a>
+            <a href="{% url 'business:categories' %}" class="bg-white text-esy-dark px-10 py-5 rounded-[2rem] font-black text-lg border border-gray-100 shadow-lg hover:bg-gray-50 transition transform hover:scale-105">
+                <i class="fas fa-th-large mr-3 text-esy-blue-600"></i>{% trans "Voir les catégories" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
