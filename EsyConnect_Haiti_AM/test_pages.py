@@ -32,6 +32,11 @@ pages = [
     ('/fr/users/profile/', 'Profile'),
     ('/fr/users/edit-profile/', 'Edit Profile'),
     ('/fr/favorites/', 'Favorites'),
+    # Business actions
+    ('/fr/register/', 'Register Business'),
+    ('/fr/business/1/', 'Business Detail'),
+    ('/fr/business/1/edit/', 'Edit Business'),
+    ('/fr/business/1/manage-gallery/', 'Manage Gallery'),
 ]
 
 print("\n" + "="*60)

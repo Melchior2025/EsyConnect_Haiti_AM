@@ -12,6 +12,15 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def slug(self):
+        from django.utils.text import slugify
+        return slugify(self.name)
+
+    @property
+    def nom(self):
+        return self.name
+
 
 class Ville(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='villes')
@@ -22,6 +31,15 @@ class Ville(models.Model):
         verbose_name_plural = "Villes"
 
     def __str__(self):
+        return self.name
+
+    @property
+    def slug(self):
+        from django.utils.text import slugify
+        return slugify(self.name)
+
+    @property
+    def nom(self):
         return self.name
 
 
@@ -90,6 +108,30 @@ class Business(models.Model):
             return self.leads.count()
         except Exception:
             return 0
+
+    @property
+    def phone(self):
+        try:
+            return self.owner.profile.phone
+        except Exception:
+            return None
+
+    @property
+    def whatsapp(self):
+        return self.phone
+
+    @property
+    def email(self):
+        try:
+            return self.owner.email
+        except Exception:
+            return None
+
+    @property
+    def description(self):
+        cat_name = self.category.name if self.category else "Services"
+        ville_name = self.ville_obj.name if self.ville_obj else "Haïti"
+        return f"{self.name} - {cat_name} disponible à {ville_name}."
     is_active = models.BooleanField(default=True, verbose_name="Est actif")
     is_pro = models.BooleanField(default=False, verbose_name="Compte PRO")
     is_verified = models.BooleanField(default=False, verbose_name="Vérifié")
