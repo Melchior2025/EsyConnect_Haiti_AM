@@ -7,7 +7,7 @@
                 <a href="{% url 'business:home' %}" class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
                     <i class="fas fa-arrow-left text-gray-700"></i>
                 </a>
-                <a href="{% url 'business:detail' business.id %}" class="flex items-center space-x-3 group">
+                <a href="{% url 'business:business_detail' business.id %}" class="flex items-center space-x-3 group">
                     {% if business.logo %}
                         <img src="{{ business.logo.url }}" class="w-10 h-10 rounded-xl object-cover shadow-lg" alt="{{ business.name }}">
                     {% else %}
@@ -21,10 +21,10 @@
 
             <!-- Business Navigation -->
             <nav class="hidden lg:flex items-center space-x-6">
-                <a href="{% url 'business:detail' business.id %}#about" class="text-sm font-bold text-gray-700 hover:text-blue-600 transition">{% trans "À propos" %}</a>
-                <a href="{% url 'business:detail' business.id %}#photos" class="text-sm font-bold text-gray-700 hover:text-blue-600 transition">{% trans "Photos" %}</a>
-                <a href="{% url 'business:detail' business.id %}#reviews" class="text-sm font-bold text-gray-700 hover:text-blue-600 transition">{% trans "Avis" %}</a>
-                <a href="{% url 'business:detail' business.id %}#contact" class="text-sm font-bold text-gray-700 hover:text-blue-600 transition">{% trans "Contact" %}</a>
+                <a href="{% url 'business:business_detail' business.id %}#about" class="text-sm font-bold text-gray-700 hover:text-blue-600 transition">{% trans "À propos" %}</a>
+                <a href="{% url 'business:business_detail' business.id %}#photos" class="text-sm font-bold text-gray-700 hover:text-blue-600 transition">{% trans "Photos" %}</a>
+                <a href="{% url 'business:business_detail' business.id %}#reviews" class="text-sm font-bold text-gray-700 hover:text-blue-600 transition">{% trans "Avis" %}</a>
+                <a href="{% url 'business:business_detail' business.id %}#contact" class="text-sm font-bold text-gray-700 hover:text-blue-600 transition">{% trans "Contact" %}</a>
                 
                 {% if business.phone %}
                 <a href="tel:{{ business.phone }}" class="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition">

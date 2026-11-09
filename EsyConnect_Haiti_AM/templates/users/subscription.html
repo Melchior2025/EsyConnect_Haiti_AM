@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}Mon Abonnement - {{ site_title|default:"EsyConnect" }}{% endblock %}
+{% block title %}{% trans "Mon Abonnement" %} - {{ site_title|default:"EsyConnect" }}{% endblock %}
 
 {% block navbar %}{% endblock %}
 {% block footer %}{% endblock %}
@@ -35,101 +35,213 @@
     {% include 'components/dashboard_header.html' %}
 
     <!-- CONTENT SCROLL -->
-    <div class="relative z-10 flex-1 px-6 py-6 custom-scrollbar flex flex-col">
+    <div class="relative z-10 flex-1 px-6 py-6 custom-scrollbar flex flex-col overflow-y-auto">
         
+        <!-- Pending Verification Notice (si gen peman k ap tann validasyon) -->
+        {% if pending_subscription %}
+        <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6 mb-6 flex items-start gap-4 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg flex-shrink-0">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="flex-1">
+                <h3 class="font-black text-amber-900 text-sm">{% trans "Paiement en attente de validation" %}</h3>
+                <p class="text-xs text-amber-800 font-medium mt-1">
+                    {% trans "Vous avez soumis un paiement pour le plan" %} <strong class="font-bold">{{ pending_subscription.plan.name }}</strong>. 
+                    {% trans "Notre équipe vérifie actuellement votre reçu MonCash/Natcash/Bancaire. Vos entreprises seront activées automatiquement dès confirmation." %}
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Current Plan Banner -->
-        <div class="bg-white rounded-xl border border-gray-200 p-8 relative overflow-hidden mb-6 shadow-sm">
+        <div class="bg-white rounded-2xl border border-gray-200 p-8 relative overflow-hidden mb-6 shadow-sm">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">Plan Actuel</p>
-                    <h2 class="text-2xl font-black text-gray-900 mb-2">Plan Freemium</h2>
-                    <p class="text-gray-500 font-medium text-sm">Vous utilisez actuellement le plan basique gratuit. Passez à la vitesse supérieure !</p>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-2">{% trans "Plan Actuel" %}</p>
+                    <div class="flex items-center gap-3 mb-2">
+                        <h2 class="text-2xl font-black text-gray-900">
+                            {% if active_subscription %}
+                                {{ active_subscription.plan.name }}
+                            {% else %}
+                                {% trans "Plan Freemium" %}
+                            {% endif %}
+                        </h2>
+                        {% if active_subscription and active_subscription.plan.price > 0 %}
+                        <span class="bg-amber-100 text-amber-800 border border-amber-200 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
+                            <i class="fas fa-crown text-amber-500"></i> {{ active_subscription.plan.badge_text|default:"PRO VIP" }}
+                        </span>
+                        {% else %}
+                        <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                            {% trans "Gratuit" %}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p class="text-gray-500 font-medium text-xs">
+                        {% if active_subscription and active_subscription.end_date %}
+                            {% trans "Valide jusqu'au" %} <strong class="text-gray-900">{{ active_subscription.end_date|date:"d M Y à H:i" }}</strong>
+                        {% elif active_subscription %}
+                            {% trans "Plan permanent actif." %}
+                        {% else %}
+                            {% trans "Vous utilisez actuellement le plan basique gratuit. Passez à la vitesse supérieure pour booster votre visibilité !" %}
+                        {% endif %}
+                    </p>
                 </div>
                 <div class="flex-shrink-0">
-                    <span class="bg-gray-100 border border-gray-200 text-gray-600 px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider">Gratuit</span>
+                    {% if active_subscription and active_subscription.plan.price > 0 %}
+                    <span class="bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fas fa-check-circle"></i> {% trans "Actif" %}
+                    </span>
+                    {% else %}
+                    <a href="{% url 'business:checkout_subscription' 'pro_monthly' %}" class="bg-gradient-to-r from-esy-blue-600 to-indigo-600 hover:from-indigo-600 hover:to-esy-blue-700 text-white font-black px-6 py-3 rounded-xl text-xs transition shadow-md inline-flex items-center gap-2">
+                        <i class="fas fa-rocket"></i> {% trans "Devenir PRO maintenant" %}
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
-        <!-- Pricing Table -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <!-- Free Plan -->
-            <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
-                <h3 class="text-lg font-black text-gray-900 mb-1">Basic</h3>
-                <p class="text-gray-500 text-xs mb-4">Idéal pour commencer</p>
-                <div class="text-3xl font-black text-gray-900 mb-6">0$ <span class="text-sm text-gray-400 font-medium">/mois</span></div>
-                <ul class="space-y-3 mb-6">
-                    <li class="flex items-center text-gray-600 text-xs"><i class="fas fa-check text-gray-400 mr-3 w-4"></i> 1 Entreprise</li>
-                    <li class="flex items-center text-gray-600 text-xs"><i class="fas fa-check text-gray-400 mr-3 w-4"></i> Visibilité standard</li>
-                    <li class="flex items-center text-gray-400 text-xs"><i class="fas fa-times text-gray-300 mr-3 w-4"></i> Pas de statistiques avancées</li>
-                    <li class="flex items-center text-gray-400 text-xs"><i class="fas fa-times text-gray-300 mr-3 w-4"></i> Pas de badge Premium</li>
-                </ul>
-                <button class="w-full bg-gray-50 border border-gray-200 text-gray-500 font-bold py-2.5 rounded-md text-xs cursor-not-allowed">
-                    Plan Actuel
-                </button>
-            </div>
+        <!-- Pricing Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {% for plan in plans %}
+            <div class="bg-white rounded-2xl {% if plan.price > 0 and plan.code == 'pro_monthly' %}border-2 border-gray-900 relative shadow-md{% else %}border border-gray-200 shadow-sm{% endif %} p-6 flex flex-col justify-between">
+                
+                {% if plan.code == 'pro_monthly' %}
+                <div class="absolute -top-3 right-6 bg-gray-900 text-white px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm">
+                    {% trans "Populaire" %}
+                </div>
+                {% elif plan.code == 'pro_yearly' %}
+                <div class="absolute -top-3 right-6 bg-amber-500 text-white px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm">
+                    {% trans "2 mois gratuits" %}
+                </div>
+                {% endif %}
 
-            <!-- Premium Plan -->
-            <div class="bg-white rounded-xl border-2 border-gray-900 p-6 shadow-sm relative">
-                <div class="absolute top-0 right-6 bg-gray-900 text-white px-2 py-0.5 rounded-b-md text-[9px] font-bold uppercase tracking-widest">Recommandé</div>
-                <h3 class="text-lg font-black text-gray-900 mb-1">Premium</h3>
-                <p class="text-gray-500 text-xs mb-4">Pour les professionnels</p>
-                <div class="text-3xl font-black text-gray-900 mb-6">29$ <span class="text-sm text-gray-400 font-medium">/mois</span></div>
-                <ul class="space-y-3 mb-6">
-                    <li class="flex items-center text-gray-800 text-xs font-medium"><i class="fas fa-check text-gray-900 mr-3 w-4"></i> Entreprises illimitées</li>
-                    <li class="flex items-center text-gray-800 text-xs font-medium"><i class="fas fa-check text-gray-900 mr-3 w-4"></i> Visibilité en tête de liste</li>
-                    <li class="flex items-center text-gray-800 text-xs font-medium"><i class="fas fa-check text-gray-900 mr-3 w-4"></i> Statistiques avancées (Leads)</li>
-                    <li class="flex items-center text-gray-800 text-xs font-medium"><i class="fas fa-check text-gray-900 mr-3 w-4"></i> Badge Premium doré</li>
-                    <li class="flex items-center text-gray-800 text-xs font-medium"><i class="fas fa-check text-gray-900 mr-3 w-4"></i> Support prioritaire</li>
-                </ul>
-                <button class="w-full bg-gray-900 hover:bg-black text-white font-bold py-2.5 rounded-md text-xs transition-all shadow-sm">
-                    Passer Premium
-                </button>
+                <div>
+                    <h3 class="text-lg font-black text-gray-900 mb-1">{{ plan.name }}</h3>
+                    <p class="text-gray-500 text-xs mb-4">{{ plan.description }}</p>
+                    
+                    <div class="text-3xl font-black text-gray-900 mb-6">
+                        {{ plan.price }} {{ plan.currency }}
+                        <span class="text-xs text-gray-400 font-medium">
+                            {% if plan.duration_days == 30 %}/ {% trans "mois" %}
+                            {% elif plan.duration_days == 365 %}/ {% trans "an" %}
+                            {% else %}/ {% trans "à vie" %}{% endif %}
+                        </span>
+                    </div>
+
+                    <ul class="space-y-3 mb-6">
+                        {% for feat in plan.get_features_list %}
+                        <li class="flex items-start text-gray-700 text-xs font-medium">
+                            <i class="fas fa-check text-green-500 mr-2.5 mt-0.5 flex-shrink-0"></i>
+                            <span>{{ feat }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div>
+                    {% if active_subscription and active_subscription.plan == plan %}
+                    <button disabled class="w-full bg-gray-100 border border-gray-200 text-gray-500 font-bold py-3 rounded-xl text-xs cursor-default">
+                        <i class="fas fa-check mr-1"></i> {% trans "Votre plan actuel" %}
+                    </button>
+                    {% else %}
+                    <a href="{% url 'business:checkout_subscription' plan.code %}" class="w-full block text-center {% if plan.price > 0 %}bg-gray-900 hover:bg-black text-white shadow-md{% else %}bg-gray-50 hover:bg-gray-100 text-gray-800 border border-gray-200{% endif %} font-black py-3 rounded-xl text-xs transition">
+                        {% if plan.price == 0 %}{% trans "Choisir ce plan" %}{% else %}{% trans "Passer à ce plan" %}{% endif %}
+                    </a>
+                    {% endif %}
+                </div>
             </div>
+            {% endfor %}
         </div>
 
+        <!-- Transactions History -->
+        {% if transactions %}
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm mb-6">
+            <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <i class="fas fa-history text-esy-blue-600"></i> {% trans "Historique de vos paiements" %}
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs">
+                    <thead>
+                        <tr class="border-b border-gray-100 text-gray-400 text-left">
+                            <th class="py-2.5 px-3 font-semibold">{% trans "Date" %}</th>
+                            <th class="py-2.5 px-3 font-semibold">{% trans "Référence" %}</th>
+                            <th class="py-2.5 px-3 font-semibold">{% trans "Méthode" %}</th>
+                            <th class="py-2.5 px-3 font-semibold">{% trans "Montant" %}</th>
+                            <th class="py-2.5 px-3 font-semibold">{% trans "Statut" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        {% for tx in transactions %}
+                        <tr class="hover:bg-gray-50/50">
+                            <td class="py-3 px-3 text-gray-600">{{ tx.created_at|date:"d/m/Y H:i" }}</td>
+                            <td class="py-3 px-3 font-mono font-bold text-gray-800">{{ tx.transaction_reference }}</td>
+                            <td class="py-3 px-3 text-gray-700">{{ tx.get_payment_method_display }}</td>
+                            <td class="py-3 px-3 font-bold text-gray-900">{{ tx.amount }} {{ tx.currency }}</td>
+                            <td class="py-3 px-3">
+                                {% if tx.status == 'completed' %}
+                                <span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-[10px] font-black uppercase">
+                                    {% trans "Validé" %}
+                                </span>
+                                {% elif tx.status == 'pending' %}
+                                <span class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full text-[10px] font-black uppercase">
+                                    {% trans "En attente" %}
+                                </span>
+                                {% else %}
+                                <span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-full text-[10px] font-black uppercase">
+                                    {{ tx.get_status_display }}
+                                </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
         <!-- FAQ / Features Comparison -->
-        <div class="bg-white rounded-xl border border-gray-100 p-6 shadow-sm mb-6">
-            <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4">Comparaison des fonctionnalités</h3>
+        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm mb-6">
+            <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-4">{% trans "Comparaison des fonctionnalités" %}</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-xs">
                     <thead>
                         <tr class="border-b border-gray-100">
-                            <th class="text-left py-3 text-gray-500 font-bold">Fonctionnalité</th>
+                            <th class="text-left py-3 text-gray-500 font-bold">{% trans "Fonctionnalité" %}</th>
                             <th class="text-center py-3 text-gray-500 font-bold">Basic</th>
-                            <th class="text-center py-3 text-gray-900 font-bold">Premium</th>
+                            <th class="text-center py-3 text-gray-900 font-bold">Premium PRO</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-50">
                         <tr>
-                            <td class="py-3 text-gray-700">Nombre d'entreprises</td>
+                            <td class="py-3 text-gray-700">{% trans "Nombre d'entreprises" %}</td>
                             <td class="py-3 text-center text-gray-500">1</td>
-                            <td class="py-3 text-center text-gray-900 font-bold">Illimité</td>
+                            <td class="py-3 text-center text-gray-900 font-bold">{% trans "Illimité" %}</td>
                         </tr>
                         <tr>
-                            <td class="py-3 text-gray-700">Statistiques</td>
-                            <td class="py-3 text-center text-gray-500">Basiques</td>
-                            <td class="py-3 text-center text-gray-900 font-bold">Avancées</td>
+                            <td class="py-3 text-gray-700">{% trans "Statistiques & Leads (WhatsApp / Appels)" %}</td>
+                            <td class="py-3 text-center text-gray-500">{% trans "Basiques" %}</td>
+                            <td class="py-3 text-center text-gray-900 font-bold">{% trans "Avancées en temps réel" %}</td>
                         </tr>
                         <tr>
-                            <td class="py-3 text-gray-700">Visibilité</td>
-                            <td class="py-3 text-center text-gray-500">Standard</td>
-                            <td class="py-3 text-center text-gray-900 font-bold">Prioritaire</td>
+                            <td class="py-3 text-gray-700">{% trans "Positionnement dans les recherches" %}</td>
+                            <td class="py-3 text-center text-gray-500">{% trans "Standard" %}</td>
+                            <td class="py-3 text-center text-gray-900 font-bold">{% trans "En tête de liste (Prioritaire)" %}</td>
                         </tr>
                         <tr>
-                            <td class="py-3 text-gray-700">Badge vérifié</td>
+                            <td class="py-3 text-gray-700">{% trans "Badge PRO VIP doré" %}</td>
                             <td class="py-3 text-center text-gray-300"><i class="fas fa-times"></i></td>
-                            <td class="py-3 text-center text-gray-900"><i class="fas fa-check"></i></td>
+                            <td class="py-3 text-center text-amber-500 font-bold"><i class="fas fa-crown"></i> {% trans "Oui" %}</td>
                         </tr>
                         <tr>
-                            <td class="py-3 text-gray-700">Export CSV</td>
+                            <td class="py-3 text-gray-700">{% trans "Export CSV des données" %}</td>
                             <td class="py-3 text-center text-gray-300"><i class="fas fa-times"></i></td>
-                            <td class="py-3 text-center text-gray-900"><i class="fas fa-check"></i></td>
+                            <td class="py-3 text-center text-gray-900"><i class="fas fa-check text-green-500"></i></td>
                         </tr>
                         <tr>
-                            <td class="py-3 text-gray-700">Support</td>
-                            <td class="py-3 text-center text-gray-500">Email</td>
-                            <td class="py-3 text-center text-gray-900 font-bold">Prioritaire 24/7</td>
+                            <td class="py-3 text-gray-700">{% trans "Support client" %}</td>
+                            <td class="py-3 text-center text-gray-500">{% trans "Email" %}</td>
+                            <td class="py-3 text-center text-gray-900 font-bold">{% trans "WhatsApp Prioritaire 24/7" %}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -143,17 +255,13 @@
                 <p>&copy; {% now "Y" %} EsyConnect Haiti. Tous droits réservés.</p>
             </div>
             <div class="flex gap-4">
-                <a href="{% url 'business:contact_general' %}" class="hover:text-gray-900 transition-colors">Support</a>
-                <a href="{% url 'business:about' %}" class="hover:text-gray-900 transition-colors">Conditions d'utilisation</a>
-                <a href="{% url 'business:about' %}" class="hover:text-gray-900 transition-colors">Politique de confidentialité</a>
+                <a href="{% url 'business:contact_general' %}" class="hover:text-gray-900 transition-colors">{% trans "Support" %}</a>
+                <a href="{% url 'business:about' %}" class="hover:text-gray-900 transition-colors">{% trans "Conditions d'utilisation" %}</a>
+                <a href="{% url 'business:about' %}" class="hover:text-gray-900 transition-colors">{% trans "Politique de confidentialité" %}</a>
             </div>
         </footer>
 
     </div>
   </main>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-
 {% endblock %}

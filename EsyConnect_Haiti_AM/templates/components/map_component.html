@@ -44,11 +44,9 @@
                     scrollWheelZoom: true
                 }).setView([{{ business.latitude|default:"19.757" }}, {{ business.longitude|default:"-72.204" }}], 14);
                 
-                // Professional tile layer with better styling
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                    subdomains: 'abcd',
-                    maxZoom: 20
+                L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+                    maxZoom: 20,
+                    attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
                 
                 // Custom professional marker with animation
@@ -110,7 +108,7 @@
                                 </div>
                             </div>
                             {% endif %}
-                            <a href="{% url 'business:detail' business.id %}" class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white text-center py-3 rounded-xl font-bold hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg">
+                            <a href="{% url 'business:business_detail' business.id %}" class="block w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white text-center py-3 rounded-xl font-bold hover:from-blue-700 hover:to-blue-800 transition-all transform hover:scale-105 shadow-lg">
                                 <i class="fas fa-arrow-right mr-2"></i>{% trans "Voir le profil complet" %}
                             </a>
                         </div>

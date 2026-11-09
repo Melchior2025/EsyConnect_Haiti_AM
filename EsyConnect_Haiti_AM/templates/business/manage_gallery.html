@@ -16,7 +16,7 @@
                 <h1 class="text-4xl font-black text-esy-dark mb-2">📸 {% trans "Gestion de la Galerie" %}</h1>
                 <p class="text-gray-500 font-bold">{% trans "Ajoutez et gérez les photos de" %} <span class="text-esy-blue-600 font-black">{{ business.name }}</span></p>
             </div>
-            <a href="{% url 'business:detail' business.id %}" target="_blank" class="inline-flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-gray-200 text-gray-700 font-bold text-sm shadow-sm hover:bg-gray-50 transition">
+            <a href="{% url 'business:business_detail' business.id %}" target="_blank" class="inline-flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-gray-200 text-gray-700 font-bold text-sm shadow-sm hover:bg-gray-50 transition">
                 <i class="fas fa-external-link-alt text-esy-blue-600"></i> {% trans "Voir la page publique" %}
             </a>
         </div>

@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import timedelta
 
 # 1. Modèl Jeografi (Lokalizasyon)
 class Department(models.Model):
@@ -88,6 +90,11 @@ class Business(models.Model):
     @property
     def quartier(self):
         return self.quartier_obj
+
+    @property
+    def image(self):
+        return self.cover_image or self.logo
+
     logo = models.ImageField(upload_to="business_logos/", default="default_logo.png", blank=True)
     # Optional address for display in listings and map popups
     address = models.CharField(max_length=255, blank=True, null=True)
@@ -95,6 +102,13 @@ class Business(models.Model):
     # Optional geographic coordinates for map display
     latitude = models.FloatField(null=True, blank=True, help_text="Latitude (decimal degrees)")
     longitude = models.FloatField(null=True, blank=True, help_text="Longitude (decimal degrees)")
+    # Social media links
+    website = models.URLField(blank=True, null=True)
+    facebook = models.URLField(blank=True, null=True)
+    instagram = models.URLField(blank=True, null=True)
+    tiktok = models.URLField(blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+    youtube = models.URLField(blank=True, null=True)
     
     # Metrik ak Statut
     view_count = models.PositiveIntegerField(default=0)
@@ -155,6 +169,21 @@ class Business(models.Model):
 
     def get_rating_count(self):
         return Review.objects.filter(business=self).count()
+
+
+class Favorite(models.Model):
+    """User favorites for businesses"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='favorited_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Favori'
+        verbose_name_plural = 'Favoris'
+        unique_together = ('user', 'business')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.business.name}"
 
 
 # 2. Review model – stores customer ratings for a Business
@@ -223,3 +252,254 @@ class SiteConfiguration(models.Model):
 
     def __str__(self):
         return self.site_name
+
+
+# ==========================================
+# 4. Modèl Abònman ak Peman (Paid Accounts & Subscriptions)
+# ==========================================
+
+class SubscriptionPlan(models.Model):
+    """Plan abònman disponib pou biznis (Basic, Pro Mensuel, Pro Annuel, VIP)."""
+    name = models.CharField(max_length=100, verbose_name="Nom du plan")
+    code = models.SlugField(max_length=50, unique=True, help_text="Idantifyan inik (ex: free, pro_monthly, pro_yearly, vip)")
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, verbose_name="Prix")
+    currency = models.CharField(
+        max_length=10,
+        default="USD",
+        choices=[("USD", "USD ($)"), ("HTG", "HTG (Gourdes)")],
+        verbose_name="Devise"
+    )
+    duration_days = models.PositiveIntegerField(
+        default=30,
+        help_text="Nombre de jours de validité (0 pour gratuit / permanent)"
+    )
+    description = models.TextField(blank=True, verbose_name="Description")
+    features = models.TextField(
+        blank=True,
+        help_text="Liste des fonctionnalités (une par ligne ou séparée par virgule)"
+    )
+    max_businesses = models.PositiveIntegerField(default=1, verbose_name="Max entreprises autorisées")
+    badge_text = models.CharField(max_length=50, blank=True, default="PRO", verbose_name="Texte du badge")
+    is_active = models.BooleanField(default=True, verbose_name="Actif")
+    is_default = models.BooleanField(default=False, verbose_name="Plan par défaut (Gratuit)")
+    order = models.PositiveIntegerField(default=0, verbose_name="Ordre d'affichage")
+
+    class Meta:
+        verbose_name = "Plan d'abonnement"
+        verbose_name_plural = "Plans d'abonnement"
+        ordering = ['order', 'price']
+
+    def __str__(self):
+        return f"{self.name} - {self.price} {self.currency}"
+
+    def get_features_list(self):
+        """Retourne la liste des fonctionnalités sous forme de liste Python."""
+        if not self.features:
+            return []
+        lines = [line.strip() for line in self.features.replace(',', '\n').split('\n') if line.strip()]
+        return lines
+
+
+class Subscription(models.Model):
+    """Abònman aktif oswa istorik yon itilizatè / biznis."""
+    STATUS_CHOICES = [
+        ('active', 'Actif'),
+        ('pending', 'En attente de paiement / validation'),
+        ('expired', 'Expiré'),
+        ('canceled', 'Annulé'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions', verbose_name="Utilisateur")
+    plan = models.ForeignKey(SubscriptionPlan, on_delete=models.PROTECT, related_name='subscriptions', verbose_name="Plan")
+    business = models.ForeignKey(
+        Business,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='subscriptions',
+        verbose_name="Entreprise spécifique (optionnel)"
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name="Statut")
+    start_date = models.DateTimeField(default=timezone.now, verbose_name="Date de début")
+    end_date = models.DateTimeField(null=True, blank=True, verbose_name="Date de fin")
+    auto_renew = models.BooleanField(default=False, verbose_name="Renouvellement automatique")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Abonnement"
+        verbose_name_plural = "Abonnements"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.plan.name} ({self.get_status_display()})"
+
+    @property
+    def is_valid(self):
+        """Verifie si abònman an aktif e li poko ekspire."""
+        if self.status != 'active':
+            return False
+        if not self.end_date:
+            return True  # Plan gratuit / permanent
+        return self.end_date >= timezone.now()
+
+    def activate(self):
+        """Aktive abònman an, kalkile dat fen an, epi mete biznis itilizatè a PRO."""
+        self.status = 'active'
+        self.start_date = timezone.now()
+        if self.plan.duration_days > 0:
+            self.end_date = self.start_date + timedelta(days=self.plan.duration_days)
+        else:
+            self.end_date = None
+        self.save()
+
+        # Mete biznis yo PRO si plan an se yon plan peyan
+        if self.plan.price > 0 or self.plan.code != 'free':
+            if self.business:
+                self.business.is_pro = True
+                self.business.save(update_fields=['is_pro'])
+            else:
+                Business.objects.filter(owner=self.user).update(is_pro=True)
+
+    def expire_or_cancel(self, new_status='expired'):
+        """Dezaktive abònman an epi mete ajou estati biznis yo."""
+        self.status = new_status
+        self.save(update_fields=['status'])
+        # Verifye si itilizatè a pa gen yon lòt abònman aktif
+        other_active = Subscription.objects.filter(
+            user=self.user,
+            status='active'
+        ).exclude(id=self.id)
+        valid_subs = [s for s in other_active if s.is_valid and (s.plan.price > 0 or s.plan.code != 'free')]
+        if not valid_subs:
+            Business.objects.filter(owner=self.user).update(is_pro=False)
+
+
+class PaymentTransaction(models.Model):
+    """Tranzaksyon peman pou yon abònman (MonCash, Natcash, Stripe, Virement, elatriye)."""
+    METHOD_CHOICES = [
+        ('moncash', 'MonCash (Digicel)'),
+        ('natcash', 'Natcash (Natcom)'),
+        ('stripe', 'Carte Bancaire / Stripe'),
+        ('bank_transfer', 'Virement / Dépôt Bancaire (Sogebank/Unibank)'),
+        ('cash', 'Espèces / En personne'),
+        ('admin', 'Manuel (Admin)'),
+    ]
+
+    STATUS_CHOICES = [
+        ('pending', 'En attente'),
+        ('completed', 'Confirmé / Validé'),
+        ('failed', 'Échoué'),
+        ('refunded', 'Remboursé'),
+    ]
+
+    subscription = models.ForeignKey(
+        Subscription,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='transactions',
+        verbose_name="Abonnement lié"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payment_transactions', verbose_name="Utilisateur")
+    business = models.ForeignKey(
+        Business,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='payment_transactions',
+        verbose_name="Entreprise"
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Montant")
+    currency = models.CharField(max_length=10, default="USD", verbose_name="Devise")
+    payment_method = models.CharField(max_length=30, choices=METHOD_CHOICES, verbose_name="Méthode de paiement")
+    transaction_reference = models.CharField(
+        max_length=100,
+        unique=True,
+        verbose_name="Référence / ID de transaction",
+        help_text="Ex: Kòd konfimasyon MonCash / Natcash oswa referans depo labank"
+    )
+    sender_phone_or_account = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name="Numéro de l'expéditeur",
+        help_text="Numéro téléphone MonCash/Natcash ou nom du compte expéditeur"
+    )
+    proof_image = models.ImageField(
+        upload_to="payment_proofs/",
+        blank=True,
+        null=True,
+        verbose_name="Preuve de paiement (Screenshot / Reçu)"
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name="Statut")
+    notes = models.TextField(blank=True, null=True, verbose_name="Notes / Commentaires")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Date de soumission")
+    confirmed_at = models.DateTimeField(null=True, blank=True, verbose_name="Date de confirmation")
+
+    class Meta:
+        verbose_name = "Transaction de paiement"
+        verbose_name_plural = "Transactions de paiement"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.transaction_reference} - {self.amount} {self.currency} ({self.get_status_display()})"
+
+    def confirm_and_activate(self):
+        """Konfime tranzaksyon an epi aktive abònman ki asosye a."""
+        self.status = 'completed'
+        self.confirmed_at = timezone.now()
+        self.save()
+        if self.subscription:
+            self.subscription.activate()
+
+
+class Donation(models.Model):
+    """Sipò kominotè ak donasyon pou ti antreprenè Ayisyen yo."""
+    donor_name = models.CharField(max_length=150, blank=True, default="Anonyme", verbose_name="Nom du donateur")
+    donor_email = models.EmailField(blank=True, null=True, verbose_name="Email")
+    donor_phone = models.CharField(max_length=50, blank=True, null=True, verbose_name="Téléphone / WhatsApp")
+    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Montant")
+    currency = models.CharField(
+        max_length=10,
+        default="HTG",
+        choices=[("HTG", "HTG (Gourdes)"), ("USD", "USD ($)")],
+        verbose_name="Devise"
+    )
+    payment_method = models.CharField(
+        max_length=50,
+        choices=[
+            ('moncash', 'MonCash (Digicel)'),
+            ('natcash', 'Natcash (Natcom)'),
+            ('bank_transfer', 'Virement / Dépôt Bancaire'),
+            ('card', 'Carte Bancaire / En ligne'),
+        ],
+        default='moncash',
+        verbose_name="Méthode de paiement"
+    )
+    transaction_reference = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Référence transaction"
+    )
+    message = models.TextField(blank=True, null=True, verbose_name="Message de soutien")
+    status = models.CharField(
+        max_length=20,
+        default='completed',
+        choices=[
+            ('pending', 'En attente'),
+            ('completed', 'Reçu / Confirmé'),
+        ],
+        verbose_name="Statut"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Donation de solidarité"
+        verbose_name_plural = "Donations de solidarité"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.donor_name} - {self.amount} {self.currency} ({self.created_at.strftime('%d/%m/%Y')})"
+

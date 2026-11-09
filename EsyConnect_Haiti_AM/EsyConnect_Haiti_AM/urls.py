@@ -13,9 +13,18 @@ urlpatterns = [
     
     # URL pou chanje lang (set_language)
     path('i18n/', include('django.conf.urls.i18n')),
-    
-    # URL AJAX pou charger les villes d'un département
+
+    # AJAX pou chaje vil ak katye yo
     path('ajax/load-villes/', business_views.load_villes, name='load_villes'),
+    path('load_villes/', business_views.load_villes),
+    path('ajax/load-quartiers/', business_views.load_quartiers, name='load_quartiers'),
+    path('load_quartiers/', business_views.load_quartiers),
+
+    # Fallback dirèk pou enskripsyon biznis ak detay biznis san namespace
+    path('register/', business_views.register_business, name='register'),
+    path('register-business/', business_views.register_business, name='register_business'),
+    path('business/<int:business_id>/', business_views.business_detail, name='business_detail'),
+    path('business/<int:business_id>/detail/', business_views.business_detail, name='detail'),
 ]
 
 # 2. URL ki gen prefiks lang (e.g., /fr/, /ht/)
@@ -25,6 +34,12 @@ urlpatterns += i18n_patterns(
     # URL pou aplikasyon business ak users ak namespace yo
     path('', include(('business.urls', 'business'), namespace='business')),
     path('users/', include(('users.urls', 'users'), namespace='users')),
+
+    # Fallback anba prefiks lang pou 'register' ak 'business_detail' san namespace
+    path('register/', business_views.register_business, name='register'),
+    path('register-business/', business_views.register_business, name='register_business'),
+    path('business/<int:business_id>/', business_views.business_detail, name='business_detail'),
+    path('business/<int:business_id>/detail/', business_views.business_detail, name='detail'),
     
     prefix_default_language=True,
 )

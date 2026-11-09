@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "Plans et Tarifs" %} - EsyConnect Haïti{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="relative bg-esy-dark py-20 md:py-28 overflow-hidden text-center">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0 bg-gradient-to-br from-esy-blue-600/20 to-indigo-600/20"></div>
+    </div>
+    <div class="relative z-10 max-w-4xl mx-auto px-4">
+        <span class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-black uppercase text-white/90 mb-6">
+            <i class="fas fa-crown text-amber-400"></i> {% trans "Abonnements Professionnels" %}
+        </span>
+        <h1 class="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight">
+            {% trans "Faites grandir votre" %} <span class="text-esy-blue-500">{% trans "Entreprise" %}</span>
+        </h1>
+        <p class="text-lg md:text-xl text-white/70 max-w-2xl mx-auto font-medium">
+            {% trans "Choisissez le plan qui propulsera votre visibilité auprès de milliers de clients en Haïti et dans la diaspora." %}
+        </p>
+    </div>
+</section>
+
+<!-- PRICING SECTION -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {% for plan in plans %}
+            <div class="bg-white rounded-3xl {% if plan.code == 'pro_monthly' %}border-2 border-esy-blue-600 shadow-2xl relative scale-105{% else %}border border-gray-200 shadow-sm{% endif %} p-8 flex flex-col justify-between transition hover:shadow-xl">
+                
+                {% if plan.code == 'pro_monthly' %}
+                <div class="absolute -top-3.5 right-8 bg-esy-blue-600 text-white px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-md">
+                    {% trans "Le plus populaire" %}
+                </div>
+                {% elif plan.code == 'pro_yearly' %}
+                <div class="absolute -top-3.5 right-8 bg-amber-500 text-white px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow-md">
+                    {% trans "Économisez 2 mois" %}
+                </div>
+                {% endif %}
+
+                <div>
+                    <span class="inline-block bg-gray-100 text-gray-700 text-xs font-black px-3 py-1 rounded-full uppercase mb-4">
+                        {{ plan.badge_text|default:"PLAN" }}
+                    </span>
+                    <h3 class="text-2xl font-black text-gray-900 mb-2">{{ plan.name }}</h3>
+                    <p class="text-gray-500 text-sm mb-6">{{ plan.description }}</p>
+
+                    <div class="text-4xl font-black text-gray-900 mb-8">
+                        {{ plan.price }} {{ plan.currency }}
+                        <span class="text-sm font-semibold text-gray-400">
+                            {% if plan.duration_days == 30 %}/ {% trans "mois" %}
+                            {% elif plan.duration_days == 365 %}/ {% trans "an" %}
+                            {% else %}/ {% trans "à vie" %}{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="border-t border-gray-100 pt-6 mb-8">
+                        <ul class="space-y-4">
+                            {% for feat in plan.get_features_list %}
+                            <li class="flex items-start text-sm text-gray-700 font-medium">
+                                <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3 flex-shrink-0"></i>
+                                <span>{{ feat }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="{% url 'business:checkout_subscription' plan.code %}" class="w-full block text-center {% if plan.code == 'pro_monthly' %}bg-esy-blue-600 hover:bg-esy-blue-700 text-white shadow-lg shadow-esy-blue-600/30{% elif plan.price > 0 %}bg-gray-900 hover:bg-black text-white{% else %}bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200{% endif %} font-black py-4 rounded-2xl text-sm transition">
+                        {% if plan.price == 0 %}{% trans "Commencer Gratuitement" %}{% else %}{% trans "Choisir ce plan" %}{% endif %}
+                    </a>
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- PAYMENT METHODS ACCEPTED -->
+        <div class="bg-white rounded-3xl p-8 border border-gray-200 text-center max-w-4xl mx-auto shadow-sm">
+            <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">
+                {% trans "Moyens de paiement acceptés en Haïti et à l'international" %}
+            </h4>
+            <div class="flex flex-wrap items-center justify-center gap-6 text-gray-700 text-sm font-bold">
+                <span class="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-xl border border-red-100">
+                    <i class="fas fa-mobile-alt"></i> MonCash (Digicel)
+                </span>
+                <span class="flex items-center gap-2 bg-orange-50 text-orange-600 px-4 py-2 rounded-xl border border-orange-100">
+                    <i class="fas fa-money-bill-wave"></i> Natcash (Natcom)
+                </span>
+                <span class="flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-xl border border-blue-100">
+                    <i class="fas fa-university"></i> Virement Sogebank / Unibank
+                </span>
+                <span class="flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl border border-emerald-100">
+                    <i class="fab fa-stripe"></i> Carte Bancaire (Visa / Mastercard)
+                </span>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+

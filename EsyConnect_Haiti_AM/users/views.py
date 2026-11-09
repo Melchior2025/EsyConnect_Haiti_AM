@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db import OperationalError
 from django.contrib.auth.decorators import login_required
-from business.models import Business
+from business.models import Business, SubscriptionPlan, Subscription, PaymentTransaction
 from .models import UserProfile
 from .forms import UserUpdateForm, ProfileUpdateForm
 
@@ -114,7 +114,18 @@ def register(request):
 
 @login_required
 def subscription_dashboard(request):
-    return render(request, 'users/subscription.html')
+    plans = SubscriptionPlan.objects.filter(is_active=True).order_by('order', 'price')
+    active_subscription = Subscription.objects.filter(user=request.user, status='active').order_by('-created_at').first()
+    pending_subscription = Subscription.objects.filter(user=request.user, status='pending').order_by('-created_at').first()
+    transactions = PaymentTransaction.objects.filter(user=request.user).order_by('-created_at')[:10]
+
+    context = {
+        'plans': plans,
+        'active_subscription': active_subscription,
+        'pending_subscription': pending_subscription,
+        'transactions': transactions,
+    }
+    return render(request, 'users/subscription.html', context)
 
 @login_required
 def reviews_dashboard(request):

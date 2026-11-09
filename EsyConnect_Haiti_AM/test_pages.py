@@ -15,11 +15,16 @@ c.force_login(user)
 pages = [
     # Public pages
     ('/fr/', 'Home'),
+    ('/fr/businesses/', 'Businesses List'),
     ('/fr/search/', 'Search'),
     ('/fr/categories/', 'Categories'),
     ('/fr/about/', 'About'),
     ('/fr/contact/', 'Contact'),
     ('/fr/departements/', 'Departments'),
+    ('/fr/pricing/', 'Pricing Plans'),
+    ('/fr/subscription/checkout/pro_monthly/', 'Checkout Pro Monthly'),
+    ('/fr/subscription/checkout/pro_yearly/', 'Checkout VIP Yearly'),
+    ('/fr/subscription/checkout/free/', 'Checkout Free'),
     # Auth pages
     ('/fr/users/login/', 'Login'),
     ('/fr/users/register/', 'Register'),
@@ -34,10 +39,16 @@ pages = [
     ('/fr/favorites/', 'Favorites'),
     # Business actions
     ('/fr/register/', 'Register Business'),
-    ('/fr/business/1/', 'Business Detail'),
-    ('/fr/business/1/edit/', 'Edit Business'),
-    ('/fr/business/1/manage-gallery/', 'Manage Gallery'),
 ]
+
+from business.models import Business
+biz = Business.objects.filter(owner=user).first() or Business.objects.first()
+if biz:
+    pages.extend([
+        (f'/fr/business/{biz.id}/', 'Business Detail'),
+        (f'/fr/business/{biz.id}/edit/', 'Edit Business'),
+        (f'/fr/business/{biz.id}/gallery/', 'Manage Gallery'),
+    ])
 
 print("\n" + "="*60)
 print(f"{'URL':<45} {'Name':<20} {'Status'}")

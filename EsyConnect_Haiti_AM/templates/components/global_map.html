@@ -133,15 +133,16 @@
         // ====================================
         // TILE LAYER PROFESSIONNEL
         // ====================================
-        L.tileLayer(
-            'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-            {
-                attribution:
-                    '&copy; OpenStreetMap contributors &copy; CARTO',
-                subdomains: 'abcd',
-                maxZoom: 20
-            }
-        ).addTo(map);
+        var osmFr = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+        var esriStreets = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ'
+        });
+        osmFr.addTo(map);
+        L.control.layers({ "🗺️ Quartiers & Rues": osmFr, "🏙️ Plan Urbain (Esri)": esriStreets }, null, { position: 'topright' }).addTo(map);
 
         // ====================================
         // DATA DJANGO
@@ -400,7 +401,9 @@
         background: white;
     }
 
-    #leaflet-global-map { height: 100%; width: 100%; }
+    #leaflet-global-map {
+        height: 100%;
+        width: 100%;
         font-family: inherit;
         border-radius: 1rem;
     }

@@ -1,618 +1,983 @@
 {% extends 'base.html' %}
-{% load static %}
 {% load i18n %}
+{% load static %}
 
-{% block title %}{{ site_title|default:"EsyConnect Haïti" }} - {% trans "Annuaire Professionnel d'Haïti" %}{% endblock %}
+{% block title %}EsyConnect Haïti - Annuaire Professionnel Premium{% endblock %}
 
 {% block extra_css %}
-<!-- Fòse kase kach css Leaflet la ak yon paramètre vèsyon -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css?v=2.1" />
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <style>
-    /* Base styles */
-    .hero-overlay {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 64, 175, 0.8) 100%);
-    }
-
-    /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateX(-20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes pulse {
-
-        0%,
-        100% {
-            transform: scale(1);
-        }
-
-        50% {
-            transform: scale(1.05);
-        }
-    }
-
-    .animate-fade-in-up {
-        animation: fadeInUp 0.8s ease-out;
-    }
-
-    .animate-slide-in {
-        animation: slideIn 0.6s ease-out;
-    }
-
-    .animate-pulse-slow {
-        animation: pulse 3s ease-in-out infinite;
-    }
-
-    @keyframes panVertical {
-        0% {
-            transform: scale(1.1) translateY(0);
-        }
-
-        50% {
-            transform: scale(1.1) translateY(-5%);
-        }
-
-        100% {
-            transform: scale(1.1) translateY(0);
-        }
-    }
-
-    .animate-pan-vertical {
-        animation: panVertical 10s ease-in-out infinite !important;
-    }
-
-    @keyframes panVerticalImg {
-        0% {
-            transform: scale(1.1) translateY(0);
-        }
-
-        50% {
-            transform: scale(1.1) translateY(-5%);
-        }
-
-        100% {
-            transform: scale(1.1) translateY(0);
-        }
-    }
-
-    .animate-pan-vertical-img {
-        animation: panVerticalImg 10s ease-in-out infinite !important;
-    }
-
-    /* Hero background animation fix */
-    .hero-bg-container {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        overflow: hidden;
-    }
-
-    .hero-bg-image {
-        position: absolute;
-        inset: 0;
+    #map {
+        height: 500px;
         width: 100%;
-        height: 100%;
-        object-fit: cover;
-        animation: panVertical 10s ease-in-out infinite;
+        border-radius: 1.25rem;
+        z-index: 10;
     }
-
-    /* Alternative animation using background-position */
-    .hero-bg-alt {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        overflow: hidden;
-        background-size: cover;
-        background-position: center;
-        animation: panVerticalBg 10s ease-in-out infinite !important;
+    .custom-biz-pin {
+        transition: transform 0.2s ease;
     }
-
-    @keyframes panVerticalBg {
-        0% {
-            background-position: center 0%;
-        }
-
-        50% {
-            background-position: center 100%;
-        }
-
-        100% {
-            background-position: center 0%;
-        }
-    }
-
-    /* Card styles */
-    .category-card {
-        background: white;
-        border: 1px solid #f1f5f9;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .category-card:hover {
-        border-color: #3b82f6;
-        transform: translateY(-8px);
-        box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1);
-    }
-
-    .business-card {
-        background: white;
-        border-radius: 2rem;
-        overflow: hidden;
-        border: 1px solid #f1f5f9;
-        transition: all 0.4s ease;
-    }
-
-    .business-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 30px 50px -12px rgba(0, 0, 0, 0.15);
-    }
-
-    /* Badge styles */
-    .premium-badge {
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-        color: white;
-        font-weight: 800;
-        letter-spacing: 0.05em;
-    }
-
-    .verified-badge {
-        background: #10b981;
-        color: white;
-        font-weight: 800;
-    }
-
-    /* Button styles */
-    .btn-primary {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-        transform: scale(1.05);
-        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
-    }
-
-    /* Section spacing */
-    section {
-        position: relative;
-    }
-
-    /* Smooth scroll */
-    html {
-        scroll-behavior: smooth;
+    .custom-biz-pin:hover {
+        transform: scale(1.1);
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- HERO SECTION VIP -->
-<section class="relative py-32 md:py-48 flex items-center justify-center bg-esy-dark">
-    <!-- Background Image -->
-    {% if site_config.hero_background %}
-    <div class="hero-bg-alt" style="background-image: url('{{ site_config.hero_background.url }}');">
-        <!-- Couche noire de lisibilité -->
-        <div class="absolute inset-0 bg-black/50 z-20"></div>
-    </div>
-    {% else %}
-    <div class="hero-bg-alt bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-        <!-- Couche noire de lisibilité -->
-        <div class="absolute inset-0 bg-black/50 z-20"></div>
-    </div>
-    {% endif %}
-
-    <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
-        <div data-aos="fade-down"
-            class="inline-flex items-center px-4 py-2 rounded-full bg-esy-blue-600/20 border border-esy-blue-400/30 text-esy-blue-100 text-sm font-bold mb-8">
-            <span class="mr-2">🇭🇹</span> {% trans "Annuaire Professionnel Premium" %}
-        </div>
-
-        <h1 data-aos="fade-up" class="text-5xl md:text-7xl font-black text-white mb-8 tracking-tight leading-tight">
-            {% trans "Propulsez Votre" %} <span class="text-esy-blue-500">{% trans "Entreprise" %}</span> <br>
-            {% trans "en Haïti" %}
+<!-- 1. Hero Section avec Barre de Recherche Optimisée -->
+<section class="relative bg-gradient-to-br from-esy-dark via-blue-950 to-esy-dark text-white py-16 md:py-24 px-4 overflow-hidden">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    
+    <div class="max-w-7xl mx-auto text-center relative z-10">
+        <span class="inline-flex items-center gap-2 bg-esy-gold/20 text-esy-gold text-xs md:text-sm font-bold px-4 py-1.5 rounded-full mb-6 border border-esy-gold/30 shadow-inner">
+            <span>🇭🇹</span> {% trans "Plateforme Numéro 1 des Entreprises en Haïti" %}
+        </span>
+        <h1 class="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight mb-4 leading-tight">
+            Propulsez Votre Entreprise <br>
+            <span class="text-esy-gold">& Trouvez les Meilleurs Services en Haïti</span>
         </h1>
-
-        <p data-aos="fade-up" data-aos-delay="100"
-            class="text-xl md:text-2xl text-white/80 mb-12 max-w-3xl mx-auto font-medium">
-            {% trans "Connectez-vous avec les meilleures entreprises et services du pays." %}
+        <p class="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
+            Connectez-vous instantanément avec les entreprises certifiées, commerces et professionnels de Cap-Haïtien et de toute la République d'Haïti.
         </p>
 
-        <!-- Search Bar Sleek (Koreksyon sou doublon HTML la) -->
-        <div data-aos="zoom-in" data-aos-delay="200" class="bg-white p-4 rounded-[2.5rem] shadow-2xl max-w-4xl mx-auto">
-            <form method="GET" action="{% url 'business:search' %}" class="flex flex-col md:flex-row gap-4">
-                <div class="flex-1 relative">
-                    <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" name="q" placeholder="{% trans 'Rechercher un service, restaurant, hôtel...' %}"
-                        class="w-full pl-14 pr-4 py-5 rounded-3xl bg-gray-50 border-none focus:ring-2 focus:ring-esy-blue-600 text-esy-dark font-medium">
+        <!-- Barre de recherche réactive (grid-cols-1 md:grid-cols-5 gap-2) -->
+        <form action="{% url 'business:business_list' %}" method="GET"
+            class="max-w-6xl mx-auto bg-white p-3 md:p-4 rounded-3xl shadow-2xl border border-gray-100 text-left">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-2 items-center">
+                <!-- 1. Département -->
+                <div class="relative flex items-center bg-gray-50 hover:bg-gray-100/90 border border-gray-200 rounded-xl px-3 py-2 transition-all">
+                    <i class="fas fa-map-marked-alt text-amber-500 mr-2.5 text-sm flex-shrink-0"></i>
+                    <div class="w-full min-w-0">
+                        <label for="dept-select" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{% trans "Département" %}</label>
+                        <select name="department" id="dept-select"
+                            class="w-full bg-transparent text-gray-900 text-sm font-semibold focus:outline-none cursor-pointer truncate">
+                            <option value="">{% trans "Tous les départements" %}</option>
+                            {% for dept in departments %}
+                                <option value="{{ dept.name }}">{{ dept.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
-                <div class="flex-1 md:w-auto flex flex-col md:flex-row gap-2">
-                    <select name="departement"
-                        class="w-full pl-4 pr-4 py-5 rounded-3xl bg-gray-50 border-none focus:ring-2 focus:ring-esy-blue-600 text-esy-dark font-medium">
-                        <option value="">{% trans 'Tous les départements' %}</option>
-                        <option value="nord">{% trans 'Nord' %}</option>
-                        <option value="ouest">{% trans 'Ouest' %}</option>
-                        <option value="artibonite">{% trans 'Artibonite' %}</option>
-                        <option value="sud">{% trans 'Sud' %}</option>
-                        <option value="centre">{% trans 'Centre' %}</option>
-                    </select>
-                    <input type="text" name="ville" placeholder="{% trans 'Ville...' %}"
-                        class="w-full pl-4 pr-4 py-5 rounded-3xl bg-gray-50 border-none focus:ring-2 focus:ring-esy-blue-600 text-esy-dark font-medium">
+
+                <!-- 2. Commune / Ville -->
+                <div class="relative flex items-center bg-gray-50 hover:bg-gray-100/90 border border-gray-200 rounded-xl px-3 py-2 transition-all">
+                    <i class="fas fa-city text-esy-blue-500 mr-2.5 text-sm flex-shrink-0"></i>
+                    <div class="w-full min-w-0">
+                        <label for="city-select" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{% trans "Commune" %}</label>
+                        <select name="ville" id="city-select"
+                            class="w-full bg-transparent text-gray-900 text-sm font-semibold focus:outline-none cursor-pointer truncate">
+                            <option value="">{% trans "Toutes les communes" %}</option>
+                            {% for v in villes %}
+                                <option value="{{ v.id }}" data-dept="{{ v.department.name }}">{{ v.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 3. Zone / Quartier -->
+                <div class="relative flex items-center bg-gray-50 hover:bg-gray-100/90 border border-gray-200 rounded-xl px-3 py-2 transition-all">
+                    <i class="fas fa-map-pin text-red-500 mr-2.5 text-sm flex-shrink-0"></i>
+                    <div class="w-full min-w-0">
+                        <label for="zone-select" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{% trans "Zone / Quartier" %}</label>
+                        <select name="zone" id="zone-select"
+                            class="w-full bg-transparent text-gray-900 text-sm font-semibold focus:outline-none cursor-pointer truncate">
+                            <option value="">{% trans "Toutes les zones" %}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 4. Catégorie -->
+                <div class="relative flex items-center bg-gray-50 hover:bg-gray-100/90 border border-gray-200 rounded-xl px-3 py-2 transition-all">
+                    <i class="fas fa-tags text-indigo-500 mr-2.5 text-sm flex-shrink-0"></i>
+                    <div class="w-full min-w-0">
+                        <label for="cat-select" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{% trans "Catégorie" %}</label>
+                        <select name="category" id="cat-select"
+                            class="w-full bg-transparent text-gray-900 text-sm font-semibold focus:outline-none cursor-pointer truncate">
+                            <option value="">{% trans "Toutes les catégories" %}</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 5. Recherche par Mot-clé -->
+                <div class="relative flex items-center bg-gray-50 hover:bg-gray-100/90 border border-gray-200 rounded-xl px-3 py-2 transition-all">
+                    <i class="fas fa-search text-gray-400 mr-2.5 text-sm flex-shrink-0"></i>
+                    <div class="w-full min-w-0">
+                        <label for="q-input" class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">{% trans "Mot-clé" %}</label>
+                        <input type="text" id="q-input" name="q" placeholder="{% trans 'Nom ou service...' %}"
+                            class="w-full bg-transparent text-gray-900 text-sm font-semibold focus:outline-none placeholder-gray-400">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bouton de Recherche & Tags Rapides -->
+            <div class="mt-3.5 pt-3 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-3">
+                <div class="flex items-center flex-wrap gap-1.5 text-xs text-gray-500">
+                    <span class="font-bold text-gray-400 flex items-center gap-1 mr-1">
+                        <i class="fas fa-bolt text-esy-gold"></i> {% trans "Populaire" %} :
+                    </span>
+                    <a href="{% url 'business:business_list' %}?ville=Cap-Haitien" class="px-2.5 py-1 bg-gray-100 hover:bg-esy-blue-50 hover:text-esy-blue-600 text-gray-700 font-semibold rounded-lg transition">📍 Cap-Haïtien</a>
+                    <a href="{% url 'business:business_list' %}?q=Pharmacie" class="px-2.5 py-1 bg-gray-100 hover:bg-esy-blue-50 hover:text-esy-blue-600 text-gray-700 font-semibold rounded-lg transition">💊 Pharmacie</a>
+                    <a href="{% url 'business:business_list' %}?q=Restaurant" class="px-2.5 py-1 bg-gray-100 hover:bg-esy-blue-50 hover:text-esy-blue-600 text-gray-700 font-semibold rounded-lg transition">🍽️ Restaurant</a>
+                    <a href="{% url 'business:business_list' %}?q=Hotel" class="px-2.5 py-1 bg-gray-100 hover:bg-esy-blue-50 hover:text-esy-blue-600 text-gray-700 font-semibold rounded-lg transition">🏨 Hôtel</a>
+                    <a href="{% url 'business:business_list' %}?q=Garage" class="px-2.5 py-1 bg-gray-100 hover:bg-esy-blue-50 hover:text-esy-blue-600 text-gray-700 font-semibold rounded-lg transition">🔧 Garage</a>
                 </div>
                 <button type="submit"
-                    class="bg-esy-blue-600 text-white px-10 py-5 rounded-3xl font-black text-lg hover:bg-esy-blue-700 transition shadow-lg shadow-esy-blue-600/20">
-                    {% trans "Rechercher" %}
+                    class="w-full md:w-auto bg-gradient-to-r from-esy-gold via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-esy-dark font-black px-8 py-3 rounded-2xl transition duration-300 flex items-center justify-center gap-2 shadow-xl shadow-amber-500/20 transform hover:-translate-y-0.5">
+                    <i class="fas fa-search text-sm"></i>
+                    <span>{% trans "Chèche / Rechercher" %}</span>
                 </button>
-            </form>
-        </div>
-
-        <div class="mt-12 flex justify-center gap-8 text-white/60 font-bold uppercase tracking-widest text-xs">
-            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-esy-gold"></i> +500 BIZNIS</div>
-            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-esy-gold"></i> 25 KATEGORI</div>
-            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-esy-gold"></i> 100% VÉRIFIÉ</div>
-        </div>
-    </div>
-</section>
-
-<!-- CATEGORIES SECTION -->
-<section class="py-24 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16">
-            <div class="max-w-2xl">
-                <h2 class="text-4xl font-black text-esy-dark mb-4">{% trans "Explorer par Catégories" %}</h2>
             </div>
-            <a href="{% url 'business:categories' %}"
-                class="mt-6 md:mt-0 text-esy-blue-600 font-bold flex items-center hover:underline">
-                {% trans "Voir toutes les catégories" %} <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-        </div>
+        </form>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {% for category in categories_with_count %}
-            <a href="{% url 'business:category' category.id %}" data-aos="fade-up"
-                data-aos-delay="{{ forloop.counter0|add:1 }}00"
-                class="category-card p-10 rounded-[2rem] text-center group shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
-                <div
-                    class="w-20 h-20 bg-gradient-to-br from-esy-blue-50 to-esy-blue-100 text-esy-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 text-3xl group-hover:from-esy-blue-600 group-hover:to-esy-blue-700 group-hover:text-white transition-all duration-300 shadow-lg group-hover:shadow-xl transform group-hover:scale-110">
-                    {% if category.name == "Hôtel" %}<i class="fas fa-bed"></i>
-                    {% elif category.name == "Restaurant" %}<i class="fas fa-utensils"></i>
-                    {% elif category.name == "Pharmacie" %}<i class="fas fa-pills"></i>
-                    {% elif category.name == "Transport" %}<i class="fas fa-car"></i>
-                    {% elif category.name == "Santé" %}<i class="fas fa-heartbeat"></i>
-                    {% elif category.name == "Éducation" %}<i class="fas fa-graduation-cap"></i>
-                    {% elif category.name == "Banque" %}<i class="fas fa-university"></i>
-                    {% elif category.name == "Shopping" %}<i class="fas fa-shopping-bag"></i>
-                    {% elif category.name == "Beauté" %}<i class="fas fa-spa"></i>
-                    {% elif category.name == "Construction" %}<i class="fas fa-hard-hat"></i>
-                    {% elif category.name == "Immobilier" %}<i class="fas fa-home"></i>
-                    {% elif category.name == "Technologie" %}<i class="fas fa-laptop"></i>
-                    {% elif category.name == "Loisirs" %}<i class="fas fa-gamepad"></i>
-                    {% elif category.name == "Services" %}<i class="fas fa-concierge-bell"></i>
-                    {% elif category.name == "Alimentation" %}<i class="fas fa-shopping-cart"></i>
-                    {% elif category.name == "Hôtellerie" %}<i class="fas fa-hotel"></i>
-                    {% else %}<i class="fas fa-store"></i>{% endif %}
-                </div>
-                <h3 class="text-xl font-bold text-esy-dark mb-2 group-hover:text-esy-blue-600 transition-colors">{{ category.name }}</h3>
-                <p class="text-gray-400 font-bold text-sm">{{ category.count }} {% trans "Entreprises" %}</p>
-            </a>
-            {% endfor %}
+        <!-- Stats Counter Dinamik -->
+        <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto mt-12 text-center">
+            <div class="bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:border-esy-gold/40 transition">
+                <span class="block text-2xl md:text-3xl font-black text-esy-gold">{{ total_businesses|default:"500+" }}</span>
+                <span class="text-xs md:text-sm text-gray-300 uppercase font-semibold">{% trans "Entreprises" %}</span>
+            </div>
+            <div class="bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:border-esy-gold/40 transition">
+                <span class="block text-2xl md:text-3xl font-black text-esy-gold">{{ total_categories|default:"25" }}</span>
+                <span class="text-xs md:text-sm text-gray-300 uppercase font-semibold">{% trans "Catégories" %}</span>
+            </div>
+            <div class="bg-white/5 backdrop-blur-sm p-4 rounded-2xl border border-white/10 hover:border-esy-gold/40 transition">
+                <span class="block text-2xl md:text-3xl font-black text-esy-gold">{{ total_cities|default:"46" }}</span>
+                <span class="text-xs md:text-sm text-gray-300 uppercase font-semibold">{% trans "Villes / Communes" %}</span>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- FEATURED BUSINESSES -->
-<section class="py-24 bg-gray-50" id="entreprises">
+<!-- 2. Catégories & Icônes Modernes -->
+<section class="py-16 bg-white max-w-7xl mx-auto px-4">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+        <div>
+            <span class="text-xs font-black uppercase tracking-widest text-esy-blue-600 bg-esy-blue-50 px-3 py-1 rounded-full">{% trans "Découverte" %}</span>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 mt-2">{% trans "Explorer par Catégorie" %}</h2>
+            <p class="text-gray-600 mt-1">{% trans "Trouvez rapidement le service ou le commerce adapté à vos besoins" %}</p>
+        </div>
+        <a href="{% url 'business:categories' %}"
+            class="text-esy-blue-600 hover:text-esy-blue-800 font-bold flex items-center gap-2 group">
+            <span>{% trans "Voir toutes les catégories" %}</span>
+            <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+        </a>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+        {% for category in categories|slice:":8" %}
+        <a href="{% url 'business:business_list' %}?category={{ category.id }}"
+            class="group p-6 bg-gray-50/70 hover:bg-esy-blue-50/70 rounded-3xl border border-gray-100 hover:border-esy-blue-200 transition-all duration-300 text-center flex flex-col items-center justify-center hover:shadow-lg">
+            <div class="w-16 h-16 bg-white text-esy-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 group-hover:bg-esy-blue-600 group-hover:text-white transition duration-300 border border-gray-100">
+                {% if category.icon and 'fa' in category.icon %}
+                    <i class="{{ category.icon }} text-2xl"></i>
+                {% elif 'pharm' in category.name|lower or 'sant' in category.name|lower %}
+                    <i class="fas fa-prescription-bottle-medical text-2xl"></i>
+                {% elif 'restaur' in category.name|lower or 'manger' in category.name|lower %}
+                    <i class="fas fa-utensils text-2xl"></i>
+                {% elif 'tel' in category.name|lower %}
+                    <i class="fas fa-hotel text-2xl"></i>
+                {% elif 'magasin' in category.name|lower or 'boutique' in category.name|lower or 'commerce' in category.name|lower %}
+                    <i class="fas fa-shopping-bag text-2xl"></i>
+                {% elif 'garage' in category.name|lower or 'auto' in category.name|lower or 'mecan' in category.name|lower %}
+                    <i class="fas fa-wrench text-2xl"></i>
+                {% elif 'cole' in category.name|lower or 'educ' in category.name|lower %}
+                    <i class="fas fa-graduation-cap text-2xl"></i>
+                {% elif 'plomb' in category.name|lower %}
+                    <i class="fas fa-faucet-drip text-2xl"></i>
+                {% elif 'electr' in category.name|lower or 'tech' in category.name|lower or category.icon == 'EL' %}
+                    <i class="fas fa-laptop-code text-2xl"></i>
+                {% elif 'vitr' in category.name|lower %}
+                    <i class="fas fa-window-maximize text-2xl"></i>
+                {% else %}
+                    <i class="fas fa-store text-2xl"></i>
+                {% endif %}
+            </div>
+            <h3 class="font-extrabold text-gray-900 group-hover:text-esy-blue-600 transition text-base mb-1">{{ category.name }}</h3>
+            <span class="text-xs text-gray-500 font-semibold">{{ category.biz_count|default:"Disponible" }} {% if category.biz_count %}{% trans "entreprises" %}{% endif %}</span>
+        </a>
+        {% empty %}
+        <p class="text-gray-500 col-span-4 text-center py-8">{% trans "Aucune catégorie disponible pour le moment." %}</p>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- 3. Entreprises à la Une (Uniformisation stricte des images h-48 w-full object-cover rounded-t-xl) -->
+<section class="py-16 bg-gray-50 border-t border-gray-100">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl font-black text-esy-dark mb-4">{% trans "Entreprises à la Une" %}</h2>
-            <p class="text-gray-500 font-medium text-lg max-w-2xl mx-auto">{% trans "Découvrez les partenaires premium
-                recommandés par EsyConnect." %}</p>
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-xs font-black uppercase tracking-widest text-esy-gold bg-amber-50 px-3 py-1 rounded-full">{% trans "Partenaires Recommandés" %}</span>
+            <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-2">{% trans "Entreprises à la Une" %}</h2>
+            <p class="text-gray-600">{% trans "Découvrez les établissements et professionnels d'excellence certifiés par EsyConnect." %}</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {% for business in latest_businesses %}
-            <div data-aos="fade-up" class="business-card group">
-                <div class="relative h-64 overflow-hidden bg-gray-50 flex items-center justify-center p-4">
-                    {% if business.logo %}
-                    <img src="{{ business.logo.url }}"
-                        class="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
-                        alt="{{ business.name }}">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for business in featured_businesses %}
+            <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col group">
+                <!-- Image Container Uniformisé -->
+                <div class="h-48 w-full bg-slate-900 relative overflow-hidden rounded-t-xl flex items-center justify-center">
+                    {% if business.cover_image %}
+                    <img src="{{ business.cover_image.url }}" alt="{{ business.name }}" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='{% static 'images/default_logo.png' %}';">
+                    {% elif business.logo and business.logo.name != 'default_logo.png' %}
+                    <img src="{{ business.logo.url }}" alt="{{ business.name }}" class="h-48 w-full object-contain bg-slate-800 p-3 transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='{% static 'images/default_logo.png' %}';">
                     {% else %}
-                    <div class="w-full h-full bg-esy-blue-900 flex items-center justify-center text-white/20 text-5xl">
-                        <i class="fas fa-image"></i>
-                    </div>
+                    <img src="{% static 'images/default_logo.png' %}" alt="{{ business.name }}" class="h-48 w-full object-cover">
                     {% endif %}
 
-                    <div class="absolute top-4 left-4 flex gap-2">
-                        {% if business.is_pro %}
-                        <span
-                            class="premium-badge px-4 py-1.5 rounded-full text-[10px] uppercase shadow-lg">PREMIUM</span>
-                        {% endif %}
-                        {% if business.is_verified %}
-                        <span
-                            class="verified-badge px-4 py-1.5 rounded-full text-[10px] uppercase shadow-lg">VÉRIFIÉ</span>
-                        {% endif %}
-                    </div>
+                    <!-- Badges Catégorie et VIP -->
+                    <span class="absolute top-4 left-4 bg-white/95 backdrop-blur-md text-esy-dark text-xs font-extrabold px-3 py-1 rounded-full shadow">
+                        {{ business.category.name|default:"Commerce" }}
+                    </span>
+                    {% if business.is_pro %}
+                    <span class="absolute top-4 right-4 bg-esy-gold text-esy-dark text-xs font-black px-3 py-1 rounded-full shadow flex items-center gap-1">
+                        <i class="fas fa-crown text-[10px]"></i> VIP
+                    </span>
+                    {% endif %}
                 </div>
 
-                <div class="p-8">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <p class="text-esy-blue-600 font-bold text-xs uppercase tracking-widest mb-1">
-                                {{ business.category.name }}</p>
-                            <h3 class="text-2xl font-black text-esy-dark">{{ business.name }}</h3>
+                <!-- Contenu Carte -->
+                <div class="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <h3 class="text-xl font-bold text-gray-900 group-hover:text-esy-blue-600 transition truncate">{{ business.name }}</h3>
+                            {% if business.is_verified %}
+                            <span class="flex-shrink-0 text-esy-blue-600 bg-esy-blue-50 w-6 h-6 rounded-full flex items-center justify-center text-xs" title="{% trans 'Vérifié' %}">
+                                <i class="fas fa-check-circle"></i>
+                            </span>
+                            {% endif %}
                         </div>
-                        <div class="bg-gray-100 p-3 rounded-2xl">
-                            <i class="fas fa-heart text-gray-300"></i>
+
+                        <!-- Étoiles de notation -->
+                        <div class="flex items-center gap-1 text-amber-400 text-xs font-bold mb-3">
+                            <i class="fas fa-star"></i>
+                            <span class="text-gray-800 font-extrabold ml-1">{{ business.get_average_rating|default:"5.0" }}</span>
+                            <span class="text-gray-400 font-normal">({{ business.get_rating_count|default:"1" }} {% trans "avis" %})</span>
                         </div>
+
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
+                            {{ business.description|default:"Établissement certifié sur l'annuaire professionnel EsyConnect Haïti." }}
+                        </p>
                     </div>
 
-                    <p class="text-gray-500 font-medium mb-8 line-clamp-2">{{ business.description|default:"Aucune
-                        description fournie pour le moment."|truncatewords:20 }}</p>
-
-                    <div class="flex items-center text-gray-400 text-sm font-bold mb-8">
-                        <i class="fas fa-map-marker-alt mr-2 text-esy-blue-600"></i> {{ business.address }}
-                    </div>
-
-                    <div class="flex gap-4">
-                        <a href="{% url 'business:detail' business.id %}"
-                            class="flex-1 bg-esy-dark text-white py-4 rounded-2xl font-black text-center hover:bg-esy-blue-900 transition shadow-lg">
-                            {% trans "Voir Profil" %}
-                        </a>
-                        <a href="tel:{{ business.phone }}"
-                            class="w-14 h-14 bg-esy-blue-50 text-esy-blue-600 rounded-2xl flex items-center justify-center hover:bg-esy-blue-600 hover:text-white transition shadow-sm">
-                            <i class="fas fa-phone"></i>
+                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
+                        <span class="truncate pr-2 text-xs font-medium text-gray-500">
+                            <i class="fas fa-map-marker-alt text-esy-gold mr-1"></i> {{ business.address|default:"Haïti" }}
+                        </span>
+                        <!-- Bouton Voir Profil dynamique -->
+                        <a href="{% url 'business_detail' business.pk %}"
+                            class="bg-esy-blue-600 hover:bg-esy-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5 flex-shrink-0">
+                            <span>{% trans "Voir Profil" %}</span>
+                            <i class="fas fa-arrow-right text-[10px]"></i>
                         </a>
                     </div>
                 </div>
             </div>
+            {% empty %}
+            <p class="text-gray-500 col-span-3 text-center py-8">{% trans "Aucune entreprise à la une pour le moment." %}</p>
             {% endfor %}
         </div>
 
-        <div class="mt-20 text-center">
-            {% if user.is_authenticated %}
-            <a href="{% url 'business:register_business' %}"
-                class="inline-flex items-center bg-gradient-to-r from-esy-gold to-yellow-500 text-white px-16 py-6 rounded-3xl font-black text-xl shadow-2xl hover:from-yellow-500 hover:to-esy-gold hover:scale-110 hover:shadow-3xl transition-all duration-300 transform animate-pulse-slow">
-                <i class="fas fa-plus-circle mr-4 text-2xl"></i> {% trans "Ajouter mon Entreprise" %}
+        <div class="text-center mt-12">
+            <a href="{% url 'business:register' %}"
+                class="inline-flex items-center gap-2 bg-esy-dark hover:bg-gray-800 text-white font-bold px-8 py-3.5 rounded-2xl shadow-xl transition transform hover:-translate-y-0.5">
+                <i class="fas fa-plus-circle text-esy-gold"></i>
+                <span>{% trans "Ajouter mon Entreprise Gratuitement" %}</span>
             </a>
-            {% else %}
-            <a href="{% url 'users:login' %}"
-                class="inline-flex items-center bg-gradient-to-r from-esy-gold to-yellow-500 text-white px-16 py-6 rounded-3xl font-black text-xl shadow-2xl hover:from-yellow-500 hover:to-esy-gold hover:scale-110 hover:shadow-3xl transition-all duration-300 transform animate-pulse-slow">
-                <i class="fas fa-plus-circle mr-4 text-2xl"></i> {% trans "Ajouter mon Entreprise" %}
-            </a>
-            {% endif %}
         </div>
     </div>
 </section>
 
-<!-- GLOBAL MAP SECTION -->
-<section class="py-0 overflow-hidden relative border-y border-gray-100">
-    {% include 'components/global_map.html' %}
-</section>
-
-<!-- WHY US SECTION -->
-<section class="py-24 bg-esy-dark text-white overflow-hidden relative">
-    <div class="max-w-7xl mx-auto px-4 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div>
-                <h2 class="text-4xl md:text-5xl font-black mb-8 leading-tight">{% trans "Poukisa Chwazi EsyConnect pou
-                    Biznis Ou?" %}</h2>
-                <div class="space-y-8">
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-esy-blue-600 rounded-2xl flex items-center justify-center mr-6 shrink-0 shadow-lg">
-                            <i class="fas fa-rocket"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold mb-2">{% trans "Vizibilite Maksimòm" %}</h4>
-                            <p class="text-white/60 font-medium">{% trans "Fè dè milye kliyan dekouvri biznis ou chak
-                                jou nan tout vil la." %}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-esy-gold rounded-2xl flex items-center justify-center mr-6 shrink-0 shadow-lg">
-                            <i class="fas fa-crown"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold mb-2">{% trans "Kont Premium" %}</h4>
-                            <p class="text-white/60 font-medium">{% trans "Mete biznis ou alatèt pou w ka jwenn plis
-                                klike ak plis vant." %}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start">
-                        <div
-                            class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center mr-6 shrink-0 shadow-lg">
-                            <i class="fas fa-check-double"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold mb-2">{% trans "Sèvis Verifye" %}</h4>
-                            <p class="text-white/60 font-medium">{% trans "Bati konfyans ak kliyan yo grasa badj
-                                verifikasyon nou an." %}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="relative" data-aos="fade-left">
-                <div class="bg-gradient-to-r from-esy-blue-600 to-blue-400 p-1 rounded-[3rem] shadow-2xl">
-                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80"
-                        class="rounded-[2.8rem] w-full" alt="Team">
-                </div>
-                <div
-                    class="absolute -bottom-10 -left-10 bg-white text-esy-dark p-8 rounded-3xl shadow-2xl hidden md:block animate-bounce">
-                    <p class="text-4xl font-black mb-1">500+</p>
-                    <p class="text-gray-500 font-bold uppercase text-xs">{% trans "Biznis Verifye" %}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- VIP TESTIMONIALS SECTION -->
-<section class="py-24 bg-gradient-to-b from-gray-50 to-white">
+<!-- 4. Section Comment ça marche ? -->
+<section class="py-16 bg-white border-y border-gray-100">
     <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16">
-            <span
-                class="bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-700 px-6 py-3 rounded-full text-sm font-bold mb-6 inline-block shadow-lg">
-                <i class="fas fa-quote-left mr-2"></i>{% trans "Sa Kliyan yo Di" %}
-            </span>
-            <h2 class="text-5xl font-extrabold text-gray-900 mb-6">{% trans "Témoignages VIP" %}</h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                {% trans "Découvrez ce que nos entrepreneurs disent d'EsyConnect" %}
-            </p>
-            <div class="h-2 w-32 bg-gradient-to-r from-yellow-400 to-amber-500 mt-8 rounded-full mx-auto shadow-lg">
-            </div>
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="text-xs font-black uppercase tracking-widest text-esy-blue-600 bg-esy-blue-50 px-3 py-1 rounded-full">{% trans "Simplicité & Rapidité" %}</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mt-3 mb-4">{% trans "Comment ça marche ?" %}</h2>
+            <p class="text-gray-600 text-base md:text-lg">{% trans "Trouvez et connectez-vous avec les meilleurs professionnels en Haïti en seulement 3 étapes simples." %}</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Témoignage 1 -->
-            <div
-                class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full -mr-16 -mt-16 opacity-50">
+            <!-- Étape 1 -->
+            <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:shadow-xl transition-all duration-300 text-center flex flex-col items-center group">
+                <div class="w-16 h-16 bg-esy-blue-600 text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shadow-esy-blue-600/30 mb-6 group-hover:scale-110 transition-transform">
+                    1
                 </div>
-                <div class="relative z-10">
-                    <div class="flex items-center mb-6">
-                        <div
-                            class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mr-4 shadow-lg">
-                            JD</div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-lg">Jean Dupont</h4>
-                            <p class="text-blue-600 font-medium">Restoran La Belle</p>
-                            <div class="flex text-yellow-400 text-sm mt-1">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-blue-50 rounded-2xl p-6 mb-4">
-                        <i class="fas fa-quote-left text-blue-300 text-3xl mb-3"></i>
-                        <p class="text-gray-700 italic leading-relaxed">
-                            "EsyConnect m'a aidé à obtenir 50% de clients en plus en 3 mois. Le service est vraiment
-                            efficace et l'équipe est très professionnelle!"
-                        </p>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-500">
-                        <i class="fas fa-calendar-alt mr-2"></i>
-                        <span>{% trans "Client depuis 2024" %}</span>
-                    </div>
-                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">{% trans "Recherchez & Filtrez" %}</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    {% trans "Trouvez rapidement les commerces, entreprises et prestataires par département, commune, zone ou spécialité." %}
+                </p>
             </div>
 
-            <!-- Témoignage 2 -->
-            <div
-                class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-100 to-green-50 rounded-full -mr-16 -mt-16 opacity-50">
+            <!-- Étape 2 -->
+            <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:shadow-xl transition-all duration-300 text-center flex flex-col items-center group">
+                <div class="w-16 h-16 bg-esy-gold text-esy-dark rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shadow-esy-gold/30 mb-6 group-hover:scale-110 transition-transform">
+                    2
                 </div>
-                <div class="relative z-10">
-                    <div class="flex items-center mb-6">
-                        <div
-                            class="w-20 h-20 bg-gradient-to-br from-green-500 to-green-700 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mr-4 shadow-lg">
-                            MP</div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-lg">Marie Paul</h4>
-                            <p class="text-green-600 font-medium">Pharmacie du Soleil</p>
-                            <div class="flex text-yellow-400 text-sm mt-1">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-green-50 rounded-2xl p-6 mb-4">
-                        <i class="fas fa-quote-left text-green-300 text-3xl mb-3"></i>
-                        <p class="text-gray-700 italic leading-relaxed">
-                            "La meilleure plateforme pour faire connaître votre entreprise à Cap-Haïtien. Je la
-                            recommande vivement à tous mes collègues entrepreneurs!"
-                        </p>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-500">
-                        <i class="fas fa-calendar-alt mr-2"></i>
-                        <span>{% trans "Client depuis 2023" %}</span>
-                    </div>
-                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">{% trans "Explorez les Profils" %}</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    {% trans "Consultez les coordonnées géolocalisées sur la carte interactive, les galeries photos, les avis et les horaires." %}
+                </p>
             </div>
 
-            <!-- Témoignage 3 -->
-            <div
-                class="bg-white rounded-3xl p-8 shadow-sm hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden">
-                <div
-                    class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-100 to-purple-50 rounded-full -mr-16 -mt-16 opacity-50">
+            <!-- Étape 3 -->
+            <div class="bg-gray-50 p-8 rounded-3xl border border-gray-100 hover:shadow-xl transition-all duration-300 text-center flex flex-col items-center group">
+                <div class="w-16 h-16 bg-emerald-600 text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg shadow-emerald-600/30 mb-6 group-hover:scale-110 transition-transform">
+                    3
                 </div>
-                <div class="relative z-10">
-                    <div class="flex items-center mb-6">
-                        <div
-                            class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-700 rounded-2xl flex items-center justify-center text-white text-2xl font-bold mr-4 shadow-lg">
-                            PJ</div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-lg">Pierre Jean</h4>
-                            <p class="text-purple-600 font-medium">Hotel Royal Palace</p>
-                            <div class="flex text-yellow-400 text-sm mt-1">
-                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
-                                    class="fas fa-star"></i><i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-purple-50 rounded-2xl p-6 mb-4">
-                        <i class="fas fa-quote-left text-purple-300 text-3xl mb-3"></i>
-                        <p class="text-gray-700 italic leading-relaxed">
-                            "Grâce à EsyConnect, notre hôtel a vu une augmentation de 70% de réservations en ligne. Une
-                            plateforme indispensable pour tout business sérieux!"
-                        </p>
-                    </div>
-                    <div class="flex items-center text-sm text-gray-500">
-                        <i class="fas fa-calendar-alt mr-2"></i>
-                        <span>{% trans "Client depuis 2024" %}</span>
-                    </div>
-                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">{% trans "Connectez-vous Directement" %}</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    {% trans "Appelez ou échangez par WhatsApp en toute liberté, sans intermédiaire ni commission cachée." %}
+                </p>
             </div>
         </div>
+    </div>
+</section>
+
+<!-- 5. Nos Plans d'Abonnement (3 Kat: Gratuit, Pro, VIP) -->
+<section id="plans" class="py-20 bg-gradient-to-b from-white to-gray-50 border-t border-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="text-xs font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-4 py-1.5 rounded-full inline-flex items-center gap-2">
+                <i class="fas fa-crown text-amber-500"></i> {% trans "Abonnements Professionnels" %}
+            </span>
+            <h2 class="text-3xl md:text-5xl font-black text-gray-900 mt-4 mb-4 tracking-tight">
+                {% trans "Nos Plans d'Abonnement" %}
+            </h2>
+            <p class="text-gray-600 text-base md:text-lg">
+                {% trans "Propulsez la croissance de votre entreprise en Haïti. Choisissez la formule adaptée à vos ambitions pour booster vos ventes et votre notoriété." %}
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+            <!-- Carte 1: Basic / Gratuit -->
+            <div class="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                <div>
+                    <span class="bg-gray-100 text-gray-700 text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+                        {% trans "Découverte" %}
+                    </span>
+                    <h3 class="text-2xl font-black text-gray-900 mt-4 mb-2">Basic (Gratuit)</h3>
+                    <p class="text-gray-500 text-sm mb-6">{% trans "Idéal pour inscrire votre premier établissement et tester la plateforme." %}</p>
+                    <div class="text-4xl font-black text-gray-900 mb-6">
+                        0$ <span class="text-sm font-semibold text-gray-400">/ {% trans "à vie" %}</span>
+                    </div>
+                    <ul class="space-y-3.5 mb-8 text-sm text-gray-600">
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> 1 Entreprise enregistrée</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Présence sur la carte interactive</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check text-green-500"></i> Boutons Appel & WhatsApp directs</li>
+                        <li class="flex items-center gap-3 text-gray-400"><i class="fas fa-times text-gray-300"></i> Pas de badge VIP doré</li>
+                        <li class="flex items-center gap-3 text-gray-400"><i class="fas fa-times text-gray-300"></i> Visibilité standard</li>
+                    </ul>
+                </div>
+                <a href="{% url 'business:checkout_subscription' 'free' %}" class="w-full text-center block bg-gray-100 hover:bg-gray-200 text-gray-800 font-black py-4 rounded-2xl text-sm transition">
+                    {% trans "Commencer Gratuitement" %}
+                </a>
+            </div>
+
+            <!-- Carte 2: Pro Mensuel (Recommandé) -->
+            <div class="bg-white rounded-3xl p-8 border-2 border-indigo-600 shadow-2xl relative flex flex-col justify-between transform md:-translate-y-2">
+                <div class="absolute -top-3.5 right-8 bg-indigo-600 text-white text-xs font-black uppercase tracking-wider px-4 py-1 rounded-full shadow-md">
+                    {% trans "Recommandé" %}
+                </div>
+                <div>
+                    <span class="bg-indigo-50 text-indigo-600 text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider">
+                        PRO MENSUEL
+                    </span>
+                    <h3 class="text-2xl font-black text-gray-900 mt-4 mb-2">Premium Pro</h3>
+                    <p class="text-gray-500 text-sm mb-6">{% trans "La formule incontournable pour attirer plus de clients chaque jour." %}</p>
+                    <div class="text-4xl font-black text-gray-900 mb-6">
+                        29$ <span class="text-sm font-semibold text-gray-400">/ {% trans "mois" %}</span>
+                    </div>
+                    <ul class="space-y-3.5 mb-8 text-sm text-gray-700 font-medium">
+                        <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500"></i> <strong>Entreprises illimitées</strong></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500"></i> <strong>Position prioritaire</strong> en tête de liste</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500"></i> Badge <span class="text-amber-500 font-black">PRO VIP</span> certifié</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500"></i> Statistiques avancées (Leads WhatsApp/Appels)</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500"></i> Galerie photos enrichie</li>
+                    </ul>
+                </div>
+                <a href="{% url 'business:checkout_subscription' 'pro_monthly' %}" class="w-full text-center block bg-gradient-to-r from-indigo-600 to-blue-700 hover:from-blue-700 hover:to-indigo-600 text-white font-black py-4 rounded-2xl text-sm transition shadow-lg shadow-indigo-600/30">
+                    {% trans "Passer au Plan PRO" %}
+                </a>
+            </div>
+
+            <!-- Carte 3: VIP Annuel -->
+            <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-xl text-white flex flex-col justify-between relative overflow-hidden">
+                <div class="absolute -top-3.5 right-8 bg-amber-500 text-slate-950 text-xs font-black uppercase tracking-wider px-4 py-1 rounded-full shadow-md">
+                    {% trans "2 mois offerts" %}
+                </div>
+                <div>
+                    <span class="bg-amber-500/20 text-amber-300 text-xs font-black uppercase px-3 py-1 rounded-full tracking-wider border border-amber-500/30">
+                        VIP ANNUEL
+                    </span>
+                    <h3 class="text-2xl font-black text-white mt-4 mb-2">Entreprise VIP</h3>
+                    <p class="text-slate-400 text-sm mb-6">{% trans "Visibilité maximale à l'année et accompagnement marketing dédié." %}</p>
+                    <div class="text-4xl font-black text-white mb-6">
+                        290$ <span class="text-sm font-semibold text-slate-400">/ {% trans "an" %}</span>
+                    </div>
+                    <ul class="space-y-3.5 mb-8 text-sm text-slate-300">
+                        <li class="flex items-center gap-3"><i class="fas fa-star text-amber-400"></i> Tous les privilèges du plan PRO</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-star text-amber-400"></i> <strong>2 mois gratuits</strong> inclus</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-star text-amber-400"></i> Mise en avant spéciale sur la page d'accueil</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-star text-amber-400"></i> Support prioritaire WhatsApp 24/7</li>
+                        <li class="flex items-center gap-3"><i class="fas fa-star text-amber-400"></i> Export complet des statistiques & avis</li>
+                    </ul>
+                </div>
+                <a href="{% url 'business:checkout_subscription' 'pro_yearly' %}" class="w-full text-center block bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black py-4 rounded-2xl text-sm transition shadow-lg shadow-amber-500/20">
+                    {% trans "Devenir Membre VIP" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 6. Seksyon Solidarité & Don Kominotè -->
+<section id="solidarite-don" x-data="{ donationModalOpen: false, selectedAmount: 1000, selectedMethod: 'moncash' }" class="py-20 bg-slate-900 text-white relative overflow-hidden">
+    <!-- Glow backgrounds -->
+    <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/60 rounded-[3rem] p-8 md:p-14 shadow-2xl">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+                
+                <div class="lg:col-span-7">
+                    <span class="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-black uppercase px-4 py-1.5 rounded-full mb-6">
+                        <i class="fas fa-heart text-red-400"></i> {% trans "Fonds de Solidarité Kominotè" %}
+                    </span>
+                    <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight mb-6">
+                        {% trans "Soutenez les Petits Entrepreneurs" %} <span class="text-amber-400">{% trans "d'Haïti" %}</span>
+                    </h2>
+                    <p class="text-slate-300 text-base md:text-lg leading-relaxed mb-8 font-medium">
+                        {% trans "Face aux défis économiques, des milliers d'artisans, marchands et jeunes créateurs se battent au quotidien pour faire vivre leurs familles et leurs quartiers. Votre don finance leur référencement numérique, des formations et un coup de pouce matériel direct." %}
+                    </p>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-6 mb-8 text-center sm:text-left">
+                        <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700">
+                            <div class="text-2xl font-black text-amber-400">100%</div>
+                            <div class="text-xs text-slate-400 font-semibold mt-1">{% trans "Réinvesti localement" %}</div>
+                        </div>
+                        <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700">
+                            <div class="text-2xl font-black text-indigo-400">MonCash / Natcash</div>
+                            <div class="text-xs text-slate-400 font-semibold mt-1">{% trans "Paiement direct en Haïti" %}</div>
+                        </div>
+                        <div class="bg-slate-800/80 p-4 rounded-2xl border border-slate-700 col-span-2 sm:col-span-1">
+                            <div class="text-2xl font-black text-green-400">Impact Réel</div>
+                            <div class="text-xs text-slate-400 font-semibold mt-1">{% trans "Suivi & transparence" %}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <button type="button" @click="donationModalOpen = true" class="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black px-8 py-4 rounded-2xl text-base transition transform hover:scale-[1.02] shadow-xl shadow-amber-400/20 inline-flex items-center gap-3">
+                            <i class="fas fa-hand-holding-heart text-lg"></i>
+                            <span>{% trans "Fè yon Don Kounye a (Faire un Don)" %}</span>
+                        </button>
+                        <a href="{% url 'business:contact_general' %}" class="text-slate-300 hover:text-white font-bold text-sm underline underline-offset-4 px-4 py-2 transition">
+                            {% trans "Proposer un partenariat" %} &rarr;
+                        </a>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5">
+                    <div class="bg-slate-950/60 rounded-3xl p-8 border border-slate-700/80 backdrop-blur-md">
+                        <h3 class="text-lg font-black text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-wallet text-amber-400"></i> {% trans "Moyens Rapides de Don" %}
+                        </h3>
+
+                        <div class="space-y-4 text-xs">
+                            <div class="p-4 bg-red-950/40 border border-red-800/50 rounded-2xl flex items-center justify-between">
+                                <div>
+                                    <span class="font-black text-red-400 text-sm block">MonCash (Digicel)</span>
+                                    <span class="text-slate-300 text-xs font-mono font-bold select-all">+509 34 56 7890</span>
+                                </div>
+                                <span class="bg-red-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase">Rapide</span>
+                            </div>
+
+                            <div class="p-4 bg-orange-950/40 border border-orange-800/50 rounded-2xl flex items-center justify-between">
+                                <div>
+                                    <span class="font-black text-orange-400 text-sm block">Natcash (Natcom)</span>
+                                    <span class="text-slate-300 text-xs font-mono font-bold select-all">+509 41 23 4567</span>
+                                </div>
+                                <span class="bg-orange-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase">Instantané</span>
+                            </div>
+
+                            <div class="p-4 bg-slate-800/60 border border-slate-700 rounded-2xl">
+                                <span class="font-bold text-slate-200 block mb-1">{% trans "Virement bancaire (Sogebank / Unibank) :" %}</span>
+                                <span class="text-slate-400">Compte : <strong class="text-white font-mono select-all">102-304-98765</strong> (EsyConnect Fonds Solidarité)</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t border-slate-800 text-center">
+                            <button type="button" @click="donationModalOpen = true" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl text-xs transition border border-slate-700">
+                                {% trans "Ouvrir le formulaire de don & reçu" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL POPUP DONATION (Alpine.js) -->
+    <div x-cloak x-show="donationModalOpen" 
+         class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        
+        <div @click.outside="donationModalOpen = false" 
+             class="bg-white text-gray-900 rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-gray-100 relative max-h-[90vh] overflow-y-auto">
+            
+            <!-- Close Button -->
+            <button type="button" @click="donationModalOpen = false" class="absolute top-5 right-5 text-gray-400 hover:text-gray-700 w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 hover:bg-gray-200 transition">
+                <i class="fas fa-times text-sm"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
+                    <i class="fas fa-heart text-red-500"></i>
+                </div>
+                <h3 class="text-2xl font-black text-gray-900">{% trans "Fè yon Don Solidarite" %}</h3>
+                <p class="text-gray-500 text-xs font-medium mt-1">{% trans "Chak goud oswa dola konte pou sipòte yon antreprenè Ayisyen." %}</p>
+            </div>
+
+            <form action="{% url 'business:submit_donation' %}" method="POST" class="space-y-4">
+                {% csrf_token %}
+
+                <!-- Montan Pré-défini -->
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-wider text-gray-700 mb-2">{% trans "Chwazi yon Montan" %} (HTG)</label>
+                    <div class="grid grid-cols-4 gap-2 mb-2">
+                        <button type="button" @click="selectedAmount = 500" :class="selectedAmount == 500 ? 'bg-indigo-600 text-white font-black' : 'bg-gray-100 text-gray-700 font-bold'" class="py-2.5 rounded-xl text-xs transition">500 G</button>
+                        <button type="button" @click="selectedAmount = 1000" :class="selectedAmount == 1000 ? 'bg-indigo-600 text-white font-black' : 'bg-gray-100 text-gray-700 font-bold'" class="py-2.5 rounded-xl text-xs transition">1,000 G</button>
+                        <button type="button" @click="selectedAmount = 2500" :class="selectedAmount == 2500 ? 'bg-indigo-600 text-white font-black' : 'bg-gray-100 text-gray-700 font-bold'" class="py-2.5 rounded-xl text-xs transition">2,500 G</button>
+                        <button type="button" @click="selectedAmount = 5000" :class="selectedAmount == 5000 ? 'bg-indigo-600 text-white font-black' : 'bg-gray-100 text-gray-700 font-bold'" class="py-2.5 rounded-xl text-xs transition">5,000 G</button>
+                    </div>
+                    <div class="relative">
+                        <input type="number" name="amount" x-model="selectedAmount" required placeholder="{% trans 'Oswa antre lòt montan...' %}" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 font-bold text-sm">
+                        <input type="hidden" name="currency" value="HTG">
+                    </div>
+                </div>
+
+                <!-- Mwayen Peman -->
+                <div>
+                    <label class="block text-xs font-black uppercase tracking-wider text-gray-700 mb-2">{% trans "Mwayen Peman" %}</label>
+                    <select name="payment_method" x-model="selectedMethod" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 font-bold text-xs">
+                        <option value="moncash">MonCash (Digicel: +509 34 56 7890)</option>
+                        <option value="natcash">Natcash (Natcom: +509 41 23 4567)</option>
+                        <option value="bank_transfer">Virement Bancaire (Sogebank / Unibank)</option>
+                        <option value="card">Carte Bancaire / En ligne</option>
+                    </select>
+                </div>
+
+                <!-- Donatè Enfòmasyon -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-600 mb-1">{% trans "Non ou (opsyonèl)" %}</label>
+                        <input type="text" name="donor_name" placeholder="{% trans 'Ex: Jean Pierre' %}" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-600 mb-1">{% trans "WhatsApp oswa Email" %}</label>
+                        <input type="text" name="donor_phone" placeholder="+509 ... oswa email" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs">
+                    </div>
+                </div>
+
+                <!-- Referans Peman -->
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-600 mb-1">{% trans "Kòd / Referans Tranzaksyon an (apre transfert)" %}</label>
+                    <input type="text" name="transaction_reference" placeholder="Ex: MC98765432 oswa kòd SMS" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-mono">
+                </div>
+
+                <!-- Mesaj -->
+                <div>
+                    <label class="block text-[11px] font-bold text-gray-600 mb-1">{% trans "Ti mesaj ankourajman (opsyonèl)" %}</label>
+                    <textarea name="message" rows="2" placeholder="{% trans 'Pataje yon ti mo ak antreprenè yo...' %}" class="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-xs"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black py-3.5 rounded-2xl text-sm transition shadow-lg shadow-amber-400/20 flex items-center justify-center gap-2">
+                    <i class="fas fa-check-circle"></i>
+                    <span>{% trans "Konfime Don an" %}</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- 5. Section Carte Interactive (Leaflet Optimisée) -->
+<section class="py-16 bg-white max-w-7xl mx-auto px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+        <div class="lg:col-span-1">
+            <span class="text-esy-blue-600 font-bold text-xs uppercase tracking-widest bg-esy-blue-50 px-3 py-1 rounded-full">{% trans "Carte Interactive" %}</span>
+            <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-4">EsyConnect Haïti</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                {% trans "Découvrez les entreprises, commerces et services disponibles à Cap-Haïtien et dans toute la République d’Haïti directement sur notre carte interactive haute précision." %}
+            </p>
+            
+            <div class="flex items-center gap-4 bg-esy-blue-50 p-4 rounded-2xl border border-esy-blue-100 mb-6">
+                <div class="w-12 h-12 bg-esy-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-md flex-shrink-0">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <div>
+                    <span class="block font-bold text-esy-dark">{{ map_count|default:"7" }} {% trans "Entreprises Géolocalisées" %}</span>
+                    <span class="text-xs text-esy-blue-700">{% trans "Cap-Haïtien & Réseau National" %}</span>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="button" id="btnFocusCap" class="px-4 py-2.5 bg-esy-dark hover:bg-gray-800 text-white rounded-xl font-bold text-xs transition shadow-sm flex items-center gap-2">
+                    <i class="fas fa-crosshairs text-esy-gold"></i> Cap-Haïtien
+                </button>
+                <button type="button" id="btnFocusHaiti" class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-bold text-xs transition border border-gray-200 flex items-center gap-2">
+                    <i class="fas fa-globe-americas text-esy-blue-600"></i> {% trans "Tout Haïti" %}
+                </button>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2">
+            <div id="map" class="h-[500px] w-full rounded-3xl shadow-xl border-2 border-gray-100 overflow-hidden relative z-10"></div>
+        </div>
+    </div>
+</section>
+
+<!-- 6. Témoignages VIP (avec Étoiles ⭐) -->
+<section class="py-16 bg-gray-50 border-t border-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-xs font-black uppercase tracking-widest text-amber-500 bg-amber-50 px-3 py-1 rounded-full">{% trans "Avis & Confiance" %}</span>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 mt-3 mb-2">{% trans "Témoignages VIP" %}</h2>
+            <p class="text-gray-600">{% trans "Découvrez ce que nos entrepreneurs et clients certifiés disent d'EsyConnect Haïti." %}</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for rev in testimonials %}
+            <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-xl border border-gray-100 flex flex-col justify-between transition-all duration-300">
+                <div>
+                    <div class="flex items-center text-amber-400 gap-1 mb-4 text-sm">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= rev.rating %}
+                                <i class="fas fa-star text-amber-400"></i>
+                            {% else %}
+                                <i class="far fa-star text-gray-300"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p class="text-gray-600 italic mb-6 leading-relaxed line-clamp-4">
+                        "{{ rev.comment }}"
+                    </p>
+                </div>
+                <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                    <div class="w-12 h-12 bg-esy-blue-100 text-esy-blue-600 rounded-2xl flex items-center font-black justify-center shadow-sm">
+                        {{ rev.user.username|slice:":2"|upper|default:"EC" }}
+                    </div>
+                    <div class="min-w-0">
+                        <h4 class="font-bold text-gray-900 text-sm truncate">{{ rev.user.get_full_name|default:rev.user.username|default:"Client Certifié" }}</h4>
+                        {% if rev.business %}
+                        <span class="text-xs text-gray-500 truncate block">{% trans "Avis sur" %} <a href="{% url 'business:business_detail' rev.business.id %}" class="text-esy-blue-600 font-bold hover:underline">{{ rev.business.name }}</a></span>
+                        {% else %}
+                        <span class="text-xs text-gray-500 truncate block">{% trans "Client EsyConnect" %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md border border-gray-100 flex flex-col justify-between transition-all">
+                <div>
+                    <div class="flex items-center text-amber-400 gap-1 mb-4 text-sm">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 italic mb-6 leading-relaxed">
+                        "EsyConnect nous a permis d'obtenir plus de 50% de clients supplémentaires au Cap-Haïtien en seulement trois mois. La visibilité sur la carte est un véritable plus !"
+                    </p>
+                </div>
+                <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                    <div class="w-12 h-12 bg-esy-blue-100 text-esy-blue-600 rounded-2xl flex items-center font-black justify-center shadow-sm">
+                        JD
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">Jean Dupont</h4>
+                        <span class="text-xs text-gray-500">Restoran La Belle • Cap-Haïtien</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md border border-gray-100 flex flex-col justify-between transition-all">
+                <div>
+                    <div class="flex items-center text-amber-400 gap-1 mb-4 text-sm">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 italic mb-6 leading-relaxed">
+                        "La meilleure plateforme pour faire connaître votre commerce à Cap-Haïtien. Les clients nous contactent directement par WhatsApp sans aucune difficulté."
+                    </p>
+                </div>
+                <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center font-black justify-center shadow-sm">
+                        MP
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">Marie Paul</h4>
+                        <span class="text-xs text-gray-500">Pharmacie du Soleil • Nord</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm hover:shadow-md border border-gray-100 flex flex-col justify-between transition-all">
+                <div>
+                    <div class="flex items-center text-amber-400 gap-1 mb-4 text-sm">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="text-gray-600 italic mb-6 leading-relaxed">
+                        "Grâce à notre référencement VIP sur EsyConnect, notre hôtel a vu une augmentation significative de réservations en ligne. Service indispensable !"
+                    </p>
+                </div>
+                <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center font-black justify-center shadow-sm">
+                        PJ
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">Pierre Jean</h4>
+                        <span class="text-xs text-gray-500">Hôtel Royal Palace • Cap-Haïtien</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- 7. Bannière Kominote WhatsApp & Rezo EsyConnect -->
+<section class="py-16 bg-white border-t border-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-[2.5rem] p-8 md:p-14 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="relative z-10 max-w-2xl">
+                <span class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-black uppercase mb-4 tracking-wider">
+                    <i class="fab fa-whatsapp text-lg"></i> {% trans "Kominote WhatsApp EsyConnect" %}
+                </span>
+                <h2 class="text-3xl md:text-4xl font-black tracking-tight mb-3">
+                    {% trans "Rejwenn Plis Pase 5,000+ Antreprenè ak Kliyan" %}
+                </h2>
+                <p class="text-emerald-100 text-sm md:text-base leading-relaxed">
+                    {% trans "Resevwa bon plan yo, nouvo biznis ki fenk ouvri nan zòn ou an, epi pataje sèvis ou dirèkteman sou rezo WhatsApp EsyConnect Haïti a." %}
+                </p>
+            </div>
+            <div class="relative z-10 flex-shrink-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                <a href="https://wa.me/50934567890?text=Bonjou%20EsyConnect,%20mwen%20ta%20renmen%20rejwenn%20kominote%20antrepren%C3%A8%20yo" target="_blank" class="bg-white hover:bg-emerald-50 text-emerald-800 font-black px-8 py-4 rounded-2xl text-sm transition shadow-lg flex items-center justify-center gap-2.5">
+                    <i class="fab fa-whatsapp text-xl text-emerald-600"></i>
+                    <span>{% trans "Rejwenn Gwoup WhatsApp la" %}</span>
+                </a>
+                <a href="{% url 'business:register' %}" class="bg-emerald-950/40 hover:bg-emerald-950/60 border border-white/30 text-white font-bold px-6 py-4 rounded-2xl text-sm transition flex items-center justify-center gap-2">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>{% trans "Enskri Biznis Ou" %}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
     </div>
 </section>
 {% endblock %}
 
 {% block extra_js %}
-<!-- Fòse kase kach script Leaflet la tou ak yon paramètre vèsyon -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js?v=2.1"></script>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
-    // Hero background animation using JavaScript
-    document.addEventListener('DOMContentLoaded', function () {
-        const heroBg = document.querySelector('.hero-bg-alt');
-        if (heroBg) {
-            let position = 0;
-            let direction = 1;
+    document.addEventListener("DOMContentLoaded", function () {
+        // 1. Initialisation de la carte centrée sur Cap-Haïtien
+        var map = L.map('map', {
+            zoomControl: true,
+            scrollWheelZoom: true
+        }).setView([19.7578, -72.2042], 14);
 
-            function animateBackground() {
-                position += 0.05 * direction;
+        // Fond de carte OpenStreetMap France (100% gratuit, sans clé API, sans blocage)
+        var osmFrLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-                if (position >= 100) {
-                    direction = -1;
-                } else if (position <= 0) {
-                    direction = 1;
-                }
+        // Couche Satellite (Esri World Imagery)
+        var esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS'
+        });
 
-                heroBg.style.backgroundPosition = `center ${position}%`;
-                requestAnimationFrame(animateBackground);
+        // Sélecteur de couches
+        var baseMaps = {
+            "🗺️ Plan (OSM France)": osmFrLayer,
+            "🛰️ Vue Satellite": esriSat
+        };
+        L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+
+        // Forcer le redimensionnement pour éviter les bugs d'affichage
+        setTimeout(function() {
+            map.invalidateSize();
+        }, 300);
+
+        window.addEventListener('resize', function () {
+            map.invalidateSize();
+        });
+
+        // 2. Chargement dynamique des villes et quartiers
+        const deptSelect = document.getElementById('dept-select');
+        const citySelect = document.getElementById('city-select');
+        const zoneSelect = document.getElementById('zone-select');
+
+        function loadQuartiersForCity(cityVal) {
+            if (!zoneSelect) return;
+            zoneSelect.disabled = true;
+            zoneSelect.innerHTML = '<option value="">Chargement des zones...</option>';
+
+            if (!cityVal) {
+                zoneSelect.innerHTML = '<option value="">Toutes les zones</option>';
+                zoneSelect.disabled = false;
+                return;
             }
 
-            animateBackground();
+            fetch(`/ajax/load-quartiers/?ville=${encodeURIComponent(cityVal)}`)
+                .then(r => r.json())
+                .then(data => {
+                    zoneSelect.disabled = false;
+                    if (data && data.length > 0) {
+                        let options = '<option value="">Toutes les zones</option>';
+                        data.forEach(q => {
+                            options += `<option value="${q.id}">${q.name}</option>`;
+                        });
+                        zoneSelect.innerHTML = options;
+                    } else {
+                        zoneSelect.innerHTML = '<option value="">Toutes les zones (Général)</option>';
+                    }
+                })
+                .catch(() => {
+                    zoneSelect.disabled = false;
+                    zoneSelect.innerHTML = '<option value="">Toutes les zones</option>';
+                });
+        }
+
+        citySelect && citySelect.addEventListener('change', function () {
+            loadQuartiersForCity(this.value);
+            const selectedOpt = this.options[this.selectedIndex];
+            if (selectedOpt && selectedOpt.dataset && selectedOpt.dataset.dept && deptSelect && !deptSelect.value) {
+                deptSelect.value = selectedOpt.dataset.dept;
+            }
+        });
+
+        // Initialiser les zones si une commune est déjà présélectionnée (ex: Cap-Haïtien)
+        if (citySelect && citySelect.value) {
+            loadQuartiersForCity(citySelect.value);
+        }
+
+        deptSelect && deptSelect.addEventListener('change', function () {
+            const dept = this.value;
+            citySelect.disabled = true;
+            citySelect.innerHTML = '<option value="">Chargement...</option>';
+            if (zoneSelect) {
+                zoneSelect.disabled = true;
+                zoneSelect.innerHTML = '<option value="">Toutes les zones</option>';
+            }
+            if (!dept) {
+                fetch('/ajax/load-villes/')
+                    .then(r => r.json())
+                    .then(data => {
+                        citySelect.disabled = false;
+                        let options = '<option value="">Toutes les communes</option>';
+                        data.forEach(v => {
+                            options += `<option value="${v.id}">${v.name}</option>`;
+                        });
+                        citySelect.innerHTML = options;
+                    })
+                    .catch(() => {
+                        citySelect.disabled = false;
+                        citySelect.innerHTML = '<option value="">Toutes les communes</option>';
+                    });
+                return;
+            }
+            fetch(`/ajax/load-villes/?department=${encodeURIComponent(dept)}`)
+                .then(r => r.json())
+                .then(data => {
+                    citySelect.disabled = false;
+                    let options = '<option value="">Toutes les communes</option>';
+                    data.forEach(v => {
+                        options += `<option value="${v.id}" data-dept="${dept}">${v.name}</option>`;
+                    });
+                    citySelect.innerHTML = options;
+                })
+                .catch(() => {
+                    citySelect.disabled = false;
+                    citySelect.innerHTML = '<option value="">Erreur de chargement</option>';
+                });
+        });
+
+        // 3. Données des entreprises injectées depuis Django
+        var businesses = {{ businesses_json|default:"[]"|safe }};
+        var markers = [];
+
+        businesses.forEach(function (biz, index) {
+            if (biz.latitude && biz.longitude) {
+                var customIcon = L.divIcon({
+                    className: 'custom-biz-pin',
+                    html: '<div style="position: relative; cursor: pointer;">' +
+                          '  <div style="width: 38px; height: 38px; background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(37,99,235,0.35); border: 2px solid white; transition: transform 0.2s;">' +
+                          '    <i class="fas fa-store" style="font-size: 15px;"></i>' +
+                          '  </div>' +
+                          '  <div style="position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%) rotate(45deg); width: 8px; height: 8px; background: #2563eb; border-right: 2px solid white; border-bottom: 2px solid white;"></div>' +
+                          '</div>',
+                    iconSize: [38, 44],
+                    iconAnchor: [19, 40],
+                    popupAnchor: [0, -38]
+                });
+
+                var popupHtml = '<div style="min-width: 230px; font-family: system-ui, -apple-system, sans-serif;">' +
+                                '  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">' +
+                                '    <div style="width: 42px; height: 42px; border-radius: 10px; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">' +
+                                (biz.logo_url ? '      <img src="' + biz.logo_url + '" style="width: 100%; height: 100%; object-fit: cover;" alt="' + biz.name + '">' : '      <span style="font-size: 16px;">' + biz.name.charAt(0).toUpperCase() + '</span>') +
+                                '    </div>' +
+                                '    <div style="flex: 1; min-width: 0;">' +
+                                '      <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">' + biz.name + '</h4>' +
+                                '      <span style="display: inline-block; font-size: 11px; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 2px 6px; border-radius: 6px; margin-top: 2px;">' + biz.category_name + '</span>' +
+                                '    </div>' +
+                                '  </div>' +
+                                '  <p style="margin: 4px 0 8px 0; font-size: 12px; color: #64748b; line-height: 1.4;"><i class="fas fa-map-marker-alt" style="color: #f59e0b; margin-right: 5px;"></i>' + biz.address + '</p>' +
+                                (biz.phone ? '  <p style="margin: 0 0 8px 0; font-size: 11px; color: #16a34a; font-weight: 700;"><i class="fas fa-phone-alt" style="margin-right: 5px;"></i>' + biz.phone + '</p>' : '') +
+                                '  <a href="' + biz.url + '" style="display: block; text-align: center; background: #0f172a; color: white; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; text-decoration: none; transition: background 0.2s;">Voir le Profil &rarr;</a>' +
+                                '</div>';
+
+                var marker = L.marker([biz.latitude, biz.longitude], { icon: customIcon }).addTo(map);
+                marker.bindPopup(popupHtml);
+                marker.bindTooltip(`<b>${biz.name}</b><br><span style="font-size:11px;color:#2563eb;">📍 ${biz.address}</span>`, {
+                    direction: 'top',
+                    offset: [0, -38],
+                    className: 'biz-map-tooltip'
+                });
+                markers.push(marker);
+
+                if (index === 0) {
+                    marker.openPopup();
+                }
+            }
+        });
+
+        // 4. Boutons de contrôle de vue
+        var btnFocusCap = document.getElementById('btnFocusCap');
+        if (btnFocusCap) {
+            btnFocusCap.addEventListener('click', function () {
+                map.flyTo([19.7578, -72.2042], 14, { duration: 1.2 });
+            });
+        }
+
+        var btnFocusHaiti = document.getElementById('btnFocusHaiti');
+        if (btnFocusHaiti) {
+            btnFocusHaiti.addEventListener('click', function () {
+                if (markers.length > 0) {
+                    var group = L.featureGroup(markers);
+                    map.fitBounds(group.getBounds().pad(0.15));
+                } else {
+                    map.flyTo([19.0, -72.3], 8, { duration: 1.2 });
+                }
+            });
         }
     });
 </script>

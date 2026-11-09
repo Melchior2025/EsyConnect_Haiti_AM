@@ -20,8 +20,8 @@
 <meta property="og:description" content="{{ business.description|truncatewords:30 }}">
 {% if business.logo %}
 <meta property="og:image" content="{{ request.build_absolute_uri }}{{ business.logo.url }}">
-{% elif business.banner %}
-<meta property="og:image" content="{{ request.build_absolute_uri }}{{ business.banner.url }}">
+{% elif business.cover_image %}
+<meta property="og:image" content="{{ request.build_absolute_uri }}{{ business.cover_image.url }}">
 {% endif %}
 <meta property="og:site_name" content="EsyConnect Haïti">
 <meta property="og:locale" content="fr_HT">
@@ -33,8 +33,8 @@
 <meta name="twitter:description" content="{{ business.description|truncatewords:30 }}">
 {% if business.logo %}
 <meta name="twitter:image" content="{{ request.build_absolute_uri }}{{ business.logo.url }}">
-{% elif business.banner %}
-<meta name="twitter:image" content="{{ request.build_absolute_uri }}{{ business.banner.url }}">
+{% elif business.cover_image %}
+<meta name="twitter:image" content="{{ request.build_absolute_uri }}{{ business.cover_image.url }}">
 {% endif %}
 
 <!-- Canonical URL -->
@@ -280,8 +280,8 @@
 <!-- HERO BUSINESS -->
 <section id="hero" class="detail-hero text-white relative">
     <div class="absolute inset-0 z-0">
-        {% if business.banner %}
-        <img src="{{ business.banner.url }}" class="detail-hero-bg" alt="{{ business.name }}" loading="lazy">
+        {% if business.cover_image %}
+        <img src="{{ business.cover_image.url }}" class="detail-hero-bg" alt="{{ business.name }}" loading="lazy">
         <div class="absolute inset-0 bg-gradient-to-r from-esy-dark/95 via-esy-dark/80 to-transparent"></div>
         {% else %}
         <div class="w-full h-full bg-gradient-to-br from-esy-dark to-esy-blue-900"></div>
@@ -809,9 +809,9 @@
                                         scrollWheelZoom: true
                                     }).setView([lat, lng], 16);
                                     
-                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                                        maxZoom: 19
+                                    L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+                                        maxZoom: 20,
+                                        attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                                     }).addTo(map);
                                     
                                     if (hasCoords && !isNaN(lat) && !isNaN(lng)) {
@@ -913,8 +913,8 @@
             {% for similar in similar_businesses %}
             <a href="/{{ similar.id }}/" class="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transition group">
                 <div class="relative aspect-video bg-gray-100">
-                    {% if similar.banner %}
-                    <img src="{{ similar.banner.url }}" class="w-full h-full object-contain p-2" alt="{{ similar.name }}">
+                    {% if similar.cover_image %}
+                    <img src="{{ similar.cover_image.url }}" class="w-full h-full object-contain p-2" alt="{{ similar.name }}">
                     {% else %}
                     <div class="w-full h-full bg-gradient-to-br from-esy-blue-100 to-indigo-100 flex items-center justify-center">
                         <i class="fas fa-store text-esy-blue-600 text-4xl"></i>
@@ -929,7 +929,7 @@
                         </div>
                         {% endif %}
                     </div>
-                    {% if similar.is_premium %}
+                    {% if similar.is_pro %}
                     <div class="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-black px-3 py-1 rounded-full shadow-md">
                         PREMIUM
                     </div>
@@ -950,7 +950,7 @@
                         <div class="flex items-center gap-2">
                             <i class="fas fa-star text-yellow-400"></i>
                             <span class="font-bold text-esy-dark">{{ similar.get_average_rating|default:"0.0" }}</span>
-                            <span class="text-xs text-gray-400">({{ similar.reviews.count }} {% trans "avis" %})</span>
+                            <span class="text-xs text-gray-400">({{ similar.get_rating_count }} {% trans "avis" %})</span>
                         </div>
                         <div class="flex items-center gap-1 text-gray-400 text-sm">
                             <i class="fas fa-map-marker-alt"></i>

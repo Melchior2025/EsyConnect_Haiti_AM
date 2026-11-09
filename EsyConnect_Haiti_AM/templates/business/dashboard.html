@@ -137,7 +137,7 @@
                 </div>
             </a>
 
-            <a href="{% url 'business:detail' business.id %}" class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-esy-blue-50 hover:border-esy-blue-200 border border-gray-100 transition-all group">
+            <a href="{% url 'business:business_detail' business.id %}" class="flex items-center gap-4 p-4 rounded-xl bg-gray-50 hover:bg-esy-blue-50 hover:border-esy-blue-200 border border-gray-100 transition-all group">
                 <div class="w-10 h-10 bg-esy-blue-600 text-white rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                     <i class="fas fa-eye"></i>
                 </div>
@@ -177,7 +177,7 @@
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-12">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-black text-esy-dark">{% trans "Avis Récents" %}</h2>
-            <a href="{% url 'business:detail' business.id %}#reviews" class="text-esy-blue-600 font-black text-sm hover:underline">
+            <a href="{% url 'business:business_detail' business.id %}#reviews" class="text-esy-blue-600 font-black text-sm hover:underline">
                 {% trans "Voir tout" %} <i class="fas fa-arrow-right ml-1"></i>
             </a>
         </div>

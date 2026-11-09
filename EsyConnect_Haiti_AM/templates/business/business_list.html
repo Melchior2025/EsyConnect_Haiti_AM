@@ -75,7 +75,17 @@
                     <select name="ville" id="ville-select" class="w-full pl-14 pr-6 py-4 rounded-[2rem] bg-white border-none focus:ring-2 focus:ring-esy-blue-600 shadow-sm transition-all appearance-none cursor-pointer font-medium">
                         <option value="">{% trans "Toutes les villes" %}</option>
                         {% for ville in villes %}
-                            <option value="{{ ville.slug }}" {% if ville_query == ville.slug %}selected{% endif %}>{{ ville.nom }}</option>
+                            <option value="{{ ville.id }}" {% if selected_ville == ville.id|stringformat:"s" or selected_ville == ville.name or ville_query == ville.slug %}selected{% endif %}>{{ ville.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="lg:w-64 relative">
+                    <i class="fas fa-map-pin absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 z-10"></i>
+                    <select name="zone" id="zone-select" class="w-full pl-14 pr-6 py-4 rounded-[2rem] bg-white border-none focus:ring-2 focus:ring-esy-blue-600 shadow-sm transition-all appearance-none cursor-pointer font-medium">
+                        <option value="">{% trans "Toutes les zones" %}</option>
+                        {% for q in quartiers %}
+                            <option value="{{ q.id }}" {% if selected_zone == q.id|stringformat:"s" or selected_zone == q.name %}selected{% endif %}>{{ q.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -185,13 +195,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {% for business in businesses %}
                         <div class="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
-                            <div class="relative h-48 overflow-hidden">
-                                {% if business.logo %}
-                                <img src="{{ business.logo.url }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="{{ business.name }}">
+                            <div class="relative h-48 w-full overflow-hidden bg-gray-50 rounded-t-xl">
+                                {% if business.image %}
+                                <img src="{{ business.image.url }}" class="h-48 w-full object-contain bg-gray-50 rounded-t-xl p-2" alt="{{ business.name }}">
+                                {% elif business.cover_image %}
+                                <img src="{{ business.cover_image.url }}" class="h-48 w-full object-contain bg-gray-50 rounded-t-xl p-2" alt="{{ business.name }}">
+                                {% elif business.logo %}
+                                <img src="{{ business.logo.url }}" class="h-48 w-full object-contain bg-gray-50 rounded-t-xl p-2" alt="{{ business.name }}">
                                 {% else %}
-                                <div class="w-full h-full bg-gradient-to-br from-esy-blue-50 to-indigo-100 flex items-center justify-center text-esy-blue-600 text-5xl">
-                                    <i class="fas fa-store"></i>
-                                </div>
+                                <img src="{% static 'images/default_logo.png' %}" class="h-48 w-full object-contain bg-gray-50 rounded-t-xl p-2" alt="{{ business.name }}">
                                 {% endif %}
                                 
                                 <div class="absolute top-4 left-4 flex gap-2">
@@ -214,7 +226,7 @@
                                 </div>
                                 
                                 <div class="flex gap-3">
-                                    <a href="{% url 'business:detail' business.id %}" class="flex-1 bg-esy-dark text-white py-3 rounded-xl font-black text-center hover:bg-esy-blue-900 transition shadow">
+                                    <a href="{% url 'business_detail' business.pk %}" class="flex-1 bg-esy-dark text-white py-3 rounded-xl font-black text-center hover:bg-esy-blue-900 transition shadow">
                                         {% trans "Voir" %}
                                     </a>
                                     <a href="tel:{{ business.phone }}" class="w-12 h-12 bg-esy-blue-50 text-esy-blue-600 rounded-xl flex items-center justify-center hover:bg-esy-blue-600 hover:text-white transition">
@@ -275,27 +287,51 @@
 document.addEventListener('DOMContentLoaded', function() {
     const departementSelect = document.getElementById('departement-select');
     const villeSelect = document.getElementById('ville-select');
+    const zoneSelect = document.getElementById('zone-select');
     
     if (departementSelect && villeSelect) {
         departementSelect.addEventListener('change', function() {
             const departementId = this.value;
             
-            // Vider le select ville
+            // Vider le select ville et zone
             villeSelect.innerHTML = '<option value="">{% trans "Toutes les villes" %}</option>';
+            if (zoneSelect) {
+                zoneSelect.innerHTML = '<option value="">{% trans "Toutes les zones" %}</option>';
+            }
             
             if (departementId) {
-                // Charger les villes via AJAX
-                fetch(`/ajax/load-villes/?departement_id=${departementId}`)
+                fetch(`/ajax/load-villes/?department=${encodeURIComponent(departementId)}`)
                     .then(response => response.json())
                     .then(data => {
                         data.forEach(ville => {
                             const option = document.createElement('option');
-                            option.value = ville.id || ville.slug;
-                            option.textContent = ville.name || ville.nom;
+                            option.value = ville.id;
+                            option.textContent = ville.name;
                             villeSelect.appendChild(option);
                         });
                     })
-                    .catch(error => console.error('Erreur lors du chargement des villes:', error));
+                    .catch(error => console.error('Erreur chargement villes:', error));
+            }
+        });
+    }
+
+    if (villeSelect && zoneSelect) {
+        villeSelect.addEventListener('change', function() {
+            const villeVal = this.value;
+            zoneSelect.innerHTML = '<option value="">{% trans "Toutes les zones" %}</option>';
+            
+            if (villeVal) {
+                fetch(`/ajax/load-quartiers/?ville=${encodeURIComponent(villeVal)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(q => {
+                            const option = document.createElement('option');
+                            option.value = q.id;
+                            option.textContent = q.name;
+                            zoneSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Erreur chargement zones:', error));
             }
         });
     }

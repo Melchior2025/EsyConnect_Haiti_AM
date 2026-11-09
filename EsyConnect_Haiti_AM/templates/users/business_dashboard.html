@@ -21,9 +21,10 @@
     {% include 'components/dashboard_sidebar.html' %}
     
     <!-- Contenu du Dashboard -->
-    <main class="flex-1 p-8 overflow-y-auto">
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
         {% include 'components/dashboard_header.html' %}
-        <div class="max-w-7xl mx-auto space-y-8">
+        <div class="flex-1 p-6 md:p-8 overflow-y-auto">
+            <div class="max-w-7xl mx-auto space-y-8">
 
     <!-- KPI Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -127,7 +128,7 @@
                     </div>
                   {% endif %}
                   <div>
-                    <a href="{% url 'business:detail' business.id %}" class="font-bold text-slate-900 hover:text-slate-600 transition-colors">{{ business.name }}</a>
+                    <a href="{% url 'business:business_detail' business.id %}" class="font-bold text-slate-900 hover:text-slate-600 transition-colors">{{ business.name }}</a>
                     <p class="text-xs text-slate-500 font-medium mt-0.5">{{ business.category.name|default:'Sans Catégorie' }}</p>
                   </div>
                 </div>
@@ -164,7 +165,7 @@
               </td>
               <td class="px-4 py-3 text-right">
                 <div class="flex items-center justify-end gap-2">
-                  <a href="{% url 'business:detail' business.id %}" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200" title="Voir le microsite"><i class="fas fa-external-link-alt text-xs text-slate-600"></i></a>
+                  <a href="{% url 'business:business_detail' business.id %}" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200" title="Voir le microsite"><i class="fas fa-external-link-alt text-xs text-slate-600"></i></a>
                   <a href="{% url 'business:manage_gallery' business.id %}" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200" title="Gérer la galerie"><i class="fas fa-image text-xs text-slate-600"></i></a>
                   <a href="{% url 'business:edit' business.id %}" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200" title="Modifier"><i class="fas fa-pen text-xs text-slate-600"></i></a>
                   <form action="{% url 'business:delete' business.id %}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette entreprise ?');" class="inline">
@@ -205,7 +206,7 @@
         </nav>
       </div>
       {% endif %}
-    </div>
+            </div>
         </div>
     </main>
 </div>
