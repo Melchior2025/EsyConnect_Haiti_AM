@@ -23,168 +23,389 @@
     <!-- Contenu du Dashboard -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden">
         {% include 'components/dashboard_header.html' %}
-        <div class="flex-1 p-6 md:p-8 overflow-y-auto">
-            <div class="max-w-7xl mx-auto space-y-8">
+        <div class="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto">
+            <div class="max-w-7xl mx-auto space-y-6 sm:space-y-8">
 
-    <!-- KPI Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      <!-- Total Entreprises -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Total Entreprises</p>
-          <h3 class="text-2xl font-bold text-slate-900">{{ stats.total_businesses|default:0 }}</h3>
-          <p class="text-xs font-medium text-slate-500">+0% ce mois</p>
+    <!-- Welcome SaaS Banner -->
+    <div class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-esy-blue-600 to-indigo-600 text-white shadow-sm">
+            <i class="fas fa-chart-pie text-[10px]"></i> Live Analytics
+          </span>
+          <span class="text-xs text-slate-400 font-bold">• {% now "d F Y" %}</span>
         </div>
-        <div class="kpi-icon bg-slate-100 text-slate-600">
-          <i class="fas fa-building"></i>
-        </div>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Performances de vos Entreprises</h2>
+        <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+          Suivez en direct vos clics WhatsApp, vos appels entrants, vos vues et l'activité de vos clients sur EsyConnect Haïti.
+        </p>
       </div>
-      <!-- Entreprises Actives -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Actives</p>
-          <h3 class="text-2xl font-bold text-slate-900">{{ stats.active_businesses|default:0 }}</h3>
-          <p class="text-xs font-medium text-slate-500">+0% ce mois</p>
-        </div>
-        <div class="kpi-icon bg-emerald-50 text-emerald-600">
-          <i class="fas fa-check-circle"></i>
-        </div>
+      <div class="flex items-center gap-3 w-full sm:w-auto">
+        <a href="{% url 'business:register' %}" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-5 py-3 rounded-2xl text-xs sm:text-sm font-bold shadow-md hover:scale-[1.02] transition transform">
+          <i class="fas fa-plus-circle text-amber-400"></i>
+          <span>Ajouter une Entreprise</span>
+        </a>
       </div>
-      <!-- En Attente -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">En attente</p>
-          <h3 class="text-2xl font-bold text-slate-900">{{ stats.pending_businesses|default:0 }}</h3>
-          <p class="text-xs font-medium text-slate-500">+0% ce mois</p>
-        </div>
-        <div class="kpi-icon bg-amber-50 text-amber-600">
-          <i class="fas fa-clock"></i>
-        </div>
+    </div>
+
+    <!-- ROW 1: PORTFOLIO & STATUT CARDS (TOU BLAN) -->
+    <div>
+      <div class="flex items-center justify-between mb-3 px-1">
+        <h3 class="text-xs font-black uppercase tracking-wider text-slate-400">Portefeuille & Statut des Entreprises</h3>
+        <span class="text-xs font-bold text-slate-500">{{ stats.total_businesses|default:0 }} enregistrée{{ stats.total_businesses|pluralize:"s" }}</span>
       </div>
-      <!-- Pro (Premium) -->
-      <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between">
-        <div>
-          <p class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Premium</p>
-          <h3 class="text-2xl font-bold text-slate-900">{{ stats.premium_businesses|default:0 }}</h3>
-          <p class="text-xs font-medium text-slate-500">+0% ce mois</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <!-- Total Entreprises -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300 flex items-center justify-between group">
+          <div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span> Total Entreprises
+            </p>
+            <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ stats.total_businesses|default:0 }}</h3>
+            <p class="text-xs font-semibold text-slate-500 mt-1">Établissements gérés</p>
+          </div>
+          <div class="w-13 h-13 w-12 h-12 rounded-2xl bg-slate-50 text-slate-700 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300 border border-slate-100">
+            <i class="fas fa-building"></i>
+          </div>
         </div>
-        <div class="kpi-icon bg-indigo-50 text-indigo-600">
-          <i class="fas fa-crown"></i>
+
+        <!-- Entreprises Actives -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300 flex items-center justify-between group">
+          <div>
+            <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Actives en Ligne
+            </p>
+            <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ stats.active_businesses|default:0 }}</h3>
+            <p class="text-xs font-bold text-emerald-600 mt-1 flex items-center gap-1">
+              <i class="fas fa-check-circle text-[11px]"></i> {{ stats.active_pct }}% publiées
+            </p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 border border-emerald-100">
+            <i class="fas fa-globe-americas"></i>
+          </div>
+        </div>
+
+        <!-- En Attente -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300 flex items-center justify-between group">
+          <div>
+            <p class="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span> En Attente / Modif.
+            </p>
+            <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ stats.pending_businesses|default:0 }}</h3>
+            <p class="text-xs font-semibold text-amber-600 mt-1">Validation requise</p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 border border-amber-100">
+            <i class="fas fa-clock"></i>
+          </div>
+        </div>
+
+        <!-- Pro (Premium VIP) -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300 flex items-center justify-between group">
+          <div>
+            <p class="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span> Comptes VIP PRO
+            </p>
+            <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ stats.premium_businesses|default:0 }}</h3>
+            <p class="text-xs font-bold text-indigo-600 mt-1 flex items-center gap-1">
+              <i class="fas fa-bolt text-[10px] text-amber-500"></i> Visibilité Prioritaire
+            </p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 text-slate-950 flex items-center justify-center text-xl group-hover:scale-110 shadow-md shadow-amber-500/20 transition-all duration-300">
+            <i class="fas fa-crown"></i>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Views Chart -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
-        <h3 class="text-base font-bold text-slate-900 mb-4">Évolution des Vues</h3>
-        <div class="relative h-64 w-full">
-          <canvas id="viewsChart" class="w-full h-64" style="max-height:260px;"></canvas>
-          {% if not monthly_views %}
-            <div class="absolute inset-0 flex items-center justify-center text-slate-500 text-sm">Aucune donnée récente</div>
-          {% endif %}
+    <!-- ROW 2: ENGAGEMENT & INTERACTIONS DIRECTES (WHATSAPP, APPELS, VUES, AVIS) -->
+    <div>
+      <div class="flex items-center justify-between mb-3 px-1">
+        <h3 class="text-xs font-black uppercase tracking-wider text-slate-400">Interactions & Conversions Clients</h3>
+        <span class="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+          <i class="fas fa-bolt text-[10px]"></i> {{ stats.total_interactions|default:0 }} contacts générés
+        </span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <!-- Clics WhatsApp -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300 flex items-center justify-between group">
+          <div>
+            <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <i class="fab fa-whatsapp text-emerald-500 text-sm"></i> Clics WhatsApp
+            </p>
+            <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ stats.total_whatsapp|default:0 }}</h3>
+            <p class="text-xs font-semibold text-slate-500 mt-1">Discussions initiées</p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300 border border-emerald-100">
+            <i class="fab fa-whatsapp"></i>
+          </div>
+        </div>
+
+        <!-- Appels Téléphoniques -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300 flex items-center justify-between group">
+          <div>
+            <p class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <i class="fas fa-phone-alt text-blue-500 text-xs"></i> Appels Téléphoniques
+            </p>
+            <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ stats.total_calls|default:0 }}</h3>
+            <p class="text-xs font-semibold text-slate-500 mt-1">Appels directs reçus</p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 border border-blue-100">
+            <i class="fas fa-phone-volume"></i>
+          </div>
+        </div>
+
+        <!-- Vues Globales -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300 flex items-center justify-between group">
+          <div>
+            <p class="text-xs font-bold text-indigo-700 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <i class="fas fa-eye text-indigo-500 text-xs"></i> Vues Cumulées
+            </p>
+            <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ stats.total_views|default:0 }}</h3>
+            <p class="text-xs font-semibold text-slate-500 mt-1">Visites sur vos fiches</p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 border border-indigo-100">
+            <i class="fas fa-chart-line"></i>
+          </div>
+        </div>
+
+        <!-- Note & Avis Clients -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-lg transition-all duration-300 flex items-center justify-between group">
+          <div>
+            <p class="text-xs font-bold text-amber-700 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <i class="fas fa-star text-amber-400 text-xs"></i> Avis & Satisfaction
+            </p>
+            <div class="flex items-baseline gap-1.5">
+              <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ stats.avg_rating }}</h3>
+              <span class="text-xs font-bold text-slate-400">/ 5</span>
+            </div>
+            <p class="text-xs font-semibold text-slate-500 mt-1">{{ stats.total_reviews|default:0 }} avis vérifié{{ stats.total_reviews|pluralize:"s" }}</p>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-amber-400 group-hover:text-white transition-all duration-300 border border-amber-100">
+            <i class="fas fa-award"></i>
+          </div>
         </div>
       </div>
-      <!-- Category Doughnut Chart -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
-        <h3 class="text-base font-bold text-slate-90 mb-4">Répartition par Catégorie</h3>
-        <div class="relative h-64 w-full">
-          <canvas id="categoryChart" class="w-full h-64" style="max-height:260px;"></canvas>
-          {% if not cat_data %}
-            <div class="absolute inset-0 flex items-center justify-center text-slate-500 text-sm">Aucune donnée récente</div>
-          {% endif %}
+    </div>
+
+    <!-- CHARTS SECTION (TOU BLAN - PURE WHITE SURFACES) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Views & Interaction Multi-Line Chart (Col 7) -->
+      <div class="lg:col-span-7 bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-100">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-esy-blue-600 shadow-sm"></span>
+              <h3 class="text-lg font-black text-slate-900 tracking-tight">Statistiques & Évolution Graphique</h3>
+            </div>
+            <p class="text-xs text-slate-400 font-medium mt-0.5">Tendance des Vues, WhatsApp et Appels sur les 6 derniers mois</p>
+          </div>
+          <!-- Legend Badges Dynamiques -->
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/60 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-blue-600"></span> Vues ({{ stats.total_views|default:0 }})
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span> WhatsApp ({{ stats.total_whatsapp|default:0 }})
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/60 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-indigo-500"></span> Appels ({{ stats.total_calls|default:0 }})
+            </span>
+          </div>
+        </div>
+
+        <div class="relative h-72 w-full bg-white">
+          <canvas id="viewsChart" class="w-full h-72"></canvas>
+        </div>
+      </div>
+
+      <!-- Category Doughnut Chart (Col 5) -->
+      <div class="lg:col-span-5 bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/90 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-500 shadow-sm"></span>
+              <h3 class="text-lg font-black text-slate-900 tracking-tight">Répartition par Catégorie</h3>
+            </div>
+            <p class="text-xs text-slate-400 font-medium mt-0.5">Ventilation sectorielle de vos entreprises</p>
+          </div>
+          <span class="text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200 px-3 py-1 rounded-full shadow-sm">
+            {{ cat_labels|length|default:1 }} secteur{{ cat_labels|length|pluralize:"s" }}
+          </span>
+        </div>
+
+        <div class="relative h-72 w-full flex flex-col justify-between bg-white">
+          <div class="relative h-44 w-full flex items-center justify-center bg-white">
+            <canvas id="categoryChart"></canvas>
+          </div>
+          <!-- Category List Breakdown -->
+          <div class="space-y-2.5 mt-3 pt-3 border-t border-slate-100 max-h-24 overflow-y-auto pr-1">
+            {% if cat_breakdown %}
+              {% for item in cat_breakdown|slice:":3" %}
+              <div class="flex items-center justify-between text-xs font-semibold">
+                <span class="text-slate-700 truncate max-w-[60%] flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full shadow-sm" style="background-color: {% cycle '#2563eb' '#10b981' '#f59e0b' '#8b5cf6' '#ec4899' %};"></span>
+                  {{ item.name }}
+                </span>
+                <span class="text-slate-900 font-black">{{ item.count }} biznis <span class="text-slate-400 font-medium">({{ item.percentage }}%)</span></span>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="flex items-center justify-between text-xs font-semibold text-slate-500">
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-sm"></span>
+                  Entreprises Générales
+                </span>
+                <span class="font-bold text-slate-700">100%</span>
+              </div>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Business Table -->
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-      <div class="px-6 py-4 border-b border-slate-200 bg-slate-50/80 flex justify-between items-center">
-        <h2 class="text-sm font-bold text-slate-900">Portefeuille d'Entreprises</h2>
-        <span class="text-xs text-slate-500 font-medium">{{ businesses|length }} entrée{{ businesses|length|pluralize:"s" }}</span>
+      <div class="px-5 sm:px-6 py-4 border-b border-slate-200 bg-slate-50/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+        <div>
+          <h2 class="text-sm font-bold text-slate-900">Portefeuille d'Entreprises</h2>
+          <p class="text-xs text-slate-500 font-medium mt-0.5">Gérez vos fiches, photos de galerie et informations en direct</p>
+        </div>
+        <span class="text-xs font-bold text-slate-600 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">
+          {{ businesses|length }} entreprise{{ businesses|length|pluralize:"s" }}
+        </span>
       </div>
       <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
-          <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase text-xs font-semibold">
+          <thead class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase text-[11px] font-bold tracking-wider">
             <tr>
-              <th class="px-4 py-3 text-left">Entreprise</th>
-              <th class="px-4 py-3 text-left">Performance (Vues / Contacts)</th>
-              <th class="px-4 py-3 text-left">Statut</th>
-              <th class="px-4 py-3 text-left">Plan</th>
-              <th class="px-4 py-3 text-right">Actions</th>
+              <th class="px-5 py-3.5 text-left">Entreprise</th>
+              <th class="px-5 py-3.5 text-left">Performance</th>
+              <th class="px-5 py-3.5 text-left">Statut</th>
+              <th class="px-5 py-3.5 text-left">Plan</th>
+              <th class="px-5 py-3.5 text-right">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
             {% for business in businesses %}
-            <tr class="hover:bg-slate-50/50 transition">
-              <td class="px-4 py-3">
-                <div class="flex items-center gap-4">
-                  {% if business.logo %}
-                    <img src="{{ business.logo.url }}" class="w-10 h-10 rounded border border-slate-200 object-cover" alt="Logo">
+            <tr class="hover:bg-slate-50/60 transition duration-150">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3.5">
+                  {% if business.logo and business.logo.name != 'default_logo.png' %}
+                    <img src="{{ business.logo.url }}" class="w-11 h-11 rounded-xl border border-slate-200 object-cover shadow-sm flex-shrink-0" alt="Logo">
+                  {% elif business.cover_image %}
+                    <img src="{{ business.cover_image.url }}" class="w-11 h-11 rounded-xl border border-slate-200 object-cover shadow-sm flex-shrink-0" alt="Cover">
                   {% else %}
-                    <div class="w-10 h-10 rounded bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-sm border border-slate-200">
-                      {{ business.name|slice:":1" }}
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-esy-blue-500 to-indigo-600 flex items-center justify-center text-white font-black text-base shadow-sm flex-shrink-0">
+                      {{ business.name|slice:":1"|upper }}
                     </div>
                   {% endif %}
-                  <div>
-                    <a href="{% url 'business:business_detail' business.id %}" class="font-bold text-slate-900 hover:text-slate-600 transition-colors">{{ business.name }}</a>
-                    <p class="text-xs text-slate-500 font-medium mt-0.5">{{ business.category.name|default:'Sans Catégorie' }}</p>
+                  <div class="min-w-0">
+                    <a href="{% url 'business:business_detail' business.id %}" class="font-bold text-slate-900 hover:text-esy-blue-600 transition-colors truncate block text-sm" title="{{ business.name }}">
+                      {{ business.name }}
+                    </a>
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <span class="text-xs text-slate-500 font-medium truncate">{{ business.category.name|default:'Sans Catégorie' }}</span>
+                      {% if business.ville_obj %}
+                      <span class="text-[10px] text-slate-400 font-semibold">• {{ business.ville_obj.name }}</span>
+                      {% endif %}
+                    </div>
+                    <!-- Quick Gallery Access Badge -->
+                    <div class="flex items-center gap-2 mt-1.5">
+                      <a href="{% url 'business:manage_gallery' business.id %}" 
+                         class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-black bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 transition shadow-xs group"
+                         title="{% trans 'Gérer la galerie photos' %}">
+                        <i class="fas fa-camera text-purple-500 group-hover:scale-110 transition"></i>
+                        <span>Galerie ({{ business.images.count }})</span>
+                        <i class="fas fa-plus text-[9px] text-purple-400"></i>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </td>
-              <td class="px-4 py-3">
-                <div class="flex gap-4">
-                  <div title="Vues">
-                    <p class="text-xs text-slate-400 font-semibold mb-0.5"><i class="fas fa-eye text-[10px]"></i></p>
-                    <p class="text-sm font-bold text-slate-700">{{ business.view_count|default:0 }}</p>
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-1.5" title="Nombre total de vues">
+                    <span class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-[10px]">
+                      <i class="fas fa-eye"></i>
+                    </span>
+                    <div>
+                      <p class="text-xs font-extrabold text-slate-800 leading-none">{{ business.view_count|default:0 }}</p>
+                      <span class="text-[10px] text-slate-400 font-medium">vues</span>
+                    </div>
                   </div>
-                  <div title="Contacts">
-                    <p class="text-xs text-slate-400 font-semibold mb-0.5"><i class="fas fa-comments text-[10px]"></i></p>
-                    <p class="text-sm font-bold text-slate-700">{{ business.contacts_count }}</p>
+                  <div class="flex items-center gap-1.5" title="Clics WhatsApp et Appels">
+                    <span class="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px]">
+                      <i class="fas fa-phone-alt"></i>
+                    </span>
+                    <div>
+                      <p class="text-xs font-extrabold text-slate-800 leading-none">{{ business.contacts_count|default:0 }}</p>
+                      <span class="text-[10px] text-slate-400 font-medium">contacts</span>
+                    </div>
                   </div>
                 </div>
               </td>
-              <td class="px-4 py-3">
+              <td class="px-5 py-4">
                 {% if business.is_active %}
-                  <span class="inline-flex items-center gap-1.5 bg-slate-50 text-slate-700 px-2.5 py-1 rounded-md text-[11px] font-semibold border border-slate-200">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Actif
+                  <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Actif
                   </span>
                 {% else %}
-                  <span class="inline-flex items-center gap-1.5 bg-slate-50 text-slate-500 px-2.5 py-1 rounded-md text-[11px] font-semibold border border-slate-200">
+                  <span class="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 px-3 py-1 rounded-full text-xs font-bold border border-amber-200">
                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> En attente
                   </span>
                 {% endif %}
               </td>
-              <td class="px-4 py-3">
+              <td class="px-5 py-4">
                 {% if business.is_pro %}
-                  <span class="bg-slate-800 text-white px-2 py-1 rounded text-[10px] font-bold tracking-wide">PRO</span>
+                  <span class="inline-flex items-center gap-1 bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider uppercase shadow-sm">
+                    <i class="fas fa-crown text-[9px]"></i> VIP PRO
+                  </span>
                 {% else %}
-                  <span class="text-slate-400 text-xs font-semibold">Standard</span>
+                  <span class="text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg text-xs font-semibold">Standard</span>
                 {% endif %}
               </td>
-              <td class="px-4 py-3 text-right">
-                <div class="flex items-center justify-end gap-2">
-                  <a href="{% url 'business:business_detail' business.id %}" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200" title="Voir le microsite"><i class="fas fa-external-link-alt text-xs text-slate-600"></i></a>
-                  <a href="{% url 'business:manage_gallery' business.id %}" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200" title="Gérer la galerie"><i class="fas fa-image text-xs text-slate-600"></i></a>
-                  <a href="{% url 'business:edit' business.id %}" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200" title="Modifier"><i class="fas fa-pen text-xs text-slate-600"></i></a>
-                  <form action="{% url 'business:delete' business.id %}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette entreprise ?');" class="inline">
+              <td class="px-5 py-4 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <a href="{% url 'business:business_detail' business.id %}" 
+                     class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-all duration-200 shadow-sm hover:scale-105" 
+                     title="Voir le microsite public">
+                    <i class="fas fa-external-link-alt text-xs"></i>
+                  </a>
+                  <a href="{% url 'business:manage_gallery' business.id %}" 
+                     class="h-8 px-2.5 rounded-xl bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white flex items-center gap-1.5 transition-all duration-200 shadow-sm hover:scale-105 font-bold text-xs" 
+                     title="Gérer la galerie photos">
+                    <i class="fas fa-images"></i>
+                    <span class="hidden md:inline">Galerie</span>
+                  </a>
+                  <a href="{% url 'business:edit' business.id %}" 
+                     class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-600 hover:text-white flex items-center justify-center transition-all duration-200 shadow-sm hover:scale-105" 
+                     title="Modifier l'entreprise">
+                    <i class="fas fa-pen text-xs"></i>
+                  </a>
+                  <form action="{% url 'business:delete' business.id %}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette entreprise ?');" class="inline m-0 p-0">
                     {% csrf_token %}
-                    <button type="submit" class="p-2 bg-slate-100 rounded-full hover:bg-slate-200 text-slate-600" title="Supprimer"><i class="fas fa-trash text-xs"></i></button>
+                    <button type="submit" 
+                            class="w-8 h-8 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all duration-200 shadow-sm hover:scale-105" 
+                            title="Supprimer cette entreprise">
+                      <i class="fas fa-trash-alt text-xs"></i>
+                    </button>
                   </form>
                 </div>
               </td>
             </tr>
             {% empty %}
             <tr>
-              <td colspan="5" class="py-12 text-center">
-                <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 mx-auto mb-3 border border-slate-200">
-                  <i class="fas fa-store"></i>
+              <td colspan="5" class="py-16 text-center">
+                <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4 border border-slate-200 shadow-inner">
+                  <i class="fas fa-store text-2xl"></i>
                 </div>
-                <h3 class="text-sm font-bold text-slate-900 mb-1">Aucune entreprise trouvée</h3>
-                <p class="text-xs text-slate-500 mb-4">Commencez par enregistrer votre première entreprise.</p>
-                <a href="{% url 'business:register' %}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium text-sm shadow-sm transition">
-                  Créer maintenant
+                <h3 class="text-base font-bold text-slate-900 mb-1">Aucune entreprise dans votre portefeuille</h3>
+                <p class="text-xs text-slate-500 max-w-sm mx-auto mb-5 leading-relaxed">
+                  Commencez dès maintenant en inscrivant votre première entreprise sur EsyConnect Haïti pour booster votre visibilité en ligne.
+                </p>
+                <a href="{% url 'business:register' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-esy-blue-600 to-indigo-600 hover:from-indigo-600 hover:to-esy-blue-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-md transition transform hover:-translate-y-0.5">
+                  <i class="fas fa-plus"></i> Inscrire mon premier biznis
                 </a>
               </td>
             </tr>
@@ -217,86 +438,177 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     Chart.defaults.font.family = "'Inter', sans-serif";
-    Chart.defaults.color = '#6b7280';
-    Chart.defaults.scale.grid.color = '#f3f4f6';
+    Chart.defaults.color = '#64748b';
+    Chart.defaults.scale.grid.color = '#f8fafc';
+
+    // Tooltip blanc moderne (SaaS Style)
     const tooltipConfig = {
-      backgroundColor: '#111827',
-      padding: 12,
-      cornerRadius: 6,
-      titleFont: { size: 12, weight: '600', family: "'Inter', sans-serif" },
-      bodyFont: { size: 12, weight: '400', family: "'Inter', sans-serif" },
+      backgroundColor: '#ffffff',
+      titleColor: '#0f172a',
+      bodyColor: '#334155',
+      borderColor: '#e2e8f0',
       borderWidth: 1,
-      borderColor: '#374151',
+      padding: 12,
+      cornerRadius: 12,
+      titleFont: { size: 12, weight: '700', family: "'Plus Jakarta Sans', 'Inter', sans-serif" },
+      bodyFont: { size: 12, weight: '500', family: "'Plus Jakarta Sans', 'Inter', sans-serif" },
       displayColors: true,
       boxPadding: 4,
       usePointStyle: true
     };
 
-    // Views chart (line)
+    // Multi-dataset Line Chart moderne avec gradient fluide
     const monthlyLabels = {{ monthly_labels|safe }};
     const monthlyViews = {{ monthly_views|safe }};
+    const monthlyWhatsapp = {{ monthly_whatsapp|default:"[]"|safe }};
+    const monthlyCalls = {{ monthly_calls|default:"[]"|safe }};
     const viewsCtx = document.getElementById('viewsChart');
-    if (viewsCtx) {
+
+    if (viewsCtx && monthlyLabels.length) {
       const ctx2d = viewsCtx.getContext('2d');
-      const gradient = ctx2d.createLinearGradient(0,0,0,250);
-      gradient.addColorStop(0, 'rgba(17,24,39,0.15)');
-      gradient.addColorStop(1, 'rgba(17,24,39,0)');
+
+      const gradientViews = ctx2d.createLinearGradient(0, 0, 0, 260);
+      gradientViews.addColorStop(0, 'rgba(37, 99, 235, 0.22)');
+      gradientViews.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+
+      const gradientWhatsapp = ctx2d.createLinearGradient(0, 0, 0, 260);
+      gradientWhatsapp.addColorStop(0, 'rgba(16, 185, 129, 0.20)');
+      gradientWhatsapp.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
       new Chart(viewsCtx, {
         type: 'line',
         data: {
-          labels: monthlyLabels.length ? monthlyLabels : ['—'],
-          datasets: [{
-            label: 'Vues Globales',
-            data: monthlyViews.length ? monthlyViews : [0],
-            borderColor: '#111827',
-            backgroundColor: gradient,
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#ffffff',
-            pointBorderColor: '#111827',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            pointHoverBackgroundColor: '#111827',
-            pointHoverBorderColor: '#ffffff'
-          }]
+          labels: monthlyLabels,
+          datasets: [
+            {
+              label: 'Vues des Fiches',
+              data: monthlyViews,
+              borderColor: '#2563eb',
+              borderWidth: 3,
+              backgroundColor: gradientViews,
+              fill: true,
+              tension: 0.42,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: '#2563eb',
+              pointBorderWidth: 2.5,
+              pointRadius: 4.5,
+              pointHoverRadius: 7,
+              pointHoverBackgroundColor: '#2563eb',
+              pointHoverBorderColor: '#ffffff'
+            },
+            {
+              label: 'Clics WhatsApp',
+              data: monthlyWhatsapp,
+              borderColor: '#10b981',
+              borderWidth: 2.5,
+              backgroundColor: gradientWhatsapp,
+              fill: true,
+              tension: 0.42,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: '#10b981',
+              pointBorderWidth: 2.5,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              pointHoverBackgroundColor: '#10b981',
+              pointHoverBorderColor: '#ffffff'
+            },
+            {
+              label: 'Appels Téléphoniques',
+              data: monthlyCalls,
+              borderColor: '#6366f1',
+              borderWidth: 2,
+              borderDash: [5, 4],
+              backgroundColor: 'transparent',
+              fill: false,
+              tension: 0.42,
+              pointBackgroundColor: '#ffffff',
+              pointBorderColor: '#6366f1',
+              pointBorderWidth: 2,
+              pointRadius: 3.5,
+              pointHoverRadius: 6,
+              pointHoverBackgroundColor: '#6366f1',
+              pointHoverBorderColor: '#ffffff'
+            }
+          ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           interaction: { mode: 'index', intersect: false },
-          plugins: { legend: { display: false }, tooltip: tooltipConfig },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              align: 'end',
+              labels: {
+                boxWidth: 8,
+                boxHeight: 8,
+                padding: 12,
+                font: { size: 11, weight: '700' },
+                color: '#475569',
+                usePointStyle: true
+              }
+            },
+            tooltip: tooltipConfig
+          },
           scales: {
-            y: { beginAtZero: true, border: { display: false }, grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, maxTicksLimit: 6 } },
-            x: { border: { display: false }, grid: { display: false }, ticks: { font: { size: 11, weight: '500' } } }
+            y: {
+              beginAtZero: true,
+              border: { display: false },
+              grid: { color: '#f1f5f9' },
+              ticks: { font: { size: 11, weight: '600' }, color: '#94a3b8', precision: 0 }
+            },
+            x: {
+              border: { display: false },
+              grid: { display: false },
+              ticks: { font: { size: 11, weight: '700' }, color: '#64748b' }
+            }
           }
         }
       });
     }
 
-    // Category chart (doughnut)
+    // Category Doughnut Chart moderne sur fond blanc
     const catLabels = {{ cat_labels|safe }};
     const catData = {{ cat_data|safe }};
     const categoryCtx = document.getElementById('categoryChart');
     if (categoryCtx) {
+      const finalCatLabels = catLabels.length ? catLabels : ['Entreprises'];
+      const finalCatData = (catData.length && catData.some(d => d > 0)) ? catData : [1];
+      const finalColors = catLabels.length ? [
+        '#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#64748b'
+      ] : ['#3b82f6'];
+
       new Chart(categoryCtx, {
         type: 'doughnut',
         data: {
-          labels: catLabels.length ? catLabels : ['—'],
+          labels: finalCatLabels,
           datasets: [{
-            data: catData.length ? catData : [0],
-            backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#f43f5e'], // emerald, indigo, amber, rose
-            hoverBackgroundColor: ['#059669', '#4f46e5', '#d97706', '#e11d48'],
-            borderWidth: 1,
+            data: finalCatData,
+            backgroundColor: finalColors,
+            hoverOffset: 6,
+            borderWidth: 3,
             borderColor: '#ffffff'
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          cutout: '70%',
-          plugins: { legend: { position: 'bottom' }, tooltip: tooltipConfig }
+          cutout: '72%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 9,
+                boxHeight: 9,
+                padding: 8,
+                font: { size: 10.5, weight: '700' },
+                color: '#475569',
+                usePointStyle: true
+              }
+            },
+            tooltip: tooltipConfig
+          }
         }
       });
     }

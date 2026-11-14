@@ -240,26 +240,34 @@
                     
                     <!-- PAGINATION DYNAMIQUE -->
                     {% if businesses.has_other_pages %}
-                    <div class="mt-16 flex justify-center gap-3">
-                        {% if businesses.has_previous %}
-                        <a href="?page={{ businesses.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" class="w-12 h-12 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold hover:border-esy-blue-400 hover:text-esy-blue-600 transition flex items-center justify-center">
-                            <i class="fas fa-chevron-left"></i>
-                        </a>
-                        {% endif %}
-                        
-                        {% for num in businesses.paginator.page_range %}
-                            {% if businesses.number == num %}
-                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" class="w-12 h-12 rounded-2xl bg-esy-blue-600 shadow-lg shadow-esy-blue-600/30 text-white font-black flex items-center justify-center">{{ num }}</a>
-                            {% elif num > businesses.number|add:'-3' and num < businesses.number|add:'3' %}
-                            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" class="w-12 h-12 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold hover:border-esy-blue-400 hover:text-esy-blue-600 transition flex items-center justify-center">{{ num }}</a>
+                    <div class="mt-16 flex flex-col items-center gap-4">
+                        <div class="flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+                            {% if businesses.has_previous %}
+                            <a href="?page={{ businesses.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if selected_department %}&department={{ selected_department }}{% endif %}{% if selected_ville %}&ville={{ selected_ville }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" 
+                               class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold hover:border-esy-blue-400 hover:text-esy-blue-600 transition flex items-center justify-center shadow-xs">
+                                <i class="fas fa-chevron-left text-sm"></i>
+                            </a>
                             {% endif %}
-                        {% endfor %}
-                        
-                        {% if businesses.has_next %}
-                        <a href="?page={{ businesses.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" class="w-12 h-12 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold hover:border-esy-blue-400 hover:text-esy-blue-600 transition flex items-center justify-center">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
-                        {% endif %}
+                            
+                            {% for num in businesses.paginator.page_range %}
+                                {% if businesses.number == num %}
+                                <span class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-esy-blue-600 shadow-lg shadow-esy-blue-600/30 text-white font-black flex items-center justify-center text-sm sm:text-base">{{ num }}</span>
+                                {% elif num > businesses.number|add:'-3' and num < businesses.number|add:'3' %}
+                                <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if selected_department %}&department={{ selected_department }}{% endif %}{% if selected_ville %}&ville={{ selected_ville }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" 
+                                   class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold hover:border-esy-blue-400 hover:text-esy-blue-600 transition flex items-center justify-center text-sm sm:text-base shadow-xs">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if businesses.has_next %}
+                            <a href="?page={{ businesses.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}{% if selected_department %}&department={{ selected_department }}{% endif %}{% if selected_ville %}&ville={{ selected_ville }}{% endif %}{% if zone_query %}&zone={{ zone_query }}{% endif %}" 
+                               class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold hover:border-esy-blue-400 hover:text-esy-blue-600 transition flex items-center justify-center shadow-xs">
+                                <i class="fas fa-chevron-right text-sm"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                        <p class="text-xs font-bold text-gray-400">
+                            {% trans "Page" %} {{ businesses.number }} {% trans "sur" %} {{ businesses.paginator.num_pages }} ({{ total_count }} {% trans "entreprises au total" %})
+                        </p>
                     </div>
                     {% endif %}
 

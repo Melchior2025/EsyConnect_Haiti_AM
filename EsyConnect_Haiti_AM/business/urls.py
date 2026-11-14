@@ -16,6 +16,7 @@ urlpatterns = [
     path('business/<int:business_id>/gallery/<int:image_id>/delete/', views.delete_gallery_image, name='delete_gallery_image'),
     path('business/<int:business_id>/delete-image/<int:image_id>/', views.delete_gallery_image, name='delete_gallery_image_alt'),
     path('business/<int:business_id>/review/', views.review, name='review'),
+    path('business/<int:business_id>/track/<str:action_type>/', views.track_click, name='track_click'),
     path('categories/', views.categories, name='categories'),
     path('category/<int:category_id>/', views.category_detail, name='category'),
     path('about/', views.about, name='about'),

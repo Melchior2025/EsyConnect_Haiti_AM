@@ -6,6 +6,109 @@ from .models import (
 )
 
 class BusinessRegistrationForm(forms.ModelForm):
+    name = forms.CharField(
+        max_length=150,
+        required=True,
+        error_messages={
+            'required': "Le nom de l'entreprise est obligatoire. Veuillez le saisir.",
+            'max_length': "Le nom de l'entreprise ne peut pas dépasser 150 caractères.",
+        },
+        widget=forms.TextInput(attrs={
+            'class': 'custom-input',
+            'placeholder': "Ex: Altidor Auto Parts, Pharmacie Centrale, Boutique Marie...",
+            'id': 'id_name',
+            'autocomplete': 'organization',
+        }),
+        label="Nom de l'entreprise"
+    )
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.all(),
+        required=True,
+        error_messages={
+            'required': "Veuillez choisir une catégorie pour votre entreprise.",
+            'invalid_choice': "Catégorie invalide. Veuillez en sélectionner une dans la liste.",
+        },
+        widget=forms.Select(attrs={
+            'class': 'custom-input cursor-pointer appearance-none',
+            'id': 'category-select',
+        }),
+        label="Catégorie"
+    )
+    departement_obj = forms.ModelChoiceField(
+        queryset=Department.objects.all(),
+        required=True,
+        error_messages={
+            'required': "Veuillez choisir le département où se trouve votre entreprise.",
+        },
+        widget=forms.Select(attrs={
+            'class': 'custom-input cursor-pointer appearance-none',
+            'id': 'departement-select',
+        }),
+        label="Département"
+    )
+    ville_obj = forms.ModelChoiceField(
+        queryset=Ville.objects.all(),
+        required=True,
+        error_messages={
+            'required': "Veuillez choisir la ville / commune où se trouve votre entreprise.",
+        },
+        widget=forms.Select(attrs={
+            'class': 'custom-input cursor-pointer appearance-none',
+            'id': 'ville-select',
+        }),
+        label="Ville / Commune"
+    )
+    address = forms.CharField(
+        max_length=255,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'custom-input',
+            'placeholder': "Adresse exacte (rue, numéro, quartier...)",
+            'id': 'id_address',
+        }),
+        label="Adresse Complète"
+    )
+    latitude = forms.FloatField(
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'custom-input',
+            'placeholder': '19.7594',
+            'step': 'any',
+            'id': 'id_latitude',
+        }),
+        label="Latitude"
+    )
+    longitude = forms.FloatField(
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'custom-input',
+            'placeholder': '-72.2497',
+            'step': 'any',
+            'id': 'id_longitude',
+        }),
+        label="Longitude"
+    )
+    logo = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'hidden',
+            'accept': 'image/*',
+            'id': 'id_logo',
+            'onchange': "previewFileName(this, 'logo-filename')",
+        }),
+        label="Logo"
+    )
+    cover_image = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'hidden',
+            'accept': 'image/*',
+            'id': 'id_cover_image',
+            'onchange': "previewFileName(this, 'cover-filename')",
+        }),
+        label="Image de couverture"
+    )
+
     class Meta:
         model = Business
         fields = [
@@ -21,46 +124,9 @@ class BusinessRegistrationForm(forms.ModelForm):
             'cover_image',
         ]
         widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'placeholder': 'Non biznis ou an...'
-            }),
-            'category': forms.Select(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-            }),
-            'departement_obj': forms.Select(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'id': 'departement-select'
-            }),
-            'ville_obj': forms.Select(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'id': 'ville-select'
-            }),
             'quartier_obj': forms.Select(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                'class': 'custom-input cursor-pointer appearance-none',
                 'id': 'quartier-select'
-            }),
-            'address': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'placeholder': 'Adres konplè (Ri, nimewo...)'
-            }),
-            'latitude': forms.NumberInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'placeholder': '19.7594',
-                'step': 'any'
-            }),
-            'longitude': forms.NumberInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'placeholder': '-72.2497',
-                'step': 'any'
-            }),
-            'logo': forms.FileInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'accept': 'image/*'
-            }),
-            'cover_image': forms.FileInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-                'accept': 'image/*'
             }),
         }
         labels = {
@@ -76,6 +142,12 @@ class BusinessRegistrationForm(forms.ModelForm):
             'cover_image': 'Image de couverture',
         }
 
+    def clean_name(self):
+        name = self.cleaned_data.get('name', '').strip()
+        if not name:
+            raise ValidationError("Le nom de l'entreprise est obligatoire. Veuillez le saisir.")
+        return name
+
 
 class ReviewForm(forms.ModelForm):
     """Formulaire pour laisser un avis et une note sur une entreprise"""
@@ -90,7 +162,7 @@ class ReviewForm(forms.ModelForm):
         widget=forms.Textarea(attrs={
             'rows': 4,
             'class': 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-            'placeholder': 'Pataje eksperyans ou ak biznis sa a...'
+            'placeholder': 'Partagez votre expérience avec cette entreprise...'
         }),
         label='Commentaire',
         required=False

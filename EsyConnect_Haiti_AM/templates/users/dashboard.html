@@ -348,14 +348,16 @@
         Chart.defaults.scale.grid.color = '#f3f4f6';
 
         const tooltipConfig = {
-            backgroundColor: '#111827',
-            padding: 12,
-            cornerRadius: 4,
-            titleFont: { size: 12, weight: '600' },
-            bodyFont: { size: 12, weight: '400' },
+            backgroundColor: '#ffffff',
+            titleColor: '#0f172a',
+            bodyColor: '#334155',
+            borderColor: '#e2e8f0',
             borderWidth: 1,
-            borderColor: '#374151',
-            displayColors: false
+            padding: 12,
+            cornerRadius: 12,
+            titleFont: { size: 12, weight: '700' },
+            bodyFont: { size: 12, weight: '500' },
+            displayColors: true
         };
 
         const mLabels = {{ monthly_labels|default:"[]"|safe }};
@@ -368,8 +370,8 @@
         if (mainCtx) {
             const ctx = mainCtx.getContext('2d');
             const gradientViews = ctx.createLinearGradient(0, 0, 0, 350);
-            gradientViews.addColorStop(0, 'rgba(17, 24, 39, 0.1)');
-            gradientViews.addColorStop(1, 'rgba(17, 24, 39, 0.0)');
+            gradientViews.addColorStop(0, 'rgba(37, 99, 235, 0.20)');
+            gradientViews.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
 
             new Chart(mainCtx, {
                 type: 'line',
@@ -379,21 +381,21 @@
                         {
                             label: 'Vues Globales',
                             data: mViews.length ? mViews : defaultData,
-                            borderColor: '#111827',
+                            borderColor: '#2563eb',
                             backgroundColor: gradientViews,
                             fill: true,
                             tension: 0.4,
-                            borderWidth: 2,
+                            borderWidth: 2.5,
                             clip: false,
                             pointBackgroundColor: '#fff',
-                            pointBorderColor: '#111827',
+                            pointBorderColor: '#2563eb',
                             pointRadius: 4,
                             pointHoverRadius: 6
                         },
                         {
-                            label: 'Leads Générés',
+                            label: 'Interactions & Leads',
                             data: mLeads.length ? mLeads : defaultData,
-                            borderColor: '#9ca3af',
+                            borderColor: '#10b981',
                             backgroundColor: 'transparent',
                             fill: false,
                             tension: 0.4,
@@ -401,7 +403,7 @@
                             clip: false,
                             borderDash: [5, 5],
                             pointBackgroundColor: '#fff',
-                            pointBorderColor: '#9ca3af',
+                            pointBorderColor: '#10b981',
                             pointRadius: 4
                         }
                     ]

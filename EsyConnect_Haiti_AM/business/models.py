@@ -245,6 +245,17 @@ class SiteConfiguration(models.Model):
     site_name = models.CharField(max_length=100, default="EsyConnect")
     contact_email = models.EmailField(blank=True, null=True)
     maintenance_mode = models.BooleanField(default=False)
+    # New global configuration fields
+    phone_number = models.CharField(max_length=30, blank=True, null=True, help_text="Contact phone number")
+    address = models.TextField(blank=True, null=True, help_text="Physical address (city/neighborhood)")
+    facebook_url = models.URLField(blank=True, null=True, help_text="Facebook page URL")
+    instagram_url = models.URLField(blank=True, null=True, help_text="Instagram profile URL")
+    whatsapp_number = models.CharField(max_length=30, blank=True, null=True, help_text="WhatsApp contact number")
+    footer_text = models.TextField(blank=True, null=True, help_text="Custom footer HTML/text")
+    meta_description = models.TextField(blank=True, null=True, help_text="SEO meta description for the site")
+    logo = models.ImageField(upload_to='site_logos/', blank=True, null=True)
+    hero_image = models.ImageField(upload_to='site_hero/', blank=True, null=True)
+
 
     class Meta:
         verbose_name = "Configuration du site"

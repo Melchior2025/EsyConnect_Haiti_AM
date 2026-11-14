@@ -1,5 +1,4 @@
 Django==4.2.7
-django-decouple==3.8
 dj-database-url==2.1.0
 django-crispy-forms==2.1
 crispy-bootstrap5==0.7

@@ -6,13 +6,18 @@
      data-recent="{{ business.created_at|date:'U' }}"
      data-aos="fade-up">
     <!-- Image Container -->
-    <div class="relative h-48 w-full overflow-hidden bg-slate-900 rounded-t-xl flex items-center justify-center">
+    <div class="relative h-48 w-full overflow-hidden bg-slate-100 rounded-t-xl flex items-center justify-center">
         {% if business.cover_image %}
             <img src="{{ business.cover_image.url }}" class="h-48 w-full object-cover transition duration-300 group-hover:scale-105" alt="{{ business.name }}" onerror="this.onerror=null; this.src='{% static 'images/default_logo.png' %}';">
         {% elif business.logo and business.logo.name != 'default_logo.png' %}
-            <img src="{{ business.logo.url }}" class="h-48 w-full object-contain bg-slate-800 p-3 transition duration-300 group-hover:scale-105" alt="{{ business.name }}" onerror="this.onerror=null; this.src='{% static 'images/default_logo.png' %}';">
+            <img src="{{ business.logo.url }}" class="h-48 w-full object-cover transition duration-300 group-hover:scale-105" alt="{{ business.name }}" onerror="this.onerror=null; this.src='{% static 'images/default_logo.png' %}';">
         {% else %}
-            <img src="{% static 'images/default_logo.png' %}" class="h-48 w-full object-cover" alt="{{ business.name }}">
+            <div class="w-full h-full bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 flex flex-col items-center justify-center text-slate-400">
+                <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-1 text-esy-blue-600">
+                    <i class="fas fa-store text-xl"></i>
+                </div>
+                <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{{ business.category.name|default:"Commerce" }}</span>
+            </div>
         {% endif %}
         
         <!-- Category Badge -->

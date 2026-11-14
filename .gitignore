@@ -12,12 +12,21 @@ ENV/
 # Environment variables
 .env
 .env.local
+.env.*
+!.env.example
+!.env.production.example
 
-# Node modules
-node_modules/
+# Database
+db.sqlite3
+*.sqlite3
+*.db
 
-# Static and media files (compiled)
+# Static and media files (compiled & uploaded)
 staticfiles/
+media/*
+!media/default_logo.png
+**/media/*
+!**/media/default_logo.png
 media/cache/
 
 # IDE & Editor files

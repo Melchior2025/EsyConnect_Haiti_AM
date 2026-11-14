@@ -67,7 +67,62 @@ admin.site.register(Business)
 admin.site.register(Department)
 admin.site.register(Ville)
 admin.site.register(Quartier)
-admin.site.register(SiteConfiguration)
+@admin.register(SiteConfiguration)
+class SiteConfigurationAdmin(admin.ModelAdmin):
+    list_display = (
+        'site_name', 'contact_email', 'maintenance_mode',
+        'phone_number', 'address', 'facebook_url', 'instagram_url',
+        'whatsapp_number',
+    )
+    fieldsets = (
+        ('Informations générales', {
+            'fields': ('site_name', 'contact_email', 'maintenance_mode'),
+        }),
+        ('Branding', {
+            'fields': ('logo', 'hero_image'),
+        }),
+        ('Contact', {
+            'fields': ('phone_number', 'address', 'whatsapp_number'),
+        }),
+        ('Réseaux sociaux', {
+            'fields': ('facebook_url', 'instagram_url'),
+        }),
+        ('SEO & Pye paj', {
+            'fields': ('meta_description', 'footer_text'),
+        }),
+    )
+
+    # ── Singleton behaviour ──────────────────────────────────────────────────
+    def has_add_permission(self, request):
+        """Block adding a second instance."""
+        return not SiteConfiguration.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        """Block deletion so the unique configuration is never lost."""
+        return False
+
+    def get_urls(self):
+        """Redirect the changelist URL straight to the change form of pk=1."""
+        from django.urls import path
+        from django.shortcuts import redirect
+
+        urls = super().get_urls()
+
+        def go_to_config(req):
+            obj = SiteConfiguration.objects.first()
+            if obj:
+                return redirect(
+                    f'/admin/business/siteconfiguration/{obj.pk}/change/'
+                )
+            return redirect('/admin/business/siteconfiguration/add/')
+
+        custom = [
+            path('', self.admin_site.admin_view(go_to_config),
+                 name='business_siteconfiguration_changelist'),
+        ]
+        return custom + urls
+
+
 admin.site.register(Review)
 admin.site.register(BusinessGallery)
 admin.site.register(Favorite)

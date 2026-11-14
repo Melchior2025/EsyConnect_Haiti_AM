@@ -21,13 +21,43 @@
     .custom-biz-pin:hover {
         transform: scale(1.1);
     }
+    /* Hero section background — force override any conflicting style */
+    .hero-bg-image {
+        background-size: cover !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+        min-height: 620px !important;
+    }
+    .hero-bg-image > * {
+        position: relative;
+        z-index: 2;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <!-- 1. Hero Section avec Barre de Recherche Optimisée -->
+{% if site_config and site_config.hero_image %}
+<section class="hero-bg-image" style="
+    position: relative;
+    width: 100%;
+    min-height: 620px;
+    background-image: url('{{ site_config.hero_image.url }}');
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #0f172a;
+    color: white;
+    padding: 80px 16px;
+    box-sizing: border-box;
+    overflow: visible;
+">
+    <!-- Dark overlay -->
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.52); z-index: 0;"></div>
+{% else %}
 <section class="relative bg-gradient-to-br from-esy-dark via-blue-950 to-esy-dark text-white py-16 md:py-24 px-4 overflow-hidden">
-    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]"></div>
+{% endif %}
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px]" style="z-index: 1;"></div>
     
     <div class="max-w-7xl mx-auto text-center relative z-10">
         <span class="inline-flex items-center gap-2 bg-esy-gold/20 text-esy-gold text-xs md:text-sm font-bold px-4 py-1.5 rounded-full mb-6 border border-esy-gold/30 shadow-inner">
@@ -204,78 +234,89 @@
     </div>
 </section>
 
-<!-- 3. Entreprises à la Une (Uniformisation stricte des images h-48 w-full object-cover rounded-t-xl) -->
+<!-- 3. Entreprises à la Une -->
 <section class="py-16 bg-gray-50 border-t border-gray-100">
-    <div class="max-w-7xl mx-auto px-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-12">
             <span class="text-xs font-black uppercase tracking-widest text-esy-gold bg-amber-50 px-3 py-1 rounded-full">{% trans "Partenaires Recommandés" %}</span>
             <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-2">{% trans "Entreprises à la Une" %}</h2>
             <p class="text-gray-600">{% trans "Découvrez les établissements et professionnels d'excellence certifiés par EsyConnect." %}</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {% for business in featured_businesses %}
-            <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col group">
-                <!-- Image Container Uniformisé -->
-                <div class="h-48 w-full bg-slate-900 relative overflow-hidden rounded-t-xl flex items-center justify-center">
+            <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col h-full group">
+
+                <!-- Image Container — hauteur fixe h-48 identique sur toutes les cartes -->
+                <div class="relative overflow-hidden rounded-t-2xl bg-slate-100" style="height: 192px; flex-shrink: 0;">
                     {% if business.cover_image %}
-                    <img src="{{ business.cover_image.url }}" alt="{{ business.name }}" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='{% static 'images/default_logo.png' %}';">
+                    <img src="{{ business.cover_image.url }}" alt="{{ business.name }}"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                         onerror="this.onerror=null; this.src='{% static 'images/default_logo.png' %}';">
                     {% elif business.logo and business.logo.name != 'default_logo.png' %}
-                    <img src="{{ business.logo.url }}" alt="{{ business.name }}" class="h-48 w-full object-contain bg-slate-800 p-3 transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; this.src='{% static 'images/default_logo.png' %}';">
+                    <img src="{{ business.logo.url }}" alt="{{ business.name }}"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                         onerror="this.onerror=null; this.src='{% static 'images/default_logo.png' %}';">
                     {% else %}
-                    <img src="{% static 'images/default_logo.png' %}" alt="{{ business.name }}" class="h-48 w-full object-cover">
+                    <div class="w-full h-full bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 flex flex-col items-center justify-center text-slate-400">
+                        <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-1 text-esy-blue-600">
+                            <i class="fas fa-store text-xl"></i>
+                        </div>
+                        <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">{{ business.category.name|default:"Commerce" }}</span>
+                    </div>
                     {% endif %}
 
-                    <!-- Badges Catégorie et VIP -->
-                    <span class="absolute top-4 left-4 bg-white/95 backdrop-blur-md text-esy-dark text-xs font-extrabold px-3 py-1 rounded-full shadow">
+                    <!-- Badge Catégorie -->
+                    <span class="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-esy-dark text-xs font-extrabold px-2.5 py-0.5 rounded-full shadow-sm truncate max-w-[60%]">
                         {{ business.category.name|default:"Commerce" }}
                     </span>
                     {% if business.is_pro %}
-                    <span class="absolute top-4 right-4 bg-esy-gold text-esy-dark text-xs font-black px-3 py-1 rounded-full shadow flex items-center gap-1">
+                    <span class="absolute top-3 right-3 bg-esy-gold text-esy-dark text-xs font-black px-2 py-0.5 rounded-full shadow flex items-center gap-1">
                         <i class="fas fa-crown text-[10px]"></i> VIP
                     </span>
                     {% endif %}
                 </div>
 
                 <!-- Contenu Carte -->
-                <div class="p-6 flex-1 flex flex-col justify-between">
+                <div class="p-4 flex-1 flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center justify-between gap-2 mb-2">
-                            <h3 class="text-xl font-bold text-gray-900 group-hover:text-esy-blue-600 transition truncate">{{ business.name }}</h3>
+                        <!-- Nom + badge vérifié -->
+                        <div class="flex items-center justify-between gap-2 mb-1">
+                            <h3 class="text-sm font-bold text-gray-900 group-hover:text-esy-blue-600 transition truncate" title="{{ business.name }}">{{ business.name }}</h3>
                             {% if business.is_verified %}
-                            <span class="flex-shrink-0 text-esy-blue-600 bg-esy-blue-50 w-6 h-6 rounded-full flex items-center justify-center text-xs" title="{% trans 'Vérifié' %}">
+                            <span class="flex-shrink-0 text-esy-blue-600 text-xs" title="{% trans 'Vérifié' %}">
                                 <i class="fas fa-check-circle"></i>
                             </span>
                             {% endif %}
                         </div>
 
-                        <!-- Étoiles de notation -->
-                        <div class="flex items-center gap-1 text-amber-400 text-xs font-bold mb-3">
+                        <!-- Note -->
+                        <div class="flex items-center gap-1 text-amber-400 text-xs mb-2">
                             <i class="fas fa-star"></i>
-                            <span class="text-gray-800 font-extrabold ml-1">{{ business.get_average_rating|default:"5.0" }}</span>
-                            <span class="text-gray-400 font-normal">({{ business.get_rating_count|default:"1" }} {% trans "avis" %})</span>
+                            <span class="text-gray-800 font-bold">{{ business.get_average_rating|default:"5.0" }}</span>
+                            <span class="text-gray-400">({{ business.get_rating_count|default:"1" }} {% trans "avis" %})</span>
                         </div>
 
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
-                            {{ business.description|default:"Établissement certifié sur l'annuaire professionnel EsyConnect Haïti." }}
+                        <!-- Description -->
+                        <p class="text-gray-500 text-xs line-clamp-2 leading-relaxed mb-3 min-h-[2.25rem]">
+                            {{ business.description|default:"Établissement certifié sur EsyConnect Haïti." }}
                         </p>
                     </div>
 
-                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-                        <span class="truncate pr-2 text-xs font-medium text-gray-500">
-                            <i class="fas fa-map-marker-alt text-esy-gold mr-1"></i> {{ business.address|default:"Haïti" }}
+                    <!-- Pied de carte -->
+                    <div class="pt-3 border-t border-gray-100 flex items-center justify-between gap-2 mt-auto">
+                        <span class="text-xs text-gray-500 truncate" title="{{ business.address|default:'Haïti' }}">
+                            <i class="fas fa-map-marker-alt text-esy-gold mr-1"></i>{{ business.address|default:"Haïti" }}
                         </span>
-                        <!-- Bouton Voir Profil dynamique -->
                         <a href="{% url 'business_detail' business.pk %}"
-                            class="bg-esy-blue-600 hover:bg-esy-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5 flex-shrink-0">
-                            <span>{% trans "Voir Profil" %}</span>
-                            <i class="fas fa-arrow-right text-[10px]"></i>
+                           class="flex-shrink-0 bg-esy-blue-600 hover:bg-esy-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1">
+                            {% trans "Voir" %} <i class="fas fa-arrow-right text-[9px]"></i>
                         </a>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <p class="text-gray-500 col-span-3 text-center py-8">{% trans "Aucune entreprise à la une pour le moment." %}</p>
+            <p class="text-gray-500 col-span-4 text-center py-8">{% trans "Aucune entreprise à la une pour le moment." %}</p>
             {% endfor %}
         </div>
 
@@ -489,7 +530,7 @@
                             <div class="p-4 bg-red-950/40 border border-red-800/50 rounded-2xl flex items-center justify-between">
                                 <div>
                                     <span class="font-black text-red-400 text-sm block">MonCash (Digicel)</span>
-                                    <span class="text-slate-300 text-xs font-mono font-bold select-all">+509 34 56 7890</span>
+                                    <span class="text-slate-300 text-xs font-mono font-bold select-all">+509 40 74 6284</span>
                                 </div>
                                 <span class="bg-red-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase">Rapide</span>
                             </div>
@@ -497,7 +538,7 @@
                             <div class="p-4 bg-orange-950/40 border border-orange-800/50 rounded-2xl flex items-center justify-between">
                                 <div>
                                     <span class="font-black text-orange-400 text-sm block">Natcash (Natcom)</span>
-                                    <span class="text-slate-300 text-xs font-mono font-bold select-all">+509 41 23 4567</span>
+                                    <span class="text-slate-300 text-xs font-mono font-bold select-all">+509 35 15 6097</span>
                                 </div>
                                 <span class="bg-orange-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase">Instantané</span>
                             </div>
@@ -568,8 +609,8 @@
                 <div>
                     <label class="block text-xs font-black uppercase tracking-wider text-gray-700 mb-2">{% trans "Mwayen Peman" %}</label>
                     <select name="payment_method" x-model="selectedMethod" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 font-bold text-xs">
-                        <option value="moncash">MonCash (Digicel: +509 34 56 7890)</option>
-                        <option value="natcash">Natcash (Natcom: +509 41 23 4567)</option>
+                        <option value="moncash">MonCash (Digicel: +509 40 74 6284)</option>
+                        <option value="natcash">Natcash (Natcom: +509 35 15 6097)</option>
                         <option value="bank_transfer">Virement Bancaire (Sogebank / Unibank)</option>
                         <option value="card">Carte Bancaire / En ligne</option>
                     </select>
@@ -765,7 +806,7 @@
                 </p>
             </div>
             <div class="relative z-10 flex-shrink-0 flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                <a href="https://wa.me/50934567890?text=Bonjou%20EsyConnect,%20mwen%20ta%20renmen%20rejwenn%20kominote%20antrepren%C3%A8%20yo" target="_blank" class="bg-white hover:bg-emerald-50 text-emerald-800 font-black px-8 py-4 rounded-2xl text-sm transition shadow-lg flex items-center justify-center gap-2.5">
+                <a href="https://wa.me/50940746284?text=Bonjou%20EsyConnect,%20mwen%20ta%20renmen%20rejwenn%20kominote%20antrepren%C3%A8%20yo" target="_blank" class="bg-white hover:bg-emerald-50 text-emerald-800 font-black px-8 py-4 rounded-2xl text-sm transition shadow-lg flex items-center justify-center gap-2.5">
                     <i class="fab fa-whatsapp text-xl text-emerald-600"></i>
                     <span>{% trans "Rejwenn Gwoup WhatsApp la" %}</span>
                 </a>
@@ -793,10 +834,10 @@
             scrollWheelZoom: true
         }).setView([19.7578, -72.2042], 14);
 
-        // Fond de carte OpenStreetMap France (100% gratuit, sans clé API, sans blocage)
-        var osmFrLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+        // Fond de carte Esri World Street Map (gratuit, sans clé API, sans blocage)
+        var esriStreet = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 20,
-            attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, HERE, Garmin, Intermap, increment P Corp., GEBCO, USGS, FAO, NPS, NRCAN, GeoBase, IGN, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), (c) OpenStreetMap contributors, and the GIS User Community'
         }).addTo(map);
 
         // Couche Satellite (Esri World Imagery)
@@ -807,7 +848,7 @@
 
         // Sélecteur de couches
         var baseMaps = {
-            "🗺️ Plan (OSM France)": osmFrLayer,
+            "🗺️ Plan (Esri)": esriStreet,
             "🛰️ Vue Satellite": esriSat
         };
         L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);

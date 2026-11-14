@@ -119,6 +119,39 @@
     {% include 'components/footer.html' %}
     {% endblock %}
 
+    <!-- Bouton Flottant WhatsApp Officiel -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2" x-data="{ open: false }">
+        <!-- Menu popover WhatsApp -->
+        <div x-show="open" @click.away="open = false" x-transition class="bg-white rounded-2xl shadow-2xl p-4 border border-gray-100 mb-2 w-64 text-left">
+            <div class="flex items-center gap-2 mb-3 pb-2 border-b border-gray-100">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span class="text-xs font-black text-gray-900 uppercase tracking-wider">{% trans "Support EsyConnect" %}</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-3">{% trans "Besoin d'aide ? Écrivez-nous sur WhatsApp :" %}</p>
+            <div class="space-y-2">
+                <a href="https://wa.me/50940746284?text=Bonjou%20EsyConnect,%20mwen%20bezwen%20yon%20enfomasyon" target="_blank" class="flex items-center gap-2.5 p-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition">
+                    <i class="fab fa-whatsapp text-lg text-emerald-600"></i>
+                    <div>
+                        <span class="block">+509 40 74 6284</span>
+                        <span class="text-[10px] text-emerald-600 font-normal">Ligne 1 • Principal</span>
+                    </div>
+                </a>
+                <a href="https://wa.me/50935156097?text=Bonjou%20EsyConnect,%20mwen%20bezwen%20yon%20enfomasyon" target="_blank" class="flex items-center gap-2.5 p-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-bold transition">
+                    <i class="fab fa-whatsapp text-lg text-teal-600"></i>
+                    <div>
+                        <span class="block">+509 35 15 6097</span>
+                        <span class="text-[10px] text-teal-600 font-normal">Ligne 2 • Support</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!-- Bouton Principal Rond -->
+        <button @click="open = !open" type="button" aria-label="Support WhatsApp" class="w-14 h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:shadow-emerald-500/40 transition-all duration-300 transform hover:scale-110 relative">
+            <span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+            <i class="fab fa-whatsapp text-3xl"></i>
+        </button>
+    </div>
+
     <!-- AOS JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
